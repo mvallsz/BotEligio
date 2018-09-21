@@ -28,14 +28,14 @@ public class BnServicios {
 //        JSONArray json = new BnServicios().serviciosActivos(1);
     }
 
-    public boolean activarServicio(long idSEr, boolean activar) {
+    public boolean activarServicio(long idSEr, int activar) {
         boolean act = false;
         Connection conn = null;
         try {
             conn = Conexion.getConn();
             String sql = "UPDATE " + DEF.ESQUEMA + ".SERV_BUREAU_EMPRESA SET activo=? WHERE ID=?;";
             PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setInt(1, (activar ? 1 : 0));
+            pst.setInt(1, activar);
             pst.setLong(2, idSEr);
             pst.executeUpdate();
             act = true;

@@ -69,7 +69,7 @@ function GuardarForm() {
         }
         json = json + "}";
         json = JSON.parse(json);
-        
+
 //        $.ajax({
 //            url: 'php/google_search_results.php',
 //            data: 'q='+encodeURIComponent(q),
@@ -78,13 +78,13 @@ function GuardarForm() {
 //                $('.search_results').html(response);
 //            }
 //        });
-        
+
         $.ajax({
             url: 'Svl_Servicios',
             type: 'POST',
             dataType: 'json',
             data: {
-                accion: 'agregar-servicio',
+                accion: 'agregarServicio',
                 nombre: nombre,
                 tipoPersona: tipoPersona,
                 bureau: bureau,
@@ -123,4 +123,58 @@ function ResVariable() {
     if (contVar < 2) {
         $('#btnEliminarVar').hide();
     }
+}
+
+function pruebaa() {
+    $.ajax({
+        url: 'Svl_Servicios',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            accion: 'buscarServicios'
+        },
+        success: function (data, textStatus, jqXHR) {
+            console.log("servicios");
+            console.log(data);
+        }
+    });
+    $.ajax({
+        url: 'Svl_Servicios',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            accion: 'buscarServiciosActivos'
+        },
+        success: function (data, textStatus, jqXHR) {
+            console.log("servicios activos");
+            console.log(data);
+        }
+    });
+//    $.ajax({
+//        url: 'Svl_Servicios',
+//        type: 'POST',
+//        dataType: 'json',
+//        data: {
+//            accion: 'activarServicio',
+//            idServ: 36,
+//            activo: 0
+//        },
+//        success: function (data, textStatus, jqXHR) {
+//            console.log("activar");
+//            console.log(data);
+//        }
+//    });
+//    $.ajax({
+//        url: 'Svl_Servicios',
+//        type: 'POST',
+//        dataType: 'json',
+//        data: {
+//            accion: 'eliminarServicio',
+//            idServ: 36
+//        },
+//        success: function (data, textStatus, jqXHR) {
+//            console.log("activar");
+//            console.log(data);
+//        }
+//    });
 }

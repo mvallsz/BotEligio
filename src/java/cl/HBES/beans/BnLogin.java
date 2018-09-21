@@ -47,12 +47,33 @@ public class BnLogin {
 
             }
         } catch (Exception ex) {
-            Soporte.severe("{0}:{1}", new Object[]{Conexion.class.getName(), ex.toString()});
+            Soporte.severe("{0}:{1}", new Object[]{BnLogin.class.getName(), ex.toString()});
             ex.printStackTrace(System.out);
         } finally {
             Conexion.desconectar(conn);
         }
 //        SoporteExpertChoice.info("Proceso iniciarSesion, devuelve: "+usuario == null ? "null": usuario.toString());
         return credenciales;
+    }
+
+    public long obtenerIDEmpresa() {
+        long id = 0;
+        Connection conn = null;
+        try {
+            conn = Conexion.getConn();
+            String sql = "SELECT ID FROM " + DEF.ESQUEMA + ".cuentaEmpresa;";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                id = rs.getLong(1);
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnLogin.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(conn);
+        }
+        return id;
     }
 }

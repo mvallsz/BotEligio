@@ -27,14 +27,6 @@ $(document).ready(function(){
 
                             <div class="clearfix">
 
-                                <label for="form-birthday" class="form-label">Birthdate</label>
-
-                                <div class="form-input"><input type="date" id="form-birthday" name="date" placeholder="mm/dd/yyyy" /></div>
-
-                            </div>
-
-                            <div class="clearfix">
-
                                 <label for="form-username" class="form-label">Username <em>*</em></label>
 
                                 <div class="form-input"><input type="text" id="form-username" name="username" required="required" maxlength="12" placeholder="Alphanumeric (max 12 char.)" /></div>
@@ -54,54 +46,6 @@ $(document).ready(function(){
                                 <label for="form-password-check" class="form-label">Password check</label>
 
                                 <div class="form-input"><input type="password" id="form-password-check" name="check" data-equals="password" maxlength="30" placeholder="Re-enter your password" /></div>
-
-                            </div>
-
-                            <div class="clearfix">
-
-                                <label for="form-website" class="form-label">Website <em>*</em></label>
-
-                                <div class="form-input"><input type="url" id="form-website" required="required" placeholder="A valid URL" /></div>
-
-                            </div>
-
-                            <div class="clearfix">
-
-                                <label for="form-textarea" class="form-label">About you <em>*</em></label>
-
-                                <div class="form-input form-textarea"><textarea id="form-textarea" required="required" rows="5" placeholder="Describe yourself"></textarea></div>
-
-                            </div>
-                            
-                            <div class="clearfix">
-
-                                <label for="form-timezone" class="form-label">Timezone</label>
-
-                                <div class="form-input"><select id="form-timezone"><option>America/Los Angeles</option><option>America/New York</option><option>Asia/Manila</option></select></div>
-
-                            </div>
-
-                            <div class="clearfix">
-
-                                <label for="form-upload" class="form-label">Photo</label>
-
-                                <div class="form-input"><input type="file" id="form-upload" placeholder="80x80 jpeg/png format" /></div>
-
-                            </div>
-
-                            <div class="clearfix">
-
-                                <label for="form-gender" class="form-label">Gender</label>
-
-                                <div class="form-input"><div class="radiogroup"><label><input type="radio" name="gender" id="form-gender" value="male" /> Male</label> <label><input type="radio" name="gender" value="female" /> Female</label></div></div>
-
-                            </div>
-
-                            <div class="clearfix">
-
-                                <label for="form-updates" class="form-label">Receive Updates?</label>
-
-                                <div class="form-input"><div class="checkgroup" ><input type="checkbox" id="form-updates" value="1" /></div></div>
 
                             </div>
 

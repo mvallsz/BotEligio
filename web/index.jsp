@@ -94,8 +94,8 @@
                     </h1>
                     <ul class="tlm">
                         <li class="current"><a href="#dashboard.jsp" title="Dashboard"><img src="images/navicons/81.png" alt=""/><span>Dashboard</span></a></li>
-                        <li class="current"><a href="#conectionBureau.jsp" title="Dashboard"><img src="images/navicons/130.png" alt=""/><span>Connection Bureau</span></a></li>
-                        <li class="current"><a href="#user.jsp" title="Dashboard"><img src="images/navicons/112.png" alt=""/><span>User</span></a></li>
+                        <li class="current"><a href="#conectionBureau.jsp" title="Conection Bureau"><img src="images/navicons/130.png" alt=""/><span>Connection Bureau</span></a></li>
+                        <li class="current"><a href="#user.jsp" title="User"><img src="images/navicons/112.png" alt=""/><span>User</span></a></li>
                     </ul>
                 </nav>
             </aside>

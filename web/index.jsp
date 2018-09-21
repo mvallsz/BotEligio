@@ -61,13 +61,11 @@
 </head>
 <body style="overflow: hidden;">
     <div id="loading"> 
-
         <script type = "text/javascript"> 
             document.write("<div id='loading-container'><p id='loading-content'>" +
                            "<img id='loading-graphic' width='16' height='16' src='images/ajax-loader-abc4ff.gif' /> " +
                            "Loading...</p></div>");
-        </script> 
-
+        </script>
     </div> 
 
     <div id="wrapper">
@@ -76,25 +74,6 @@
             <nav>
                 <div class="container_12">
                     <div class="grid_12">
-<!--                        <ul class="toolbar clearfix fl">
-                            <li>
-                                <a href="#" title="Activity" class="icon-only" id="activity-button">
-                                    <img src="images/navicons-small/77.png" alt=""/>
-                                    <span class="message-count">1</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" title="Notifications" class="icon-only" id="notifications-button">
-                                    <img src="images/navicons-small/08.png" alt=""/>
-                                    <span class="message-count">3</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" title="Settings" class="icon-only" id="settings-button">
-                                    <img src="images/navicons-small/19.png" alt=""/>
-                                </a>
-                            </li>
-                        </ul>-->
                         <a href="login.jsp" title="Logout" class="button icon-with-text fr"><img src="images/navicons-small/129.png" alt=""/>Logout</a>
                         <div class="user-info fr">
                             Logged in as Administrator<!--<a href="#">Administrator</a>-->
@@ -113,63 +92,10 @@
                         <span class="title">Main Menu</span>
                         <button title="Go Back" class="back">Back</button>
                     </h1>
-<!--                    <div class="clearfix" id="searchform">
-                        <div class="searchcontainer">
-                            <div class="searchbox" onclick="$(this).find('input').focus();">
-                                <input type="text" name="q" id="q" autocomplete="off" placeholder="Search...">
-                            </div>
-                            <input type="button" value="Cancel" />
-                        </div>
-                        <div class="search_results"></div>
-                    </div>                        -->
                     <ul class="tlm">
                         <li class="current"><a href="#dashboard.jsp" title="Dashboard"><img src="images/navicons/81.png" alt=""/><span>Dashboard</span></a></li>
                         <li class="current"><a href="#conectionBureau.jsp" title="Dashboard"><img src="images/navicons/130.png" alt=""/><span>Connection Bureau</span></a></li>
                         <li class="current"><a href="#user.jsp" title="Dashboard"><img src="images/navicons/112.png" alt=""/><span>User</span></a></li>
-<!--                        <li class="current"><a href="" title="Dashboard"><img src="images/navicons/81.png" alt=""/><span></span></a></li>
-                        <li class="hasul"><a href="#"><img src="images/navicons/111.png" alt=""/><span>Administrator</span></a>
-                            <ul>
-                            	<li><a href="#" title="Users"><img src="images/navicons/111.png" alt=""/><span>Users</span></a></li>
-                                <li><a href="#" title="Groups"><img src="images/navicons/112.png" alt=""/><span>Groups</span></a></li>
-                                <li><a href="#" title="Settings"><img src="images/navicons/106.png" alt=""/><span>Settings</span></a></li>
-                                <li><a href="login.html" title="Logout"><img src="images/navicons/129.png" alt=""/><span>Logout</span></a></li>
-                            </ul>
-                        </li>
-                        <li class="current"><a href="#dashboard.html" title="Dashboard"><img src="images/navicons/81.png" alt=""/><span>Dashboard</span></a></li>
-                        <li><a href="#contacts.html" title="Contacts"><img src="images/navicons/123.png" alt=""/><span>Contacts</span></a></li>
-                        <li><a href="#media.html" title="Media"><img src="images/navicons/42.png" alt=""/><span>Media</span></a></li>
-                        <li class="hasul"><a href="#" title="Forms"><img src="images/navicons/139.png" alt=""/><span>Forms</span></a>
-                            <ul>
-                                <li><a href="#forms1.html" title="Form Sample 1"><span>Form Sample</span></a></li>
-                                <li><a href="#forms2.html" title="Custom Form Elements"><span>Custom Form Elements</span></a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#wizard.html" title="Wizard"><img src="images/navicons/165.png" alt=""/><span>Wizard</span></a></li>
-                        <li><a href="#tables.html" title="Tables"><img src="images/navicons/29.png" alt=""/><span>Tables</span></a></li>
-                        <li class="hasul"><a href="#"><img src="images/navicons/20.png" alt=""/><span>Widgets</span></a>
-                            <ul>
-                                <li><a href="#calendar.html" title="Calendar"><img src="images/navicons/83.png" alt=""/><span>Calendar</span></a></li>
-                                <li><a href="#wysiwyg.html" title="WYSIWYG Editor"><img src="images/navicons/26.png" alt=""/><span>WYSIWYG Editor</span></a></li>
-                            </ul>
-                        </li>
-                        <li class="hasul"><a href="#"><img src="images/navicons/96.png" alt=""/><span>Documentation</span></a>
-                            <ul>
-                                <li><a href="#doc-intro.html" title="Documentation"><span>Introduction</span></a></li>
-                                <li><a href="#doc-forms.html" title="Documentation"><span>Forms</span></a></li>
-                                <li><a href="#doc-media.html" title="Documentation"><span>Media</span></a></li>
-                                <li><a href="#doc-notifications.html"><span>Notifications</span></a></li>
-                                <li class="hasul"><a href="#"><span>Widgets</span></a>
-                                    <ul>
-                                        <li><a href="#doc-calendar.html" title="Documentation"><span>Calendar</span></a></li>
-                                        <li><a href="#doc-wysiwyg.html" title="Documentation"><span>WYSIWYG</span></a></li>
-                                        <li><a href="#doc-graph.html" title="Documentation"><span>Graph</span></a></li>
-                                        <li><a href="#doc-popover.html" title="Documentation"><span>Pop Over</span></a></li>
-                                        <li><a href="#doc-style.html" title="Documentation"><span>Style</span></a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="#doc-wizard.html"><span>Wizard</span></a></li>
-                            </ul>
-                        </li>-->
                     </ul>
                 </nav>
             </aside>

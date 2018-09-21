@@ -24,7 +24,7 @@
                 </div>
             </div>
             <div class="clearfix">
-                <label for="form-bureau" class="form-label">Bureaus</label>
+                <label for="form-bureau" class="form-label">Bureaus<em>*</em></label>
                 <div class="form-input">
                     <select id="form-bureau">
                         <option value="0" disabled selected>Select Option</option>
@@ -50,10 +50,10 @@
                 <div class="form-input"><input type="text" id="form-url" name="name" required="required" placeholder="Enter url service" /></div>
             </div>
             <div class="clearfix">
-                <label for="form-tipoVigencia" class="form-label">Tipo de Vigencia</label>
+                <label for="form-tipoVigencia" class="form-label">Tipo de Vigencia<em>*</em></label>
                 <div class="form-input">
                     <select id="form-tipoWs">
-                        <option value="0" disabled selected>Select Option<em>*</em></option>
+                        <option value="0" disabled selected>Select Option</option>
                         <option value="1">Cantidad de Dias</option>
                         <option value="2">Dias de la semana</option>
                     </select>

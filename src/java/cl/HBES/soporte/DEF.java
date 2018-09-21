@@ -15,4 +15,6 @@ public class DEF {
     public static final String USER = "desarrollo";
     public static final String PASSWORD = "clavetemporal";
     public static final String ESQUEMA = "HUB";
+    
+    public static final String SESSION_USUARIO = "user_session";
 }

@@ -24,8 +24,9 @@ public class BnServicios {
 //        boolean json = new BnServicios().insertarServicios("prueba", "prueba", 1, 222, 3, 1, 4, "prueba", 0, "xlm", 3, 1);
 //        boolean json = new BnServicios().actualizarServicio(35, "pruebaaa", "pruebaaaa", 2, 225, 4, 4, "prueba", 5, "xlm", 3, 1);
 //        boolean json = new BnServicios().activarServicio(35, true);
-        boolean json = new BnServicios().eliminarServicio(35);
+//        boolean json = new BnServicios().eliminarServicio(35);
 //        JSONArray json = new BnServicios().serviciosActivos(1);
+        JSONObject json = new BnServicios().consultaBureauMes(1);
     }
 
     public boolean activarServicio(long idSEr, int activar) {
@@ -104,7 +105,7 @@ public class BnServicios {
         try {
             conn = Conexion.getConn();
             String sql = "INSERT INTO " + DEF.ESQUEMA + ".SERV_BUREAU_EMPRESA (nombre, ip, vigencia_tipo, vigencia_cant, vigencia_dia, id_empresa, id_bureau, activo, credenciales, contador, limite_contador, xml, tipo_rut, tipo_ws) \n"
-                    + "VALUES(?, ?, ?, ?, ?, ?, ?, 1, ?, 0, ?, ?, ?, ?);";
+                    + "VALUES(?, ?, ?, ?, ?, ?, ?, 0, ?, 0, ?, ?, ?, ?);";
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, nombre);
             pst.setString(2, ip);
@@ -129,7 +130,7 @@ public class BnServicios {
         return insert;
     }
 
-    public JSONArray buscarServicios(long id_emp) {
+    public JSONArray buscarServicios() {
         JSONArray json = new JSONArray();
         Connection conn = null;
         try {
@@ -137,9 +138,8 @@ public class BnServicios {
             String sql = "SELECT SER.ID, SER.nombre, SER.ip, SER.vigencia_tipo, SER.vigencia_cant, SER.vigencia_dia, SER.id_bureau, BU.DESCRIPCION, SER.activo, \n"
                     + "SER.credenciales, SER.contador, SER.limite_contador, SER.xml, SER.tipo_rut, SER.tipo_ws \n"
                     + "FROM " + DEF.ESQUEMA + ".SERV_BUREAU_EMPRESA SER JOIN " + DEF.ESQUEMA + ".BUREAUS BU ON (SER.id_bureau = BU.ID)\n"
-                    + "WHERE id_empresa = ? ORDER BY ID ASC;";
+                    + "ORDER BY ID ASC;";
             PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setLong(1, id_emp);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 JSONObject json2 = new JSONObject();
@@ -207,6 +207,170 @@ public class BnServicios {
             Conexion.desconectar(conn);
         }
         return json;
+    }
+
+    public JSONObject consultaBureauMes(long idEmpresa) {
+        JSONObject act = new JSONObject();
+        Connection conn = null;
+        try {
+            conn = Conexion.getConn();
+            String sql = "SELECT DESCRIPCION FROM " + DEF.ESQUEMA + ".BUREAUS;";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                JSONArray json = new BnServicios().bureauMes(idEmpresa, rs.getString(1));
+                act.put(rs.getString(1), json);
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnServicios.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(conn);
+        }
+        return act;
+    }
+
+    public JSONArray bureauMes(long idEmpresa, String bureau) {
+        JSONArray act = new JSONArray();
+        Connection conn = null;
+        try {
+            int anio = 0;
+            int mes = 0;
+            conn = Conexion.getConn();
+            String sql = "SELECT DATE_FORMAT(CURRENT_DATE,'%m'), DATE_FORMAT(CURRENT_DATE,'%Y');";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                mes = rs.getInt(1);
+                anio = rs.getInt(2);
+            }
+            for (int i = 1; i < 13; i++) {
+                JSONObject json = new JSONObject();
+                String fecha = anio + "-" + (String.valueOf(mes).length() == 1 ? "0" + mes : "" + mes);
+                int cantidad = 0;
+                sql = "SELECT COUNT(*) as cantidad, DATE_FORMAT(RC.UPDATED_DATE,'%m-%Y') as fecha\n"
+                        + "FROM " + DEF.ESQUEMA + "." + bureau + " RC JOIN " + DEF.ESQUEMA + ".cuentaEmpresa EMP ON (RC.ID_EMPRESA = EMP.ID)\n"
+                        + "WHERE EMP.ID = ? AND DATE_FORMAT(RC.UPDATED_DATE,'%Y-%m') = ?\n"
+                        + "GROUP BY DATE_FORMAT(RC.UPDATED_DATE,'%m-%Y');";
+                PreparedStatement pst2 = conn.prepareStatement(sql);
+                pst2.setLong(1, idEmpresa);
+                pst2.setString(2, fecha);
+                ResultSet rs2 = pst2.executeQuery();
+                if (rs2.next()) {
+                    cantidad = rs2.getInt(1);
+                }
+                if (cantidad == 0) {
+                    sql = "SELECT COUNT(*) as cantidad\n"
+                            + "FROM " + DEF.ESQUEMA + "." + bureau + " RC JOIN " + DEF.ESQUEMA + ".cuentaEmpresa EMP ON (RC.ID_EMPRESA = EMP.ID)\n"
+                            + "WHERE EMP.ID = ? AND DATE_FORMAT(RC.FECHA,'%Y-%m') = ?\n"
+                            + "GROUP BY DATE_FORMAT(RC.FECHA,'%m-%Y');";
+                    PreparedStatement pst3 = conn.prepareStatement(sql);
+                    pst3.setLong(1, idEmpresa);
+                    pst3.setString(2, fecha);
+                    ResultSet rs3 = pst3.executeQuery();
+                    if (rs3.next()) {
+                        cantidad = rs3.getInt(1);
+                    }
+                }
+
+                json.put("fecha", fecha);
+                json.put("cantidad", cantidad);
+                mes--;
+                if (mes == 1) {
+                    mes = 12;
+                    anio = anio - 1;
+                }
+                act.put(json);
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnServicios.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(conn);
+        }
+        return act;
+    }
+    
+    public JSONObject consultaHistorialMes(long idEmpresa) {
+        JSONObject act = new JSONObject();
+        Connection conn = null;
+        try {
+            conn = Conexion.getConn();
+            String sql = "SELECT DESCRIPCION FROM " + DEF.ESQUEMA + ".BUREAUS;";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                JSONArray json = new BnServicios().bureauMes(idEmpresa, rs.getString(1));
+                act.put(rs.getString(1), json);
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnServicios.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(conn);
+        }
+        return act;
+    }
+
+    public JSONArray historialMes(long idEmpresa, String bureau) {
+        JSONArray act = new JSONArray();
+        Connection conn = null;
+        try {
+            int anio = 0;
+            int mes = 0;
+            conn = Conexion.getConn();
+            String sql = "SELECT DATE_FORMAT(CURRENT_DATE,'%m'), DATE_FORMAT(CURRENT_DATE,'%Y');";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                mes = rs.getInt(1);
+                anio = rs.getInt(2);
+            }
+            for (int i = 1; i < 13; i++) {
+                JSONObject json = new JSONObject();
+                String fecha = anio + "-" + (String.valueOf(mes).length() == 1 ? "0" + mes : "" + mes);
+                int cantidad = 0;
+                sql = "SELECT COUNT(*) as cantidad, DATE_FORMAT(RC.UPDATED_DATE,'%m-%Y') as fecha\n"
+                        + "FROM " + DEF.ESQUEMA + "." + bureau + " RC JOIN " + DEF.ESQUEMA + ".cuentaEmpresa EMP ON (RC.ID_EMPRESA = EMP.ID)\n"
+                        + "WHERE EMP.ID = ? AND DATE_FORMAT(RC.UPDATED_DATE,'%Y-%m') = ?\n"
+                        + "GROUP BY DATE_FORMAT(RC.UPDATED_DATE,'%m-%Y');";
+                PreparedStatement pst2 = conn.prepareStatement(sql);
+                pst2.setLong(1, idEmpresa);
+                pst2.setString(2, fecha);
+                ResultSet rs2 = pst2.executeQuery();
+                if (rs2.next()) {
+                    cantidad = rs2.getInt(1);
+                }
+                if (cantidad == 0) {
+                    sql = "SELECT COUNT(*) as cantidad\n"
+                            + "FROM " + DEF.ESQUEMA + "." + bureau + " RC JOIN " + DEF.ESQUEMA + ".cuentaEmpresa EMP ON (RC.ID_EMPRESA = EMP.ID)\n"
+                            + "WHERE EMP.ID = ? AND DATE_FORMAT(RC.FECHA,'%Y-%m') = ?\n"
+                            + "GROUP BY DATE_FORMAT(RC.FECHA,'%m-%Y');";
+                    PreparedStatement pst3 = conn.prepareStatement(sql);
+                    pst3.setLong(1, idEmpresa);
+                    pst3.setString(2, fecha);
+                    ResultSet rs3 = pst3.executeQuery();
+                    if (rs3.next()) {
+                        cantidad = rs3.getInt(1);
+                    }
+                }
+
+                json.put("fecha", fecha);
+                json.put("cantidad", cantidad);
+                mes--;
+                if (mes == 1) {
+                    mes = 12;
+                    anio = anio - 1;
+                }
+                act.put(json);
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnServicios.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(conn);
+        }
+        return act;
     }
 
 }

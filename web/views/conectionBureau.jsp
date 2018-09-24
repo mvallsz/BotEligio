@@ -40,8 +40,7 @@
                 <label for="form-tipoWs" class="form-label">Tipo de Servicio<em>*</em></label>
                 <div class="form-input">
                     <select id="form-tipoWs">
-                        <option value="0" disabled selected>Select Option</option>
-                        <option value="1">SOAP</option>
+                        <option value="1" selected>SOAP</option>
                         <option value="2">REST</option>
                     </select>
                 </div>
@@ -59,11 +58,11 @@
                     </select>
                 </div>
             </div>
-            <div class="clearfix" id="div">
+            <div class="clearfix" id="divCantDias">
                 <label for="form-cantDias" class="form-label">Cantidad de Dias<em>*</em></label>
                 <div class="form-input"><input type="number" id="form-cantDias" name="name" required="required" placeholder="Enter number" /></div>
             </div>
-            <div class="clearfix">
+            <div class="clearfix" id="divDiasVig" style="display: none">
                 <label for="form-diaVigencia" class="form-label">Dia de Vigencia<em>*</em></label>
                 <div class="form-input">
                     <select id="form-diaVigencia">
@@ -77,16 +76,21 @@
                     </select>
                 </div>
             </div>
-            <div class="clearfix">
+            <div class="clearfix" id="divXML">
                 <label for="form-xml" class="form-label">XML<em>*</em></label>
                 <div class="form-input form-xml"><textarea id="form-xml" required="required" rows="5" placeholder="Enter XML from service"></textarea></div>
             </div>
             <div>
                 <div class="clearfix">
-                    <label for="form-variable1" class="form-label">Variable 1<em>*</em></label>
+                    <label for="form-variable1" class="form-label">Variable 1<em>*</em>
+                        <div class="checkgroup" >
+                            <label style="font-size: 12px;">Rut </label><input type="checkbox" id="form-chkRut1" onchange="EditVarRut(1)"/>
+                            <label style="font-size: 12px;">XML Header </label><input type="checkbox" id="form-chkHeader1" onchange="EditVarHeader(1)"/>
+                        </div>
+                    </label>
                     <div class="form-input">
-                        <input type="text" id="form-cantDiaslabel1" name="name" required="required" placeholder="Enter name variable" />
-                        <input type="text" id="form-cantDiasvar1" name="name" required="required" placeholder="Enter variable" />
+                        <div id="divCantDiaslabel1"><input type="text" id="form-cantDiaslabel1" name="name" required="required" placeholder="Enter name variable"/></div>
+                        <div id="divCantDiasvar1"><input type="text" id="form-cantDiasvar1" name="name" required="required" placeholder="Enter variable"/></div>
                     </div>
                 </div>
                 <div id="addVariables"></div>

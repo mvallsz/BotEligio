@@ -16,6 +16,8 @@
 <title>HBES Beta</title>
 
 <link rel="shortcut icon" href="favicon.ico">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
 
 <!-- iOS ICONS -->
 <link rel="apple-touch-icon" href="touch-icon-iphone.png" />
@@ -39,8 +41,8 @@
 <link rel="stylesheet" href="css/jquery.uniform.css" media="screen" />
 <link rel="stylesheet" href="css/jquery.popover.css" media="screen">
 <link rel="stylesheet" href="css/jquery.itextsuggest.css" media="screen">
-<link rel="stylesheet" href="css/themes/lightblue/style.css" media="screen" />
-
+<link rel="stylesheet" href="css/themes/gray/style.css" media="screen" />
+<!--<link rel="stylesheet" href="css/themes/lightblue/style.css" media="screen" />-->
 
 
 <style type = "text/css">
@@ -126,6 +128,7 @@
     
     <!-- MAIN JAVASCRIPTS -->
     <script src="//code.jquery.com/jquery-1.7.min.js"></script>
+    <!--<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>-->
     <script>window.jQuery || document.write("<script src='js/jquery.min.js'>\x3C/script>")</script>
     <script type="text/javascript" src="js/jquery.tools.min.js"></script>
     <script type="text/javascript" src="js/jquery.uniform.min.js"></script>
@@ -136,7 +139,7 @@
     <script type="text/javascript" src="js/jquery.hashchange.min.js"></script>
     <script type="text/javascript" src="js/jquery.drilldownmenu.js"></script>
     <script type="text/javascript" src="js/jquery.popover.js"></script>
-    
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <!--[if lt IE 9]>
     <script type="text/javascript" src="js/PIE.js"></script>
     <script type="text/javascript" src="js/ie.js"></script>

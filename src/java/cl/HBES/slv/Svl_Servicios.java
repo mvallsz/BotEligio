@@ -59,7 +59,8 @@ public class Svl_Servicios extends HttpServlet {
                     int cantDias = Integer.parseInt(request.getParameter("cantDias"));
                     int diaVigencia = Integer.parseInt(request.getParameter("diaVigencia"));
                     String xml = request.getParameter("xml");
-                    int limiteContador = Integer.parseInt(request.getParameter("limiteContador"));
+//                    int limiteContador = Integer.parseInt(request.getParameter("limiteContador"));
+                    int limiteContador = 0;
                     String credenciales = request.getParameter("json");
 
                     if (bn.insertarServicios(nombre, url, tipoVigencia, cantDias, diaVigencia, id_empresa, bureau, credenciales, limiteContador, xml, tipoPersona, tipoServicio)) {
@@ -93,7 +94,7 @@ public class Svl_Servicios extends HttpServlet {
                     break;
                 }
                 case "buscarServicios": {
-                    JSONArray servicios = bn.buscarServicios(id_empresa);
+                    JSONArray servicios = bn.buscarServicios();
                     if (servicios.length() > 0) {
                         json.put("estado", 200);
                         json.put("datos", servicios);

@@ -7,10 +7,11 @@
                     <section class="grid_12"> 
                         <div class="message success">
                             <h2 style="margin-bottom: 10px;">Bureau Activos</h2> 
-                            <h3 style="margin-bottom: 0px;">Sinacofi</h3> 
+                            <div id="divBureauActivo"></div>
+<!--                            <h3 style="margin-bottom: 0px;">Sinacofi</h3> 
                             <h3 style="margin-bottom: 0px;">Equifax</h3>
                             <h3 style="margin-bottom: 0px;">TransUnion</h3> 
-                            <h3 style="margin-bottom: 0px;">Siisa</h3> 
+                            <h3 style="margin-bottom: 0px;">Siisa</h3> -->
                         </div>
                     </section>
                     <section class="portlet grid_12 leading"> 

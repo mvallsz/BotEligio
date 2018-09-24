@@ -1,9 +1,9 @@
 <script type="text/javascript" src="js/jquery.itextclear.js"></script>
 <!--<script type="text/javascript" src="js/jquery.min"></script>-->
 <script type="text/javascript">
-    $(document).ready(function () {
-        $('input[type=text], input[type=password], input[type=url], input[type=email], input[type=number], textarea', '.form').iTextClear();
-    });
+//    $(document).ready(function () {
+//        $('input[type=text], input[type=password], input[type=url], input[type=email], input[type=number], textarea', '.form').iTextClear();
+//    });
 </script>
 <h1 class="page-title">Connection Bureau</h1>
 <div class="container_12 clearfix leading">
@@ -60,7 +60,7 @@
             </div>
             <div class="clearfix" id="divCantDias">
                 <label for="form-cantDias" class="form-label">Cantidad de Dias<em>*</em></label>
-                <div class="form-input"><input type="number" id="form-cantDias" name="name" required="required" placeholder="Enter number" /></div>
+                <div class="form-input"><input min="1" max="999" type="number" id="form-cantDias" name="name" required="required" placeholder="Enter number" /></div>
             </div>
             <div class="clearfix" id="divDiasVig" style="display: none">
                 <label for="form-diaVigencia" class="form-label">Dia de Vigencia<em>*</em></label>
@@ -101,8 +101,29 @@
             </div>
             <div class="form-action clearfix">
                 <button class="button" type="button" onclick="GuardarForm()">OK</button>
-                <button class="button" type="reset">Reset</button>
+                <button class="button" type="reset" onclick="limpiarForm()">Reset</button>
             </div>
+        </div>
+    </div>
+</div>
+<br><br>
+<div class="container_12 clearfix leading">
+    <div class="grid_12">
+        <div id="divTableServicios" class="clearfix"> 
+            <table class="display" id="tableServicios"> 
+                <thead>
+                    <tr>
+                        <th >Nombre Servicio</th>
+                        <th >Tipo Persona</th>
+                        <th >Bureau</th>
+                        <th >Estado</th>
+                        <th >Propiedades</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table> 
         </div>
     </div>
 </div>

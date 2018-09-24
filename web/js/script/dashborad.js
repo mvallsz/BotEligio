@@ -1,5 +1,5 @@
 $(document).ready(function () {
-
+    initBureauActivo()
 //Plot 1
     var Bureau1 = [50, 70, 90, 100, 120, 140, 160, 190, 250];
     var Bureau2 = [243, 345, 465, 344, 200, 250, 455, 254, 145];
@@ -29,12 +29,12 @@ $(document).ready(function () {
             sizeAdjust: 7.5,
             tooltipAxes: 'y'
         },
-        cursor:{
-            zoom:true,
+        cursor: {
+            zoom: true,
             looseZoom: true
         }
     });
-    
+
 //Plot 2
     var line1 = [600, 700, 650, 600, 500, 400, 500, 600, 550];
     var line2 = [50, 100, 200, 251, 300, 500, 450, 400, 600];
@@ -59,19 +59,39 @@ $(document).ready(function () {
             yaxis: {min: 0}
         }
     });
-    
+
 //Plot 3
-    var total = [['Utilizado', 10],['Libre', 90]];
-    var chart3 = jQuery.jqplot ('chart3', [total], {
-            seriesDefaults: {
-            renderer: jQuery.jqplot.PieRenderer, 
-            rendererOptions: { showDataLabels: true }
-            }, 
-            legend: { 
-                    show:true, 
-                    location: 'e' 
-            }
+    var total = [['Utilizado', 10], ['Libre', 90]];
+    var chart3 = jQuery.jqplot('chart3', [total], {
+        seriesDefaults: {
+            renderer: jQuery.jqplot.PieRenderer,
+            rendererOptions: {showDataLabels: true}
+        },
+        legend: {
+            show: true,
+            location: 'e'
+        }
     });
 });
+
+function initBureauActivo() {
+    $.ajax({
+        url: 'Svl_Servicios',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            accion: 'buscarServiciosActivos'
+        },
+        success: function (data, textStatus, jqXHR) {
+            if (data.estado == 200) {
+                for (var i = 0; i < data.datos.length; i++) {
+                    $('#divBureauActivo').append('<h3 style="margin-bottom: 0px;">'+data.datos[i].NOMBRE_BUREAU+'</h3>');
+                }
+            } else {
+                alert("No se pudo verificar los bureaus activos");
+            }
+        }
+    });
+}
 
 

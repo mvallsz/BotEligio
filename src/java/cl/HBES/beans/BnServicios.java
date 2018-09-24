@@ -129,7 +129,7 @@ public class BnServicios {
         return insert;
     }
 
-    public JSONArray buscarServicios(long id_emp) {
+    public JSONArray buscarServicios() {
         JSONArray json = new JSONArray();
         Connection conn = null;
         try {
@@ -137,9 +137,8 @@ public class BnServicios {
             String sql = "SELECT SER.ID, SER.nombre, SER.ip, SER.vigencia_tipo, SER.vigencia_cant, SER.vigencia_dia, SER.id_bureau, BU.DESCRIPCION, SER.activo, \n"
                     + "SER.credenciales, SER.contador, SER.limite_contador, SER.xml, SER.tipo_rut, SER.tipo_ws \n"
                     + "FROM " + DEF.ESQUEMA + ".SERV_BUREAU_EMPRESA SER JOIN " + DEF.ESQUEMA + ".BUREAUS BU ON (SER.id_bureau = BU.ID)\n"
-                    + "WHERE id_empresa = ? ORDER BY ID ASC;";
+                    + " ORDER BY ID ASC;";
             PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setLong(1, id_emp);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 JSONObject json2 = new JSONObject();
@@ -174,30 +173,19 @@ public class BnServicios {
         Connection conn = null;
         try {
             conn = Conexion.getConn();
-            String sql = "SELECT SER.ID, SER.nombre, SER.ip, SER.vigencia_tipo, SER.vigencia_cant, SER.vigencia_dia, SER.id_bureau, BU.DESCRIPCION, SER.activo, \n"
-                    + "SER.credenciales, SER.contador, SER.limite_contador, SER.xml, SER.tipo_rut, SER.tipo_ws \n"
+            String sql = "SELECT SER.id_bureau, BU.DESCRIPCION\n"
                     + "FROM " + DEF.ESQUEMA + ".SERV_BUREAU_EMPRESA SER JOIN " + DEF.ESQUEMA + ".BUREAUS BU ON (SER.id_bureau = BU.ID)\n"
-                    + "WHERE SER.id_empresa = ? AND SER.activo = 1 ORDER BY ID ASC;";
+                    + "WHERE SER.id_empresa = ? \n"
+                    + "AND SER.activo = 1 \n"
+                    + "GROUP BY BU.DESCRIPCION\n"
+                    + "ORDER BY id_bureau ASC;";
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setLong(1, id_emp);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 JSONObject json2 = new JSONObject();
-                json2.put("ID", rs.getInt(1));
-                json2.put("NOMBRE", rs.getString(2));
-                json2.put("IP", rs.getString(3));
-                json2.put("VIGENCIA_TIPO", rs.getInt(4));
-                json2.put("VIGENCIA_CANT", rs.getInt(5));
-                json2.put("VIGENCIA_DIA", rs.getInt(6));
-                json2.put("ID_BUREAU", rs.getInt(7));
-                json2.put("NOMBRE_BUREAU", rs.getString(8));
-                json2.put("ACTIVO", rs.getInt(9));
-                json2.put("CREDENCIALES", rs.getString(10));
-                json2.put("CONTADOR", rs.getInt(11));
-                json2.put("LIMITE_CONTADOR", rs.getInt(12));
-                json2.put("XML", rs.getString(13));
-                json2.put("TIPO_RUT", rs.getInt(14));
-                json2.put("TIPO_WS", rs.getInt(15));
+                json2.put("ID_BUREAU", rs.getInt(1));
+                json2.put("NOMBRE_BUREAU", rs.getString(2));
                 json.put(json2);
             }
         } catch (Exception ex) {

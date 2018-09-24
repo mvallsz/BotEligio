@@ -64,17 +64,17 @@ function GuardarForm() {
             if (i > 1) {
                 json = json + ",";
             }
+            var labelVar = "";
             if($('#form-chkRut'+i).is(":checked")){
-                var labelVar = $("select#form-diaVigencia"+i+" option:checked").val();
+                labelVar = $("select#form-diaVigencia"+i+" option:checked").val();
             }else{
-                var labelVar = $('#form-cantDiaslabel' + i).val().trim();  
+                labelVar = $('#form-cantDiaslabel' + i).val().trim();  
             }
             var nombreVar = $('#form-cantDiasvar' + i).val().trim();
             json = json + '\"' + labelVar + '\":\"' + nombreVar + '\"';
         }
         json = json + "}";
         json = JSON.parse(json);
-
         if (Object.keys(json).length < contVar) {
             alert("Nombre de Variables Repetido");
         } else {

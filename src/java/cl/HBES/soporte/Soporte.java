@@ -5,10 +5,13 @@
  */
 package cl.HBES.soporte;
 
+import cl.HBES.clases.CredencialesUsuario;
 import java.security.SecureRandom;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,7 +22,7 @@ import org.json.JSONTokener;
  * @author Desarrollador
  */
 public class Soporte {
-    
+
     /**
      *
      */
@@ -174,5 +177,24 @@ public class Soporte {
         long longToken = Math.abs(random.nextLong());
         String random = Long.toString(longToken, 50);
         return random;
+    }
+
+    public static CredencialesUsuario getUsuarioSesion(HttpServletRequest request) {
+        if (isSesionActiva(request)) {
+            HttpSession sesion = request.getSession(false);
+            CredencialesUsuario usuLogin = (CredencialesUsuario) sesion.getAttribute(DEF.SESSION_USUARIO);
+            if (usuLogin == null) {
+                return null;
+            } else {
+                return usuLogin;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public static boolean isSesionActiva(HttpServletRequest request) {
+        CredencialesUsuario usuLogin = (CredencialesUsuario) request.getSession().getAttribute(DEF.SESSION_USUARIO);
+        return usuLogin != null;
     }
 }

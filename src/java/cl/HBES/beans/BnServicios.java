@@ -26,7 +26,7 @@ public class BnServicios {
 //        boolean json = new BnServicios().activarServicio(35, true);
 //        boolean json = new BnServicios().eliminarServicio(35);
 //        JSONArray json = new BnServicios().serviciosActivos(1);
-        JSONObject json = new BnServicios().consultaBureauMes(1);
+        JSONObject json = new BnServicios().consultaHistorialMes(1);
     }
 
     public boolean activarServicio(long idSEr, int activar) {
@@ -174,30 +174,16 @@ public class BnServicios {
         Connection conn = null;
         try {
             conn = Conexion.getConn();
-            String sql = "SELECT SER.ID, SER.nombre, SER.ip, SER.vigencia_tipo, SER.vigencia_cant, SER.vigencia_dia, SER.id_bureau, BU.DESCRIPCION, SER.activo, \n"
-                    + "SER.credenciales, SER.contador, SER.limite_contador, SER.xml, SER.tipo_rut, SER.tipo_ws \n"
+            String sql = "SELECT SER.id_bureau, BU.DESCRIPCION \n"
                     + "FROM " + DEF.ESQUEMA + ".SERV_BUREAU_EMPRESA SER JOIN " + DEF.ESQUEMA + ".BUREAUS BU ON (SER.id_bureau = BU.ID)\n"
-                    + "WHERE SER.id_empresa = ? AND SER.activo = 1 ORDER BY ID ASC;";
+                    + "WHERE SER.id_empresa = ? AND SER.activo = 1 GROUP BY BU.DESCRIPCION ORDER BY SER.id_bureau ASC;";
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setLong(1, id_emp);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 JSONObject json2 = new JSONObject();
-                json2.put("ID", rs.getInt(1));
-                json2.put("NOMBRE", rs.getString(2));
-                json2.put("IP", rs.getString(3));
-                json2.put("VIGENCIA_TIPO", rs.getInt(4));
-                json2.put("VIGENCIA_CANT", rs.getInt(5));
-                json2.put("VIGENCIA_DIA", rs.getInt(6));
-                json2.put("ID_BUREAU", rs.getInt(7));
-                json2.put("NOMBRE_BUREAU", rs.getString(8));
-                json2.put("ACTIVO", rs.getInt(9));
-                json2.put("CREDENCIALES", rs.getString(10));
-                json2.put("CONTADOR", rs.getInt(11));
-                json2.put("LIMITE_CONTADOR", rs.getInt(12));
-                json2.put("XML", rs.getString(13));
-                json2.put("TIPO_RUT", rs.getInt(14));
-                json2.put("TIPO_WS", rs.getInt(15));
+                json2.put("ID_BUREAU", rs.getInt(1));
+                json2.put("NOMBRE_BUREAU", rs.getString(2));
                 json.put(json2);
             }
         } catch (Exception ex) {
@@ -248,7 +234,7 @@ public class BnServicios {
                 JSONObject json = new JSONObject();
                 String fecha = anio + "-" + (String.valueOf(mes).length() == 1 ? "0" + mes : "" + mes);
                 int cantidad = 0;
-                sql = "SELECT COUNT(*) as cantidad, DATE_FORMAT(RC.UPDATED_DATE,'%m-%Y') as fecha\n"
+                sql = "SELECT COUNT(*) as cantpidad, DATE_FORMAT(RC.UPDATED_DATE,'%m-%Y') as fecha\n"
                         + "FROM " + DEF.ESQUEMA + "." + bureau + " RC JOIN " + DEF.ESQUEMA + ".cuentaEmpresa EMP ON (RC.ID_EMPRESA = EMP.ID)\n"
                         + "WHERE EMP.ID = ? AND DATE_FORMAT(RC.UPDATED_DATE,'%Y-%m') = ?\n"
                         + "GROUP BY DATE_FORMAT(RC.UPDATED_DATE,'%m-%Y');";
@@ -290,18 +276,18 @@ public class BnServicios {
         }
         return act;
     }
-    
+
     public JSONObject consultaHistorialMes(long idEmpresa) {
         JSONObject act = new JSONObject();
         Connection conn = null;
         try {
             conn = Conexion.getConn();
-            String sql = "SELECT DESCRIPCION FROM " + DEF.ESQUEMA + ".BUREAUS;";
+            String sql = "SELECT ID, NOMBRE FROM " + DEF.ESQUEMA + ".TIPO_DATO_CONSULTA;";
             PreparedStatement pst = conn.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
-                JSONArray json = new BnServicios().bureauMes(idEmpresa, rs.getString(1));
-                act.put(rs.getString(1), json);
+                JSONArray json = new BnServicios().historialMes(idEmpresa, rs.getLong(1));
+                act.put(rs.getString(2), json);
             }
         } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnServicios.class.getName(), ex.toString()});
@@ -312,7 +298,7 @@ public class BnServicios {
         return act;
     }
 
-    public JSONArray historialMes(long idEmpresa, String bureau) {
+    public JSONArray historialMes(long idEmpresa, long buscarDatos) {
         JSONArray act = new JSONArray();
         Connection conn = null;
         try {
@@ -330,31 +316,18 @@ public class BnServicios {
                 JSONObject json = new JSONObject();
                 String fecha = anio + "-" + (String.valueOf(mes).length() == 1 ? "0" + mes : "" + mes);
                 int cantidad = 0;
-                sql = "SELECT COUNT(*) as cantidad, DATE_FORMAT(RC.UPDATED_DATE,'%m-%Y') as fecha\n"
-                        + "FROM " + DEF.ESQUEMA + "." + bureau + " RC JOIN " + DEF.ESQUEMA + ".cuentaEmpresa EMP ON (RC.ID_EMPRESA = EMP.ID)\n"
-                        + "WHERE EMP.ID = ? AND DATE_FORMAT(RC.UPDATED_DATE,'%Y-%m') = ?\n"
-                        + "GROUP BY DATE_FORMAT(RC.UPDATED_DATE,'%m-%Y');";
+                sql = "SELECT COUNT(*) as cantidad\n"
+                        + "FROM " + DEF.ESQUEMA + ".REGISTRO_CONSULTAS RC JOIN " + DEF.ESQUEMA + ".cuentaEmpresa EMP ON (RC.ID_EMPRESA = EMP.ID)\n"
+                        + "WHERE EMP.ID = ? AND DATE_FORMAT(RC.FECHA,'%Y-%m') = ? AND RC.BUSCAR_DATOS = ?\n"
+                        + "GROUP BY DATE_FORMAT(RC.FECHA,'%m-%Y');";
                 PreparedStatement pst2 = conn.prepareStatement(sql);
                 pst2.setLong(1, idEmpresa);
                 pst2.setString(2, fecha);
+                pst2.setLong(3, buscarDatos);
                 ResultSet rs2 = pst2.executeQuery();
                 if (rs2.next()) {
                     cantidad = rs2.getInt(1);
                 }
-                if (cantidad == 0) {
-                    sql = "SELECT COUNT(*) as cantidad\n"
-                            + "FROM " + DEF.ESQUEMA + "." + bureau + " RC JOIN " + DEF.ESQUEMA + ".cuentaEmpresa EMP ON (RC.ID_EMPRESA = EMP.ID)\n"
-                            + "WHERE EMP.ID = ? AND DATE_FORMAT(RC.FECHA,'%Y-%m') = ?\n"
-                            + "GROUP BY DATE_FORMAT(RC.FECHA,'%m-%Y');";
-                    PreparedStatement pst3 = conn.prepareStatement(sql);
-                    pst3.setLong(1, idEmpresa);
-                    pst3.setString(2, fecha);
-                    ResultSet rs3 = pst3.executeQuery();
-                    if (rs3.next()) {
-                        cantidad = rs3.getInt(1);
-                    }
-                }
-
                 json.put("fecha", fecha);
                 json.put("cantidad", cantidad);
                 mes--;

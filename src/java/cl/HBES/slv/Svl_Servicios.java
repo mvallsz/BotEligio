@@ -170,6 +170,45 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+                case "consultasHistorialMes": {
+                    try {
+                        id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
+                    } catch (Exception ex) {
+                    }
+                    JSONObject datos = bn.consultaHistorialMes(id_empresa);
+                    if (datos.length() > 0) {
+                        json.put("estado", 200);
+                        json.put("datos", datos);
+                    } else {
+                        json.put("estado", 300);
+                    }
+                    response.getWriter().print(json);
+                    break;
+                }
+                case "consultasMes": {
+                    int mes = 0;
+                    int anio = 0;
+                    int bureau = 0;
+                    try {
+                        id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
+                        mes = Integer.parseInt(request.getParameter("mes"));
+                        anio = Integer.parseInt(request.getParameter("anio"));
+                        bureau = Integer.parseInt(request.getParameter("bureau"));
+                    } catch (Exception ex) {
+                        mes = Integer.parseInt(request.getParameter("mes"));
+                        anio = Integer.parseInt(request.getParameter("anio"));
+                        bureau = Integer.parseInt(request.getParameter("bureau"));
+                    }
+                    JSONArray datos = bn.consultasMes(id_empresa, mes, anio, bureau);
+                    if (datos.length() > 0) {
+                        json.put("estado", 200);
+                        json.put("datos", datos);
+                    } else {
+                        json.put("estado", 300);
+                    }
+                    response.getWriter().print(json);
+                    break;
+                }
             }
         } catch (NumberFormatException ex) {
             response.getWriter().print("{ \"estado\" : " + 300 + ", \"descripcion\" : \"" + ex + "\" }");

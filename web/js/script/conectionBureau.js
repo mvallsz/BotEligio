@@ -74,6 +74,7 @@ function initTables(tablaN) {
             break;
     }
 }
+
 $('#form-cantDias').on('input', function (e) {
     if (this.value.length > 3) {
         this.value = this.value.slice(0, 3);

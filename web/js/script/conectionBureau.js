@@ -141,14 +141,19 @@ function ValidaForm() {
     }
     for (var i = 1; i <= contVar; i++) {
         var labelVar = "";
-        if (!$('#form-chkRut' + i).is(":checked")) {
+        var nombreVar = "";
+        if ($('#form-chkRut' + i).is(":checked")) {
             labelVar = $('#form-cantDiaslabel' + i).val().trim();
+        }else if ($('#form-chkHeader' + i).is(":checked")) {
+            nombreVar = $('#form-cantDiasvar' + i).val().trim();
+        }else{
+            labelVar = $('#form-cantDiaslabel' + i).val().trim();
+            nombreVar = $('#form-cantDiasvar' + i).val().trim();
         }
-        var nombreVar = $('#form-cantDiasvar' + i).val().trim();
-        if (labelVar === "" && !$('#form-chkHeader' + i).is(":checked") && !$('#form-chkRut' + i).is(":checked")) {
+        if (labelVar === "" && !$('#form-chkHeader' + i).is(":checked")) {
             alert('Debe ingresar Nombre de la Variable');
             return false;
-        } else if (nombreVar === "") {
+        } else if (nombreVar === "" && !$('#form-chkRut' + i).is(":checked")) {
             alert('Debe ingresar Variable');
             return false;
         }
@@ -175,13 +180,13 @@ function GuardarForm() {
             if (i > 1) {
                 json = json + ",";
             }
-            var labelVar = "";
+            var nombreVar = ""
+            var labelVar = $('#form-cantDiaslabel' + i).val().trim();
             if ($('#form-chkRut' + i).is(":checked")) {
-                labelVar = $("select#form-diaVigencia" + i + " option:checked").val();
-            } else {
-                labelVar = $('#form-cantDiaslabel' + i).val().trim();
+                nombreVar = $("select#form-diaVigencia" + i + " option:checked").val();
+            } else if ($('#form-chkHeader' + i).is(":checked")){
+                nombreVar = $('#form-cantDiasvar' + i).val().trim();
             }
-            var nombreVar = $('#form-cantDiasvar' + i).val().trim();
             json = json + '\"' + labelVar + '\":\"' + nombreVar + '\"';
         }
         json = json + "}";
@@ -302,7 +307,7 @@ function EditVarHeader(num) {
     if ($('#form-chkHeader' + num).is(":checked")) {
         $("#form-chkRut" + num).parent().removeClass("checked");
         $("#form-chkRut" + num).prop("checked", false);
-        $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
+        $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
         $("#form-cantDiaslabel" + num).val('SOAPAction');
         $("#form-cantDiaslabel" + num).attr("disabled", true);
     } else if (!$('#form-chkRut' + num).is(":checked")) {

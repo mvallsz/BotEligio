@@ -1,3 +1,4 @@
+console.log("Entra");
 $(document).ready(function () {
     initBureauActivo();
     addAnio();
@@ -96,46 +97,50 @@ function initTables(tablaN) {
                     $('#tableConsultas tbody').append('<tr id="trCargando" class="odd" style="text-align: center;"><td valign="top" colspan="7" class="dataTables_empty" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i>  Buscando Registros</td></tr>');
                 },
                 success: function (data) {
-                    $('#trCargando').remove();
-                    $('#tableConsultas').DataTable().destroy();
-                    $('#tableConsultas').DataTable({
-                        "language": {
-                                   "lengthMenu": "Mostrar _MENU_ registros por página.",
-                                   "zeroRecords": "Lo sentimos. No se encontraron registros.",
-                                         "info": "Mostrando página _PAGE_ de _PAGES_",
-                                         "infoEmpty": "No hay registros aún.",
-                                         "infoFiltered": "(filtrados de un total de _MAX_ registros)",
-                                         "search": "Búsqueda",
-                                         "LoadingRecords": "Cargando ...",
-                                         "Processing": "Procesando...",
-                                         "SearchPlaceholder": "Comience a teclear...",
-                                         "paginate": {
-                                     "previous": "Anterior",
-                                     "next": "Siguiente"
-                                 }
-                              },
-                        "data": data.datos,
-                        "bSort": true,
-                        "columnDefs": [
-                            {"width": "25%", "targets": 0},
-                            {"width": "30%", "targets": 1},
-                            {"width": "25%", "targets": 2},
-                            {"width": "20%", "targets": 3}
-                        ],
-                        "columns": [
-                            {data: 'BUREAU', class: 'txt-center'},
-                            {data: 'SERVICIO', class: 'txt-center'},
-                            {data: 'USUARIO', class: 'txt-center'},
-                            {data: 'FECHA', class: 'txt-center'},
-                            {data: null, "render": function (data, type, row) {
-                                    if (data.BUSCAR_DATOS === 1) {
-                                        return "Bureau";
-                                    } else {
-                                        return "Cache";
-                                    }
-                                }}
-                        ]
-                    });
+                    if (data.estado == 200) {
+                        $('#trCargando').remove();
+                        $('#tableConsultas').DataTable().destroy();
+                        $('#tableConsultas').DataTable({
+                            "language": {
+                                       "lengthMenu": "Mostrar _MENU_ registros por página.",
+                                       "zeroRecords": "Lo sentimos. No se encontraron registros.",
+                                             "info": "Mostrando página _PAGE_ de _PAGES_",
+                                             "infoEmpty": "No hay registros aún.",
+                                             "infoFiltered": "(filtrados de un total de _MAX_ registros)",
+                                             "search": "Búsqueda",
+                                             "LoadingRecords": "Cargando ...",
+                                             "Processing": "Procesando...",
+                                             "SearchPlaceholder": "Comience a teclear...",
+                                             "paginate": {
+                                         "previous": "Anterior",
+                                         "next": "Siguiente"
+                                     }
+                                  },
+                            "data": data.datos,
+                            "bSort": true,
+                            "columnDefs": [
+                                {"width": "25%", "targets": 0},
+                                {"width": "30%", "targets": 1},
+                                {"width": "25%", "targets": 2},
+                                {"width": "20%", "targets": 3}
+                            ],
+                            "columns": [
+                                {data: 'BUREAU', class: 'txt-center'},
+                                {data: 'SERVICIO', class: 'txt-center'},
+                                {data: 'USUARIO', class: 'txt-center'},
+                                {data: 'FECHA', class: 'txt-center'},
+                                {data: null, "render": function (data, type, row) {
+                                        if (data.BUSCAR_DATOS === 1) {
+                                            return "Bureau";
+                                        } else {
+                                            return "Cache";
+                                        }
+                                    }}
+                            ]
+                        });
+                    }else{
+                        $('#tableConsultas').DataTable().rows().remove().draw();
+                    }
                 }
             });
             break;

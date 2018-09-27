@@ -285,7 +285,8 @@ function EditVarRut(num) {
     if ($('#form-chkRut' + num).is(":checked")) {
         $("#form-chkHeader" + num).parent().removeClass("checked");
         $("#form-chkHeader" + num).prop("checked", false);
-        $("#divCantDiaslabel" + num).html('<select id="form-diaVigencia' + num + '">' +
+        $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
+        $("#divCantDiasvar" + num).html('<select id="form-diaVigencia' + num + '">' +
                 '<option value="rut" selected>RUT</option>' +
                 '<option value="dv">DV</option>' +
                 '<option value="rut-dv">RUT-DV</option>' +
@@ -301,7 +302,7 @@ function EditVarHeader(num) {
     if ($('#form-chkHeader' + num).is(":checked")) {
         $("#form-chkRut" + num).parent().removeClass("checked");
         $("#form-chkRut" + num).prop("checked", false);
-        $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
+        $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
         $("#form-cantDiaslabel" + num).val('SOAPAction');
         $("#form-cantDiaslabel" + num).attr("disabled", true);
     } else if (!$('#form-chkRut' + num).is(":checked")) {

@@ -11,7 +11,7 @@
         <div class="form has-validation">
             <div class="clearfix">
                 <label for="form-nombre" class="form-label">Nombre del Servicio<em>*</em></label>
-                <div class="form-input"><input type="text" id="form-nombre" name="name" required="required" placeholder="Enter name service" /></div>
+                <div class="form-input"><input type="text" id="form-nombre" name="name" required="required" placeholder="Servicio de Consultas" /></div>
             </div>
             <div class="clearfix">
                 <label for="form-tipoPersona" class="form-label">Tipo Persona<em>*</em></label>
@@ -47,7 +47,7 @@
             </div>
             <div class="clearfix">
                 <label for="form-url" class="form-label">URL<em>*</em></label>
-                <div class="form-input"><input type="text" id="form-url" name="name" required="required" placeholder="Enter url service" /></div>
+                <div class="form-input"><input type="text" id="form-url" name="name" required="required" placeholder="http://www.webservicex.com/globalweather.asmx?wsdl" /></div>
             </div>
             <div class="clearfix">
                 <label for="form-tipoVigencia" class="form-label">Tipo de Vigencia<em>*</em></label>
@@ -60,7 +60,7 @@
             </div>
             <div class="clearfix" id="divCantDias">
                 <label for="form-cantDias" class="form-label">Cantidad de Dias<em>*</em></label>
-                <div class="form-input"><input min="1" max="999" type="number" id="form-cantDias" name="name" required="required" placeholder="Enter number" /></div>
+                <div class="form-input"><input min="1" max="999" type="number" id="form-cantDias" name="name" required="required" placeholder="365" /></div>
             </div>
             <div class="clearfix" id="divDiasVig" style="display: none">
                 <label for="form-diaVigencia" class="form-label">Dia de Vigencia<em>*</em></label>
@@ -78,7 +78,7 @@
             </div>
             <div class="clearfix" id="divXML">
                 <label for="form-xml" class="form-label">XML<em>*</em></label>
-                <div class="form-input form-xml"><textarea id="form-xml" required="required" rows="5" placeholder="Enter XML from service"></textarea></div>
+                <div class="form-input form-xml"><textarea id="form-xml" required="required" rows="15" placeholder="<?xml version=&#34;1.0&#34;?>&#10;<soap:Envelope xmlns:soap=&#34;http://www.w3.org/2003/05/soap-envelope/&#34; soap:encodingStyle=&#34;http://www.w3.org/2003/05/soap-encoding&#34;>&#10;<soap:Header>&#10;...&#10;</soap:Header>&#10;<soap:Body>&#10;...&#10;<soap:Fault>&#10;...&#10;</soap:Fault>&#10;</soap:Body>&#10;</soap:Envelope>&#10;"></textarea></div>
             </div>
             <div>
                 <div class="clearfix">

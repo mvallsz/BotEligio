@@ -1,4 +1,3 @@
-console.log('Entra');
 $(document).ready(function () {
     initBureauActivo();
     addAnio();

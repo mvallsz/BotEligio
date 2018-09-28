@@ -109,7 +109,9 @@ public class Svl_Servicios extends HttpServlet {
                     break;
                 }
                 case "buscarServicios": {
-                    JSONArray servicios = bn.buscarServicios();
+                    long empresa = 1;
+                    empresa = Long.parseLong(request.getParameter("empresa"));
+                    JSONArray servicios = bn.buscarServicios(empresa);
                     if (servicios.length() > 0) {
                         json.put("estado", 200);
                         json.put("datos", servicios);
@@ -189,17 +191,32 @@ public class Svl_Servicios extends HttpServlet {
                     int mes = 0;
                     int anio = 0;
                     int bureau = 0;
+                    long empresa = 1;
+                    JSONArray datos = new JSONArray();
                     try {
                         id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
                         mes = Integer.parseInt(request.getParameter("mes"));
                         anio = Integer.parseInt(request.getParameter("anio"));
                         bureau = Integer.parseInt(request.getParameter("bureau"));
+                        datos = bn.consultasMes(id_empresa, mes, anio, bureau);
                     } catch (Exception ex) {
                         mes = Integer.parseInt(request.getParameter("mes"));
                         anio = Integer.parseInt(request.getParameter("anio"));
                         bureau = Integer.parseInt(request.getParameter("bureau"));
+                        empresa = Long.parseLong(request.getParameter("empresa"));
+                        datos = bn.consultasMes(empresa, mes, anio, bureau);
                     }
-                    JSONArray datos = bn.consultasMes(id_empresa, mes, anio, bureau);
+                    if (datos.length() > 0) {
+                        json.put("estado", 200);
+                        json.put("datos", datos);
+                    } else {
+                        json.put("estado", 300);
+                    }
+                    response.getWriter().print(json);
+                    break;
+                }
+                case "listarEmpresas": {
+                    JSONArray datos = bn.listarEmpresas();
                     if (datos.length() > 0) {
                         json.put("estado", 200);
                         json.put("datos", datos);

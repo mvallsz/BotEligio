@@ -130,16 +130,18 @@ public class BnServicios {
         return insert;
     }
 
-    public JSONArray buscarServicios() {
+    public JSONArray buscarServicios(long empresa) {
         JSONArray json = new JSONArray();
         Connection conn = null;
         try {
             conn = Conexion.getConn();
             String sql = "SELECT SER.ID, SER.nombre, SER.ip, SER.vigencia_tipo, SER.vigencia_cant, SER.vigencia_dia, SER.id_bureau, BU.DESCRIPCION, SER.activo, \n"
                     + "SER.credenciales, SER.contador, SER.limite_contador, SER.xml, SER.tipo_rut, SER.tipo_ws \n"
-                    + "FROM " + DEF.ESQUEMA + ".SERV_BUREAU_EMPRESA SER JOIN " + DEF.ESQUEMA + ".BUREAUS BU ON (SER.id_bureau = BU.ID)\n"
-                    + " ORDER BY ID ASC;";
+                    + "FROM " + DEF.ESQUEMA + ".SERV_BUREAU_EMPRESA SER JOIN " + DEF.ESQUEMA + ".BUREAUS BU ON (SER.id_bureau = BU.ID) \n"
+                    + "WHERE SER.id_empresa = ? \n"
+                    + "ORDER BY ID ASC;";
             PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setLong(1, empresa);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 JSONObject json2 = new JSONObject();
@@ -299,6 +301,29 @@ public class BnServicios {
             Conexion.desconectar(conn);
         }
         return act;
+    }
+    
+    public JSONArray listarEmpresas() {
+        JSONArray empresas = new JSONArray();
+        Connection conn = null;
+        try {
+            conn = Conexion.getConn();
+            String sql = "SELECT ID, nom_empresa FROM " + DEF.ESQUEMA + ".cuentaEmpresa ORDER BY nom_empresa ASC;";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                JSONObject empresa = new JSONObject();
+                empresa.put("ID", rs.getLong(1));
+                empresa.put("nom_empresa", rs.getString(2));
+                empresas.put(empresa);
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnServicios.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(conn);
+        }
+        return empresas;
     }
 
     public JSONArray historialMes(long idEmpresa, long buscarDatos) {

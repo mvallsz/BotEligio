@@ -5,27 +5,23 @@
  */
 package cl.HBES.slv;
 
-import cl.HBES.beans.BnLogin;
 import cl.HBES.clases.CredencialesUsuario;
-import cl.HBES.clases.Encriptar;
 import cl.HBES.soporte.DEF;
+import cl.HBES.soporte.Soporte;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import org.json.JSONObject;
 
 /**
  *
  * @author Desarrollador
  */
-@WebServlet(name = "Svl_Login", urlPatterns = {"/Svl_Login"})
-public class Svl_Login extends HttpServlet {
+@WebServlet(name = "cmd", urlPatterns = {"/cmd"})
+public class cmd extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,34 +32,21 @@ public class Svl_Login extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            String code = request.getParameter("code");
-            HttpSession session = request.getSession();
+        CredencialesUsuario usu_session = Soporte.getUsuarioSesion(request);
+        if (Soporte.isSesionActiva(request)) {
+            String code = (request.getParameter("code") == null ? "home" : request.getParameter("code"));
             switch (code) {
-                case "login": {
-                    JSONObject json = new JSONObject();
-                    String user = request.getParameter("username");
-                    String clave = request.getParameter("password");
-                    BnLogin bn = new BnLogin();
-                    CredencialesUsuario credenciales = bn.iniciarSesion(user, Encriptar.toMD5(clave));
-                    if (credenciales != null) {
-                        credenciales.setPassword(clave);
-                        session.setAttribute(DEF.SESSION_USUARIO, credenciales);
-                        json.put("estado", 200);
-                    } else {
-                        json.put("estado", 405);
-                        json.put("descripcion", "Error de usuario o contraseña");
-                    }
-                    out.print(json);
+                case "home": {
+//                    toPage("/home.jsp", request, response);
+                    Soporte.toPage("/home.jsp", request, response, this);
                     break;
                 }
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } else {
+            Soporte.info("Parametro: " + request.getParameter("accion") != null ? request.getParameter("accion") : "null" + ", se redireccionara a: " + DEF.PAGE_LOGIN);
+            Soporte.toPage(DEF.PAGE_LOGIN, request, response, this);
         }
     }
 
@@ -106,4 +89,11 @@ public class Svl_Login extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private void toPage(String page, HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        try {
+            getServletContext().getRequestDispatcher(page).forward(request, response);
+        } catch (IOException ioe) {
+            ioe.printStackTrace(System.err);
+        }
+    }
 }

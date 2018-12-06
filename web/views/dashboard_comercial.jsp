@@ -1,3 +1,11 @@
+<%@page import="cl.HBES.soporte.DEF"%>
+<%@page import="cl.HBES.soporte.Soporte"%>
+<%
+    if (!Soporte.isSesionActiva(request)) {
+        response.sendRedirect("cmd");
+        return;
+    }
+%>
 <!-- jQplot CSS -->
 <link rel="stylesheet" media="screen" href="lib/jqplot/jquery.jqplot.min.css" />
 <!-- jQplot CSS END -->
@@ -21,21 +29,21 @@
         <section>
             <div class="clearfix">
                 <div class="grid_4">
-                    <label for="form-bureau" class="form-label">Bureau</label>
+                    <label for="form-bureauu" class="form-label">Bureau</label>
                     <div class="form-input">
-                        <select id="form-bureau" onchange="initTables(1)">
+                        <select id="form-bureauu" onchange="initTables1(1)">
                             <option value="0" selected>Todos</option>
-                            <option value="1">Sinacofi</option>
-                            <option value="2">Equifax</option>
-                            <option value="3">Trasunion</option>
-                            <option value="4">Siisa</option>
+                            <!--                            <option value="1">Sinacofi</option>
+                                                        <option value="2">Equifax</option>
+                                                        <option value="3">Trasunion</option>
+                                                        <option value="4">Siisa</option>-->
                         </select>
                     </div>
                 </div>
                 <div class="grid_4">
                     <label for="form-mes" class="form-label">Mes</label>
                     <div class="form-input">
-                        <select id="form-mes" onchange="initTables(1)">
+                        <select id="form-mes" onchange="initTables1(1)">
                             <option value="1">Enero</option>
                             <option value="2">Febrero</option>
                             <option value="3">Marzo</option>
@@ -54,7 +62,7 @@
                 <div class="grid_4">
                     <label for="form-anio" class="form-label">Año</label>
                     <div class="form-input">
-                        <select id="form-anio" onchange="initTables(1)">
+                        <select id="form-anio" onchange="initTables1(1)">
 
                         </select>
                     </div>
@@ -65,8 +73,8 @@
                 <div class="grid_3">
                     <label for="form-empresa1" class="form-label">Empresa</label>
                     <div class="form-input">
-                        <select id="form-empresa1" onchange="initTables(1)">
-                            <option value="1" selected>EXPERT CHOICE S.A.</option>
+                        <select id="form-empresa1">
+                            <option value="0" selected disabled>Select Option</option>
                         </select>
                     </div>
                 </div>
@@ -75,7 +83,7 @@
             <table class="display" id="tableConsultas"> 
                 <thead>
                     <tr>
-                        <th >Bureau</th>
+                        <th >Nombre Origen</th>
                         <th >Servicio</th>
                         <th >Usuario</th>
                         <th >Fecha</th>
@@ -127,4 +135,5 @@
 <script type="text/javascript" src="lib/jqplot/plugins/jqplot.categoryAxisRenderer.min.js"></script> 
 <script type="text/javascript" src="lib/jqplot/plugins/jqplot.pieRenderer.min.js"></script>
 <script type="text/javascript" src="js/script/dashborad_comercial.js"></script> 
+<script type="text/javascript" src="js/script/funciones.js"></script> 
 <!-- jQplot SETUP END -->

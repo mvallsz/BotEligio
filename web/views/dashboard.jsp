@@ -1,3 +1,11 @@
+<%@page import="cl.HBES.soporte.DEF"%>
+<%@page import="cl.HBES.soporte.Soporte"%>
+<%
+    if (!Soporte.isSesionActiva(request)) {
+        response.sendRedirect("cmd");
+        return;
+    }
+%>
 <!-- jQplot CSS -->
 <link rel="stylesheet" media="screen" href="lib/jqplot/jquery.jqplot.min.css" />
 <!-- jQplot CSS END -->
@@ -21,9 +29,9 @@
         <section>
             <div class="clearfix">
                 <div class="grid_4">
-                    <label for="form-bureau" class="form-label">Bureau</label>
+                    <label for="form-bureauu" class="form-label">Bureau</label>
                     <div class="form-input">
-                        <select id="form-bureau" onchange="initTables(1)">
+                        <select id="form-bureauu" onchange="initTables(1)">
                             <option value="0" selected>Todos</option>
                             <option value="1">Sinacofi</option>
                             <option value="2">Equifax</option>
@@ -64,7 +72,7 @@
             <table class="display" id="tableConsultas"> 
                 <thead>
                     <tr>
-                        <th >Bureau</th>
+                        <th >Nombre Origen</th>
                         <th >Servicio</th>
                         <th >Usuario</th>
                         <th >Fecha</th>

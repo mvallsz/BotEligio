@@ -1,3 +1,11 @@
+<%@page import="cl.HBES.soporte.DEF"%>
+<%@page import="cl.HBES.soporte.Soporte"%>
+<%
+    if (!Soporte.isSesionActiva(request)) {
+        response.sendRedirect("cmd");
+        return;
+    }
+%>
 <script type="text/javascript" src="js/jquery.itextclear.js"></script>
 <!--<script type="text/javascript" src="js/jquery.min"></script>-->
 <script type="text/javascript">
@@ -5,7 +13,7 @@
 //        $('input[type=text], input[type=password], input[type=url], input[type=email], input[type=number], textarea', '.form').iTextClear();
 //    });
 </script>
-<h1 class="page-title">Connection Bureau</h1>
+<h1 class="page-title">Creation of Connections</h1>
 <div class="container_12 clearfix leading">
     <div class="grid_12">
         <div class="form has-validation">

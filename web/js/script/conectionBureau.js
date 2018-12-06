@@ -3,6 +3,8 @@ console.log("entra");
 
 $(document).ready(function () {
     initTables(1);
+    var set = setInterval(listarOrigen(), 3000);
+    clearInterval(set);
 });
 
 function initTables(tablaN) {

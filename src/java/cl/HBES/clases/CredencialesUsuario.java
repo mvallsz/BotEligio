@@ -14,6 +14,7 @@ public class CredencialesUsuario {
     private String nombre;
     private String apellido;
     private String email;
+    private String usuario;
     private String password;
     private CuentaEmpresa empresa;
 
@@ -47,6 +48,14 @@ public class CredencialesUsuario {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public String getPassword() {

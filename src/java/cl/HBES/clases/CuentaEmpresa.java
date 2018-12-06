@@ -13,7 +13,7 @@ public class CuentaEmpresa {
     private long id;
     private String nombre;
     private long rut;
-    private long dv;
+    private String dv;
     private long cod_subsidiary;
     private String fecha_act;
     private boolean historial;
@@ -42,11 +42,11 @@ public class CuentaEmpresa {
         this.rut = rut;
     }
 
-    public long getDv() {
+    public String getDv() {
         return dv;
     }
 
-    public void setDv(long dv) {
+    public void setDv(String dv) {
         this.dv = dv;
     }
 

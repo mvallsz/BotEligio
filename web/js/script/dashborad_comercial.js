@@ -1,9 +1,8 @@
-console.log("Entra");
+//console.log("Entra");
+var Dataaa = [];
 $(document).ready(function () {
-    initBureauActivo();
     addAnio();
     listarEmpresas();
-    initTables(1);
 //Plot 1
     var Bureau1 = [50, 70, 90, 100, 120, 140, 160, 190, 250];
     var Bureau2 = [243, 345, 465, 344, 200, 250, 455, 254, 145];
@@ -78,12 +77,13 @@ $(document).ready(function () {
     });
 });
 
-function initTables(tablaN) {
+function initTables1(tablaN) {
     switch (tablaN) {
         case 1:
+            $('#tableConsultas').DataTable().rows().remove().draw();
             var anio = $("#form-anio option:selected").val();
             var mes = $("#form-mes option:selected").val();
-            var bureau = $("#form-bureau option:selected").val();
+            var bureau = $("#form-bureauu option:selected").val();
             var empresa = $("#form-empresa1 option:selected").val();
             $.ajax({
                 url: 'Svl_Servicios',
@@ -100,50 +100,10 @@ function initTables(tablaN) {
                     $('#tableConsultas tbody').append('<tr id="trCargando" class="odd" style="text-align: center;"><td valign="top" colspan="7" class="dataTables_empty" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i>  Buscando Registros</td></tr>');
                 },
                 success: function (data) {
-                    if (data.estado == 200) {
-                        $('#trCargando').remove();
-                        $('#tableConsultas').DataTable().destroy();
-                        $('#tableConsultas').DataTable({
-                            "language": {
-                                       "lengthMenu": "Mostrar _MENU_ registros por página.",
-                                       "zeroRecords": "Lo sentimos. No se encontraron registros.",
-                                             "info": "Mostrando página _PAGE_ de _PAGES_",
-                                             "infoEmpty": "No hay registros aún.",
-                                             "infoFiltered": "(filtrados de un total de _MAX_ registros)",
-                                             "search": "Búsqueda",
-                                             "LoadingRecords": "Cargando ...",
-                                             "Processing": "Procesando...",
-                                             "SearchPlaceholder": "Comience a teclear...",
-                                             "paginate": {
-                                         "previous": "Anterior",
-                                         "next": "Siguiente"
-                                     }
-                                  },
-                            "data": data.datos,
-                            "bSort": true,
-                            "columnDefs": [
-                                {"width": "25%", "targets": 0},
-                                {"width": "30%", "targets": 1},
-                                {"width": "25%", "targets": 2},
-                                {"width": "20%", "targets": 3}
-                            ],
-                            "columns": [
-                                {data: 'BUREAU', class: 'txt-center'},
-                                {data: 'SERVICIO', class: 'txt-center'},
-                                {data: 'USUARIO', class: 'txt-center'},
-                                {data: 'FECHA', class: 'txt-center'},
-                                {data: null, "render": function (data, type, row) {
-                                        if (data.BUSCAR_DATOS === 1) {
-                                            return "Bureau";
-                                        } else {
-                                            return "Cache";
-                                        }
-                                    }}
-                            ]
-                        });
-                    } else {
-                        $('#tableConsultas').DataTable().rows().remove().draw();
+                    if (data.estado === 200) {
+                        Dataaa = data.datos;
                     }
+                    listarConsultas();
                 }
             });
             break;
@@ -151,20 +111,23 @@ function initTables(tablaN) {
 }
 
 function initBureauActivo() {
+    $('#divBureauActivo').html('');
     $.ajax({
         url: 'Svl_Servicios',
         type: 'POST',
         dataType: 'json',
         data: {
-            accion: 'buscarServiciosActivos'
+            accion: 'buscarServiciosActivos',
+            idEmpresa: $("#form-empresa1 option:selected").val()
         },
         success: function (data, textStatus, jqXHR) {
             if (data.estado == 200) {
                 for (var i = 0; i < data.datos.length; i++) {
-                    $('#divBureauActivo').append('<h3 style="margin-bottom: 0px;">' + data.datos[i].NOMBRE_BUREAU + '</h3>');
+                    $('#divBureauActivo').append('<h3 style="margin-bottom: 0px;">' + data.datos[i].NOMBRE_ORIGEN + '</h3>');
                 }
             } else {
                 alert("No se pudo verificar los bureaus activos");
+                $('#divBureauActivo').append('<h3 style="margin-bottom: 0px;">Sin Bureaus Activos</h3>');
             }
         }
     });
@@ -198,14 +161,89 @@ function listarEmpresas() {
         success: function (data, textStatus, jqXHR) {
             if (data.estado == 200) {
                 for (var dato in data.datos) {
-                    if(data.datos[dato].ID != 1){
-                        $('#form-empresa1').append( '<option selected value="'+data.datos[dato].ID+'">'+data.datos[dato].nom_empresa+'</option>' );
+                    if (codigo != 23) {
+                        if (data.datos[dato].ID === idEmp) {
+                            $('#form-empresa1').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
+                            selectedF('form-empresa1', idEmp);
+                            initTables1(1);
+                            initBureauActivo();
+                            listarOrigen1();
+                            break;
+                        }
+                    } else {
+                        $('#form-empresa1').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
                     }
                 }
-            } else {
-
+                if (codigo === 23) {
+                    $('#form-empresa1').attr('onchange', 'initTables1(1);initBureauActivo();listarOrigen1();');
+                    $('#divBureauActivo').append('<h3 style="margin-bottom: 0px;">Sin datos</h3>');
+                    $('#tableConsultas').DataTable().rows().remove().draw();
+                    $('#tableConsultas tbody').append('<tr id="trCargando" class="odd" style="text-align: center;"><td valign="top" colspan="7" class="dataTables_empty" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i>  Buscando Registros</td></tr>');
+                    listarConsultas();
+                }
             }
         }
+    });
+}
+
+function listarOrigen1() {
+    limpiarSelectF('form-bureauu', 0);
+    var idEmp = $("#form-empresa1 option:selected").val();
+    $.ajax({
+        url: 'Svl_Servicios',
+        type: 'POST',
+        dataType: 'json',
+        data: {accion: 'listarOrigenes2', idEmp: idEmp},
+        success: function (data, textStatus, jqXHR) {
+            if (data.estado == 200) {
+                for (var dato in data.datos) {
+                    $('#form-bureauu').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nombre_origen + '</option>');
+                }
+            }
+        }
+    });
+}
+
+function listarConsultas() {
+    $('#trCargando').remove();
+    $('#tableConsultas').DataTable().destroy();
+    $('#tableConsultas').DataTable({
+        "language": {
+                   "lengthMenu": "Mostrar _MENU_ registros por página.",
+                   "zeroRecords": "Lo sentimos. No se encontraron registros.",
+                         "info": "Mostrando página _PAGE_ de _PAGES_",
+                         "infoEmpty": "No hay registros aún.",
+                         "infoFiltered": "(filtrados de un total de _MAX_ registros)",
+                         "search": "Búsqueda",
+                         "LoadingRecords": "Cargando ...",
+                         "Processing": "Procesando...",
+                         "SearchPlaceholder": "Comience a teclear...",
+                         "paginate": {
+                     "previous": "Anterior",
+                     "next": "Siguiente"
+                 }
+              },
+        "data": Dataaa,
+        "bSort": true,
+        "columnDefs": [
+            {"width": "25%", "targets": 0},
+            {"width": "30%", "targets": 1},
+            {"width": "25%", "targets": 2},
+            {"width": "20%", "targets": 3}
+        ],
+        "columns": [
+            {data: 'ORIGEN', class: 'txt-center'},
+            {data: 'SERVICIO', class: 'txt-center'},
+            {data: 'USUARIO', class: 'txt-center'},
+            {data: 'FECHA', class: 'txt-center'},
+            {data: null, "render": function (data, type, row) {
+                    if (data.BUSCAR_DATOS === 1) {
+                        return "Servicio";
+                    } else {
+                        return "Cache";
+                    }
+                }}
+        ]
     });
 }
 

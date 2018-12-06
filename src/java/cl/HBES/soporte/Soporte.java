@@ -6,6 +6,7 @@
 package cl.HBES.soporte;
 
 import cl.HBES.clases.CredencialesUsuario;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -16,6 +17,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import java.security.SecureRandom;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -26,7 +31,7 @@ public class Soporte {
     /**
      *
      */
-    public static final String loggerId = "Cache Siisa v1.0.0";
+    public static final String loggerId = "HBES v1.0.0";
 
     /**
      *
@@ -171,6 +176,26 @@ public class Soporte {
         return "";
     }
 
+    public static String buscarEnJSONv2(String str, String busqueda) {
+        String val = "";
+        if (busqueda.contains("/")) {
+            try {
+                String[] parts = busqueda.split("/");
+                String oldstring2 = str;
+                for (int i = 0; i < parts.length; i++) {
+                    String part1 = parts[i];
+                    oldstring2 = buscarEnJSON(oldstring2, "", part1);
+                }
+                val = oldstring2;
+            } catch (Exception ex) {
+                Soporte.severe("{0}:{1}", new Object[]{Soporte.class.getName(), ex.toString()});
+            }
+        } else {
+            val = buscarEnJSON(str, "", busqueda);
+        }
+        return val;
+    }
+
     protected static SecureRandom random = new SecureRandom();
 
     public synchronized String generateToken() {
@@ -196,5 +221,68 @@ public class Soporte {
     public static boolean isSesionActiva(HttpServletRequest request) {
         CredencialesUsuario usuLogin = (CredencialesUsuario) request.getSession().getAttribute(DEF.SESSION_USUARIO);
         return usuLogin != null;
+    }
+
+    public static String buscarHijos(String datos, JSONArray hijos) {
+        String val = "[";
+        try {
+            if (datos.length() > 0) {
+                JSONArray jsonArray = new JSONArray();
+                Object json2 = new JSONTokener(datos).nextValue();
+                Object intervention = json2;
+                if (intervention instanceof JSONArray) {
+                    jsonArray = new JSONArray(datos);
+                } else if (intervention instanceof JSONObject) {
+                    JSONObject jsonObject = new JSONObject(datos);
+                    jsonArray.put(jsonObject);
+                }
+                if (jsonArray.length() > 0) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        if (i != 0) {
+                            val += ",";
+                        }
+                        val += "{";
+                        JSONObject json = new JSONObject(jsonArray.get(i).toString());
+                        for (int j = 0; j < hijos.length(); j++) {
+                            if (j != 0) {
+                                val += ",";
+                            }
+                            JSONObject jHi = new JSONObject(hijos.get(j).toString());
+                            String valor = json.get(jHi.getString("busqueda")).toString();
+                            String nombre = jHi.getString("nombre");
+                            try {
+                                Long.parseLong(valor);
+                                val += "\"" + nombre + "\":" + valor;
+                            } catch (Exception e) {
+                                try {
+                                    Float.parseFloat(valor);
+                                    val += "\"" + nombre + "\":" + valor;
+                                } catch (Exception ex) {
+                                    try {
+                                        Double.parseDouble(valor);
+                                        val += "\"" + nombre + "\":" + valor;
+                                    } catch (Exception exs) {
+                                        val += "\"" + nombre + "\":\"" + valor + "\"";
+                                    }
+                                }
+                            }
+                        }
+                        val += "}";
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{Soporte.class.getName(), ex.toString()});
+        }
+        val += "]";
+        return val;
+    }
+
+    public static void toPage(String page, HttpServletRequest request, HttpServletResponse response, HttpServlet ser) throws ServletException {
+        try {
+            ser.getServletContext().getRequestDispatcher(page).forward(request, response);
+        } catch (IOException ioe) {
+            ioe.printStackTrace(System.err);
+        }
     }
 }

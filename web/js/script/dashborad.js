@@ -1,8 +1,10 @@
 console.log("Entra");
 $(document).ready(function () {
+    listarOrigen1();
     initBureauActivo();
     addAnio();
-    initTables(1);
+    var set = setInterval(initTables(1), 3000);
+    clearInterval(set);
 //Plot 1
     var Bureau1 = [50, 70, 90, 100, 120, 140, 160, 190, 250];
     var Bureau2 = [243, 345, 465, 344, 200, 250, 455, 254, 145];
@@ -82,7 +84,7 @@ function initTables(tablaN) {
         case 1:
             var anio = $("#form-anio option:selected").val();
             var mes = $("#form-mes option:selected").val();
-            var bureau = $("#form-bureau option:selected").val();
+            var bureau = $("#form-bureauu option:selected").val();
             $.ajax({
                 url: 'Svl_Servicios',
                 type: 'POST',
@@ -125,21 +127,22 @@ function initTables(tablaN) {
                                 {"width": "20%", "targets": 3}
                             ],
                             "columns": [
-                                {data: 'BUREAU', class: 'txt-center'},
+                                {data: 'ORIGEN', class: 'txt-center'},
                                 {data: 'SERVICIO', class: 'txt-center'},
                                 {data: 'USUARIO', class: 'txt-center'},
                                 {data: 'FECHA', class: 'txt-center'},
                                 {data: null, "render": function (data, type, row) {
                                         if (data.BUSCAR_DATOS === 1) {
-                                            return "Bureau";
+                                            return "Servicio";
                                         } else {
                                             return "Cache";
                                         }
                                     }}
                             ]
                         });
-                    }else{
+                    } else {
                         $('#tableConsultas').DataTable().rows().remove().draw();
+//                        $('#trCargando').remove();
                     }
                 }
             });

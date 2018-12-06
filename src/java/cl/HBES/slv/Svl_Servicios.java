@@ -5,12 +5,14 @@
  */
 package cl.HBES.slv;
 
-import cl.HBES.beans.BnLogin;
+import cl.HBES.beans.BnUsuario;
+import cl.HBES.beans.BnResponse;
 import cl.HBES.beans.BnServicios;
 import cl.HBES.clases.CredencialesUsuario;
 import cl.HBES.soporte.Soporte;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -46,8 +48,6 @@ public class Svl_Servicios extends HttpServlet {
             String accion = request.getParameter("accion");
             JSONObject json = new JSONObject();
             BnServicios bn = new BnServicios();
-            long id_empresa = new BnLogin().obtenerIDEmpresa();
-//            CredencialesUsuario user = Soporte.getUsuarioSesion(request);
             switch (accion) {
                 case "agregarServicio": {
                     String nombre = request.getParameter("nombre");
@@ -60,18 +60,34 @@ public class Svl_Servicios extends HttpServlet {
                     int diaVigencia = Integer.parseInt(request.getParameter("diaVigencia"));
                     String xml = request.getParameter("xml");
                     String credenciales = request.getParameter("json");
+                    int tipoResponse = Integer.parseInt(request.getParameter("response"));
+                    String varResponse = request.getParameter("varResponse");
+                    long id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
                     int limiteContador = 0;
                     try {
                         limiteContador = Integer.parseInt(request.getParameter("limiteContador"));
                     } catch (Exception ex) {
                     }
-                    try {
-                        id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
-                    } catch (Exception ex) {
-                    }
-
-                    if (bn.insertarServicios(nombre, url, tipoVigencia, cantDias, diaVigencia, id_empresa, bureau, credenciales, limiteContador, xml, tipoPersona, tipoServicio)) {
-                        json.put("estado", 200);
+                    BigInteger id = bn.insertarServicios(nombre, url, tipoVigencia, cantDias, diaVigencia, id_empresa, bureau, credenciales, limiteContador, xml, tipoPersona, tipoServicio, tipoResponse);
+                    if (!id.toString().equalsIgnoreCase("0")) {
+                        boolean result = false;
+                        JSONArray jsonn = new JSONArray(varResponse);
+                        for (int i = 0; i < jsonn.length(); i++) {
+                            JSONObject j = new JSONObject(jsonn.get(i).toString());
+                            long idr = bn.guardarVariables(id, tipoPersona, j);
+                            JSONArray jr = new JSONArray(j.get("VARHIJO").toString());
+                            if (jr.length() > 0) {
+                                for (int k = 0; k < jr.length(); k++) {
+                                    JSONObject j2 = new JSONObject(jr.get(k).toString());
+                                    result = bn.guardarVariablesHijo(idr, j2);
+                                }
+                            }
+                        }
+                        if (result) {
+                            json.put("estado", 200);
+                        } else {
+                            json.put("estado", 301);
+                        }
                     } else {
                         json.put("estado", 300);
                     }
@@ -95,11 +111,6 @@ public class Svl_Servicios extends HttpServlet {
                         limiteContador = Integer.parseInt(request.getParameter("limiteContador"));
                     } catch (Exception ex) {
                     }
-                    try {
-                        id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
-                    } catch (Exception ex) {
-                    }
-
                     if (bn.actualizarServicio(idServicio, nombre, url, tipoVigencia, cantDias, diaVigencia, bureau, credenciales, limiteContador, xml, tipoPersona, tipoServicio)) {
                         json.put("estado", 200);
                     } else {
@@ -122,10 +133,7 @@ public class Svl_Servicios extends HttpServlet {
                     break;
                 }
                 case "buscarServiciosActivos": {
-                    try {
-                        id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
-                    } catch (Exception ex) {
-                    }
+                    long id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
                     JSONArray servicios = bn.serviciosActivos(id_empresa);
                     if (servicios.length() > 0) {
                         json.put("estado", 200);
@@ -158,10 +166,7 @@ public class Svl_Servicios extends HttpServlet {
                     break;
                 }
                 case "consultasBureauMes": {
-                    try {
-                        id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
-                    } catch (Exception ex) {
-                    }
+                    long id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
                     JSONObject datos = bn.consultaBureauMes(id_empresa);
                     if (datos.length() > 0) {
                         json.put("estado", 200);
@@ -173,10 +178,7 @@ public class Svl_Servicios extends HttpServlet {
                     break;
                 }
                 case "consultasHistorialMes": {
-                    try {
-                        id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
-                    } catch (Exception ex) {
-                    }
+                    long id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
                     JSONObject datos = bn.consultaHistorialMes(id_empresa);
                     if (datos.length() > 0) {
                         json.put("estado", 200);
@@ -191,21 +193,12 @@ public class Svl_Servicios extends HttpServlet {
                     int mes = 0;
                     int anio = 0;
                     int bureau = 0;
-                    long empresa = 1;
                     JSONArray datos = new JSONArray();
-                    try {
-                        id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
-                        mes = Integer.parseInt(request.getParameter("mes"));
-                        anio = Integer.parseInt(request.getParameter("anio"));
-                        bureau = Integer.parseInt(request.getParameter("bureau"));
-                        datos = bn.consultasMes(id_empresa, mes, anio, bureau);
-                    } catch (Exception ex) {
-                        mes = Integer.parseInt(request.getParameter("mes"));
-                        anio = Integer.parseInt(request.getParameter("anio"));
-                        bureau = Integer.parseInt(request.getParameter("bureau"));
-                        empresa = Long.parseLong(request.getParameter("empresa"));
-                        datos = bn.consultasMes(empresa, mes, anio, bureau);
-                    }
+                    long id_empresa = Long.parseLong(request.getParameter("empresa"));
+                    mes = Integer.parseInt(request.getParameter("mes"));
+                    anio = Integer.parseInt(request.getParameter("anio"));
+                    bureau = Integer.parseInt(request.getParameter("bureau"));
+                    datos = bn.consultasMes(id_empresa, mes, anio, bureau);
                     if (datos.length() > 0) {
                         json.put("estado", 200);
                         json.put("datos", datos);
@@ -217,6 +210,63 @@ public class Svl_Servicios extends HttpServlet {
                 }
                 case "listarEmpresas": {
                     JSONArray datos = bn.listarEmpresas();
+                    if (datos.length() > 0) {
+                        json.put("estado", 200);
+                        json.put("datos", datos);
+                    } else {
+                        json.put("estado", 300);
+                    }
+                    response.getWriter().print(json);
+                    break;
+                }
+                case "listarOrigenes": {
+                    long id_empresa = Long.parseLong(request.getParameter("idEmp"));
+                    JSONArray datos = bn.listarOrigenes(id_empresa);
+                    if (datos.length() > 0) {
+                        json.put("estado", 200);
+                        json.put("datos", datos);
+                    } else {
+                        json.put("estado", 300);
+                    }
+                    response.getWriter().print(json);
+                    break;
+                }
+                case "listarOrigenes2": {
+                    long id_empresa = Long.parseLong(request.getParameter("idEmp"));
+                    JSONArray datos = bn.listarOrigenes2(id_empresa);
+                    if (datos.length() > 0) {
+                        json.put("estado", 200);
+                        json.put("datos", datos);
+                    } else {
+                        json.put("estado", 300);
+                    }
+                    response.getWriter().print(json);
+                    break;
+                }
+                case "agregarOrigen": {
+                    String origen = request.getParameter("origen");
+                    long idEmp = Long.parseLong(request.getParameter("idEmp"));
+                    if (bn.insertarOrigen(origen, idEmp)) {
+                        json.put("estado", 200);
+                    } else {
+                        json.put("estado", 300);
+                    }
+                    response.getWriter().print(json);
+                    break;
+                }
+                case "listarTipoDato": {
+                    JSONArray datos = bn.listarTipoDato();
+                    if (datos.length() > 0) {
+                        json.put("estado", 200);
+                        json.put("datos", datos);
+                    } else {
+                        json.put("estado", 300);
+                    }
+                    response.getWriter().print(json);
+                    break;
+                }
+                case "listarServiciosDefault": {
+                    JSONObject datos = bn.listarServicioDefault();
                     if (datos.length() > 0) {
                         json.put("estado", 200);
                         json.put("datos", datos);

@@ -3,6 +3,8 @@ var contPar = 1;
 var contArr = 1;
 var SERV_DEFAULT;
 var Daata = [];
+var varDeF = false;
+var limitVar = 0;
 console.log("entra");
 
 $(document).ready(function () {
@@ -110,22 +112,29 @@ function ValidaForm() {
         return false;
     }
     for (var i = 1; i <= contVar; i++) {
-        var labelVar = "";
-        var nombreVar = "";
         if ($('#form-chkRut' + i).is(":checked")) {
-            labelVar = $('#form-cantDiaslabel' + i).val().trim();
+            if ($('#form-cantDiaslabel' + i).val().trim() === "") {
+                alert('Debe ingresar Nombre de la Variable');
+                return false;
+            }
         } else if ($('#form-chkHeader' + i).is(":checked")) {
-            nombreVar = $('#form-cantDiasvar' + i).val().trim();
+            if ($('#form-cantDiasvar' + i).val().trim() === "") {
+                alert('Debe ingresar Variable');
+                return false;
+            }
+        } else if ($('#form-chkParametro' + i).is(":checked")) {
+            if ($('#form-cantDiaslabel' + i).val().trim() === "") {
+                alert('Debe ingresar Nombre de la Variable');
+                return false;
+            }
         } else {
-            labelVar = $('#form-cantDiaslabel' + i).val().trim();
-            nombreVar = $('#form-cantDiasvar' + i).val().trim();
-        }
-        if (labelVar === "" && !$('#form-chkHeader' + i).is(":checked")) {
-            alert('Debe ingresar Nombre de la Variable');
-            return false;
-        } else if (nombreVar === "" && !$('#form-chkRut' + i).is(":checked")) {
-            alert('Debe ingresar Variable');
-            return false;
+            if ($('#form-cantDiaslabel' + i).val().trim() === "") {
+                alert('Debe ingresar Nombre de la Variable');
+                return false;
+            } else if ($('#form-cantDiasvar' + i).val().trim() === "") {
+                alert('Debe ingresar Variable');
+                return false;
+            }
         }
     }
     for (var i = 1; i <= contPar; i++) {
@@ -220,51 +229,53 @@ function GuardarForm() {
         if (tipoServicio == 1) {
             xml = $('#form-xml').val().trim();
         }
-        var json = "{";
+        var contP = 0;
+        var jsonAr = new Array();
+        var json = new Object();
         for (var i = 1; i <= contVar; i++) {
-            if (i > 1) {
-                json = json + ",";
-            }
             var labelVar = $('#form-cantDiaslabel' + i).val().trim();
             var nombreVar = ""
             if ($('#form-chkRut' + i).is(":checked")) {
                 nombreVar = $("select#form-diaVigencia" + i + " option:checked").val();
+            } else if ($('#form-chkParametro' + i).is(":checked")) {
+                jsonAr.push(labelVar);
+                contP++;
             } else {
                 nombreVar = $('#form-cantDiasvar' + i).val().trim();
             }
-            json = json + '\"' + labelVar + '\":\"' + nombreVar + '\"';
-        }
-        json = json + "}";
-        json = JSON.parse(json);
-
-        var response = $("select#form-tipoSalida option:checked").val();
-        var json2 = "[";
-        for (var i = 1; i <= contPar; i++) {
-            if (i > 1) {
-                json2 = json2 + ",";
+            if (!$('#form-chkParametro' + i).is(":checked")) {
+                json[labelVar] = nombreVar;
             }
+        }
+        json['parametros'] = jsonAr;
+        var response = $("select#form-tipoSalida option:checked").val();
+        var json2 = new Array();
+        for (var i = 1; i <= contPar; i++) {
             var labelPar = $('#form-cantDiaslabelPar' + i).val().trim();
             var nombrePar = $('#form-cantDiasPar' + i).val().trim();
             var tipo_dato = $("select#form-TipoDato" + i + " option:checked").val();
             verificarHi(i);
-            var jsonh = [];
+            var jsonh = new Array();
             for (var k = 1; k <= contArr; k++) {
                 var labelarr = $('#form-nombreHijo' + i + "_" + k).val().trim();
                 var nombrearr = $('#form-variableHijo' + i + "_" + k).val().trim();
                 var tipo_datoarr = $("select#form-tipoDatoHijo" + i + "_" + k + " option:checked").val();
                 if (labelarr != "" && nombrearr != "" && tipo_datoarr != "0") {
-                    var j = {};
+                    var j = new Object();
                     j.NOMBRE = labelarr;
                     j.VARIABLE = nombrearr;
                     j.TIPODATO = tipo_datoarr;
                     jsonh.push(j);
                 }
             }
-            var jsonArr = '{\"NOMBRE\":\"' + labelPar + '\",\"VARIABLE\":\"' + nombrePar + '\", \"TIPODATO\":' + tipo_dato + ', \"VARHIJO\":' + JSON.stringify(jsonh) + '}';
-            json2 = json2 + '' + jsonArr;
+            var x = new Object();
+            x.NOMBRE = labelPar;
+            x.VARIABLE = nombrePar;
+            x.TIPODATO = tipo_dato;
+            x.VARHIJO = jsonh;
+            json2.push(x);
         }
-        json2 = json2 + "]";
-        if (Object.keys(json).length < contVar) {
+        if (jsonAr.length < contP && Object.keys(json).length < (contP === 0 ? contVar : (contVar - (contP - 1)))) {
             alert("Nombre de Variables de Entrada Repetido");
         } else if (Object.keys(json2).length < contPar) {
             alert("Nombre de Variables de Salida Repetido");
@@ -287,7 +298,7 @@ function GuardarForm() {
                     xml: xml,
                     json: JSON.stringify(json),
                     response: response,
-                    varResponse: json2
+                    varResponse: JSON.stringify(json2)
                 },
                 success: function (data, textStatus, jqXHR) {
                     alert('Servicio creado, debe activarlo para utilizarlo');
@@ -373,7 +384,8 @@ function AddVariable() {
             '<label for="form-variable' + contVar + '" class="form-label">Variable ' + contVar + '<em>*</em>' +
             '<div class="checkgroup" >' +
             '<label style="font-size: 12px;">Rut </label><input type="checkbox" id="form-chkRut' + contVar + '" onchange="EditVarRut(' + contVar + ');"/>' +
-            ' <label style="font-size: 12px;"> XML Header </label><input type="checkbox" id="form-chkHeader' + contVar + '" onchange="EditVarHeader(' + contVar + ');"/>' +
+            '<label style="font-size: 12px;"> XML Header </label><input type="checkbox" id="form-chkHeader' + contVar + '" onchange="EditVarHeader(' + contVar + ');"/>' +
+            '<label style="font-size: 12px;" title="Parametro para Web Service Users"> Parametro </label><input type="checkbox" id="form-chkParametro' + contVar + '" onchange="EditParametroHeader(' + contVar + ')"/>' +
             '</div>' +
             '</label>' +
             '<div class="form-input">' +
@@ -386,8 +398,14 @@ function AddVariable() {
 function ResVariable() {
     $('#divVar' + contVar).remove();
     contVar--;
-    if (contVar < 2) {
-        $('#btnEliminarVar').hide();
+    if (varDeF) {
+        if (contVar < limitVar) {
+            $('#btnEliminarVar').hide();
+        }
+    } else {
+        if (contVar < 2) {
+            $('#btnEliminarVar').hide();
+        }
     }
 }
 
@@ -395,6 +413,8 @@ function EditVarRut(num) {
     if ($('#form-chkRut' + num).is(":checked")) {
         $("#form-chkHeader" + num).parent().removeClass("checked");
         $("#form-chkHeader" + num).prop("checked", false);
+        $("#form-chkParametro" + num).parent().removeClass("checked");
+        $("#form-chkParametro" + num).prop("checked", false);
         $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
         $("#divCantDiasvar" + num).html('<div class="selector" id="uniform-form-diaVigencia' + num + '"><span></span>' +
                 '<select id="form-diaVigencia' + num + '" onchange="mostrarSelect2(\'form-diaVigencia' + num + '\');">' +
@@ -407,6 +427,9 @@ function EditVarRut(num) {
     } else if (!$('#form-chkHeader' + num).is(":checked")) {
         $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
         $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter variable"/>');
+    } else if (!$('#form-chkParametro' + num).is(":checked")) {
+        $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
+        $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter variable"/>');
     }
 }
 
@@ -414,10 +437,33 @@ function EditVarHeader(num) {
     if ($('#form-chkHeader' + num).is(":checked")) {
         $("#form-chkRut" + num).parent().removeClass("checked");
         $("#form-chkRut" + num).prop("checked", false);
+        $("#form-chkParametro" + num).parent().removeClass("checked");
+        $("#form-chkParametro" + num).prop("checked", false);
         $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
         $("#form-cantDiaslabel" + num).val('SOAPAction');
         $("#form-cantDiaslabel" + num).attr("disabled", true);
     } else if (!$('#form-chkRut' + num).is(":checked")) {
+        $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
+        $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter variable"/>');
+    } else if (!$('#form-chkParametro' + num).is(":checked")) {
+        $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
+        $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter variable"/>');
+    }
+}
+
+function EditParametroHeader(num) {
+    if ($('#form-chkParametro' + num).is(":checked")) {
+        $("#form-chkRut" + num).parent().removeClass("checked");
+        $("#form-chkRut" + num).prop("checked", false);
+        $("#form-chkHeader" + num).parent().removeClass("checked");
+        $("#form-chkHeader" + num).prop("checked", false);
+        $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
+        $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="variable"/>');
+        $("#form-cantDiasvar" + num).attr("disabled", true);
+    } else if (!$('#form-chkRut' + num).is(":checked")) {
+        $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
+        $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter variable"/>');
+    } else if (!$('#form-chkHeader' + num).is(":checked")) {
         $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
         $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter variable"/>');
     }
@@ -464,9 +510,6 @@ function limpiarForm(tipo) {
             $('#servicio-default').hide();
         }
     }
-    if (codigo === 23 && tipo != 3) {
-        selectedF('form-empresa', 0);
-    }
     selectedF('form-tipoVigencia', '1');
     selectedF('form-tipoPersona', '0');
     selectedF('form-tipoWs', '1');
@@ -494,6 +537,8 @@ function limpiarForm(tipo) {
     $("#divCantDiasPar1").html('<input type="text" id="form-cantDiasPar1" name="name" required="required" placeholder="Ej: Edad"/>');
     $("#form-chkHeader1").parent().removeClass("checked");
     $("#form-chkHeader1").prop("checked", false);
+    $("#form-chkParametro1").parent().removeClass("checked");
+    $("#form-chkParametro1").prop("checked", false);
     $("#form-chkRut1").parent().removeClass("checked");
     $("#form-chkRut1").prop("checked", false);
     $('#addVar' + contPar).show();
@@ -516,8 +561,7 @@ function limpiarForm(tipo) {
     $("#divCantDiaslabelPar1").attr('disabled', false);
     $("#divCantDiasPar1").attr('disabled', false);
     $("#form-chkHeader1").attr('disabled', false);
-    $("#form-chkHeader1").attr('disabled', false);
-    $("#form-chkRut1").attr('disabled', false);
+    $("#form-chkParametro1").attr('disabled', false);
     $("#form-chkRut1").attr('disabled', false);
     $("#form-TipoDato1").attr('disabled', false);
     $('#form-chkRut1').attr('disabled', false);
@@ -548,25 +592,24 @@ function listarEmpresas() {
         success: function (data, textStatus, jqXHR) {
             if (data.estado == 200) {
                 for (var dato in data.datos) {
-                    if (codigo != 23) {
-                        if (data.datos[dato].ID === idEmp) {
-                            $('#form-empresa').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
-                            selectedF('form-empresa', idEmp);
-                            initTables(1);
-                            listarOrigen();
-                            break;
-                        }
-                    } else {
+//                    if (codigo != 23) {
+                    if (data.datos[dato].ID === idEmp) {
                         $('#form-empresa').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
+                        selectedF('form-empresa', idEmp);
+                        initTables(1);
+                        listarOrigen();
+                        break;
                     }
+//                    } else {
+//                        $('#form-empresa').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
+//                    }
                 }
-                if (codigo === 23) {
-                    $('#form-empresa').attr('onchange', 'initTables(1);listarOrigen();');
-                    $('#tableServicios').DataTable().rows().remove().draw();
-                    $('#tableServicios tbody').append('<tr id="trCargando" class="odd" style="text-align: center;"><td valign="top" colspan="7" class="dataTables_empty" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i>  Buscando Registros</td></tr>');
-                    listarServi();
-                }
-
+//                if (codigo === 23) {
+//                    $('#form-empresa').attr('onchange', 'initTables(1);listarOrigen();');
+//                    $('#tableServicios').DataTable().rows().remove().draw();
+//                    $('#tableServicios tbody').append('<tr id="trCargando" class="odd" style="text-align: center;"><td valign="top" colspan="7" class="dataTables_empty" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i>  Buscando Registros</td></tr>');
+//                    listarServi();
+//                }
             }
         }
     });
@@ -874,10 +917,15 @@ function agregarVariEntrada(creden) {
             i++;
             $('#form-chkRut' + contVar).attr('disabled', true);
             $('#form-chkHeader' + contVar).attr('disabled', true);
+            $('#form-chkParametro' + contVar).attr('disabled', true);
         }
-        $('#addVa').hide();
+        limitVar = contVar + 1;
+        varDeF = true;
+        $('#btnEliminarVar').hide();
     } else {
-        $('#addVa').show();
+        limitVar = 0;
+        varDeF = false;
+        $('#btnEliminarVar').show();
     }
 }
 

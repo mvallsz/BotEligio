@@ -16,20 +16,20 @@ function listarEmpresasU() {
         success: function (data, textStatus, jqXHR) {
             if (data.estado == 200) {
                 for (var dato in data.datos) {
-                    if (codigo != 23) {
-                        if (data.datos[dato].ID === idEmp) {
-                            $('#form-empresau').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
-                            selectedF('form-empresau', idEmp);
-                            buscarUser();
-                            break;
-                        }
-                    } else {
+//                    if (codigo != 23) {
+                    if (data.datos[dato].ID === idEmp) {
                         $('#form-empresau').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
+                        selectedF('form-empresau', idEmp);
+                        buscarUser();
+                        break;
                     }
+//                    } else {
+//                        $('#form-empresau').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
+//                    }
                 }
-                if (codigo === 23) {
-                    $('#form-empresau').attr('onchange', 'buscarUser()');
-                }
+//                if (codigo === 23) {
+//                    $('#form-empresau').attr('onchange', 'buscarUser()');
+//                }
             }
         }
     });

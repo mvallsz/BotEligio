@@ -50,13 +50,13 @@ import org.json.XML;
  */
 public class BnDatos {
 
-    public static JSONObject obtenerDatosSoap(String rut, String parametros, String url, String xml, int tipoResponse) {
+    public static JSONObject obtenerDatosSoap(String rut, String parametros, String url, String xml, int tipoResponse, String parametrosWeb, boolean web) {
         JSONObject respuesta = new JSONObject();
         try {
             SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
             SOAPConnection soapConnection = soapConnectionFactory.createConnection();
             // Send SOAP Message to SOAP Server
-            SOAPMessage soapResponse = soapConnection.call(createSOAPRequest(rut, parametros, xml), url);
+            SOAPMessage soapResponse = soapConnection.call(createSOAPRequest(rut, parametros, xml, parametrosWeb, web), url);
             String resp = soapAstring(soapResponse);
             byte[] ptext = resp.getBytes(ISO_8859_1);
             String value = new String(ptext, UTF_8);
@@ -69,35 +69,46 @@ public class BnDatos {
         return respuesta;
     }
 
-    private static SOAPMessage createSOAPRequest(String rut, String credenciales, String xml) throws JSONException {
+    private static SOAPMessage createSOAPRequest(String rut, String credenciales, String xml, String parametrosWeb, boolean web) throws JSONException {
 
         SOAPMessage soapMessage = null;
         try {
             String message = "";
             String[] xmlS = xml.split("\n");
             JSONObject json = new JSONObject(credenciales);
+            for (String x : JSONObject.getNames(json)) {
+                if (x.equalsIgnoreCase("parametros")) {
+                    json.remove(x);
+                    break;
+                }
+            }
+            if (web) {
+                json = reemplDatConst(json.toString(), parametrosWeb);
+            }
             for (int i = 0; i < xmlS.length; i++) {
                 String texto = xmlS[i];
                 for (String name : JSONObject.getNames(json)) {
                     if (texto.contains(name)) {
                         String valor = json.get(name).toString();
-                        if (valor.equalsIgnoreCase("dv") || valor.equalsIgnoreCase("rut") || valor.equalsIgnoreCase("rut-dv") || valor.equalsIgnoreCase("rutdv")) {
-                            switch (valor.toUpperCase()) {
-                                case "RUT":
-                                    String[] var = rut.split("-");
-                                    valor = var[0];
-                                    break;
-                                case "DV":
-                                    String[] var1 = rut.split("-");
-                                    valor = var1[1];
-                                    break;
-                                case "RUT-DV":
-                                    valor = rut;
-                                    break;
-                                case "RUTDV":
-                                    String[] var2 = rut.split("-");
-                                    valor = var2[0] + "" + var2[1];
-                                    break;
+                        if (!web) {
+                            if (valor.equalsIgnoreCase("dv") || valor.equalsIgnoreCase("rut") || valor.equalsIgnoreCase("rut-dv") || valor.equalsIgnoreCase("rutdv")) {
+                                switch (valor.toUpperCase()) {
+                                    case "RUT":
+                                        String[] var = rut.split("-");
+                                        valor = var[0];
+                                        break;
+                                    case "DV":
+                                        String[] var1 = rut.split("-");
+                                        valor = var1[1];
+                                        break;
+                                    case "RUT-DV":
+                                        valor = rut;
+                                        break;
+                                    case "RUTDV":
+                                        String[] var2 = rut.split("-");
+                                        valor = var2[0] + "" + var2[1];
+                                        break;
+                                }
                             }
                         }
                         texto = texto.replace("?", valor);
@@ -124,12 +135,21 @@ public class BnDatos {
         return soapMessage;
     }
 
-    public static JSONObject obtenerDatosRest(String rut, String credenciales, String url, String xml, int tipoResponse) {
+    public static JSONObject obtenerDatosRest(String rut, String credenciales, String url, String xml, int tipoResponse, String parametrosWeb, boolean web) {
         JSONObject respuesta = new JSONObject();
         try {
             int cont = 1;
             String Get = url;
             JSONObject json = new JSONObject(credenciales);
+            for (String x : JSONObject.getNames(json)) {
+                if (x.equalsIgnoreCase("parametros")) {
+                    json.remove(x);
+                    break;
+                }
+            }
+            if (web) {
+                json = reemplDatConst(json.toString(), parametrosWeb);
+            }
             for (String name : JSONObject.getNames(json)) {
                 if (cont == 1) {
                     Get = Get + "?" + name + "=";
@@ -138,23 +158,25 @@ public class BnDatos {
                     Get = Get + "&" + name + "=";
                 }
                 String valor = json.get(name).toString();
-                if (valor.equalsIgnoreCase("dv") || valor.equalsIgnoreCase("rut") || valor.equalsIgnoreCase("rut-dv") || valor.equalsIgnoreCase("rutdv")) {                    //RUT SIEMPRE VENDRA CON EN -
-                    switch (valor.toUpperCase()) {
-                        case "RUT":
-                            String[] var = rut.split("-");
-                            valor = var[0];
-                            break;
-                        case "DV":
-                            String[] var1 = rut.split("-");
-                            valor = var1[1];
-                            break;
-                        case "RUT-DV":
-                            valor = rut;
-                            break;
-                        case "RUTDV":
-                            String[] var2 = rut.split("-");
-                            valor = var2[0] + "" + var2[1];
-                            break;
+                if (!web) {
+                    if (valor.equalsIgnoreCase("dv") || valor.equalsIgnoreCase("rut") || valor.equalsIgnoreCase("rut-dv") || valor.equalsIgnoreCase("rutdv")) { //RUT SIEMPRE VENDRA CON EN -
+                        switch (valor.toUpperCase()) {
+                            case "RUT":
+                                String[] var = rut.split("-");
+                                valor = var[0];
+                                break;
+                            case "DV":
+                                String[] var1 = rut.split("-");
+                                valor = var1[1];
+                                break;
+                            case "RUT-DV":
+                                valor = rut;
+                                break;
+                            case "RUTDV":
+                                String[] var2 = rut.split("-");
+                                valor = var2[0] + "" + var2[1];
+                                break;
+                        }
                     }
                 }
                 Get = Get + valor;
@@ -266,35 +288,83 @@ public class BnDatos {
         return resp;
     }
 
-    public static int verificarVigencia(String rut, int vigencia, long idEmpresa, int vigenciaCantDias, int diaVigencia, int isActivo, long idServi) {
+    public static int verificarVigencia(String rut, int vigencia, long idEmpresa, int vigenciaCantDias, int diaVigencia, int isActivo, long idServi, String parametros, boolean web) {
         int cantidad = 1;//NO ESTA REGISTRADO EN CACHE
         Connection con = Conexion.getConn();
         try {
-
-            String[] r = rut.split("-");
-            DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+            JSONObject jParam = new JSONObject();
             Date fechaActual = new Date();
             Date fechaUltima = null;
+            String query = "";
+            if (web) {
+                jParam = new JSONObject(parametros);
+                JSONObject jaux = new JSONObject();
+                query = "SELECT credenciales FROM " + DEF.ESQUEMA + ".SERV_ORIGEN_EMPRESA WHERE ID=?;";
+                PreparedStatement pst1 = con.prepareStatement(query);
+                pst1.setLong(1, idServi);
+                ResultSet rs = pst1.executeQuery();
+                while (rs.next()) {
+                    JSONObject creden = new JSONObject((rs.getString(1) == null || rs.getString(1).equals("") ? "{}" : rs.getString(1)));
+                    if (creden.has("parametros")) {
+                        JSONArray param = creden.getJSONArray("parametros");
+                        for (String name : JSONObject.getNames(jParam)) {
+                            for (int i = 0; i < param.length(); i++) {
+                                if (param.getString(i).equals(name)) {
+                                    jaux.put(name, jParam.get(name));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                jParam = jaux;
+                for (String name : JSONObject.getNames(jParam)) {
+                    query = "SELECT UPDATED_DATE FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE PARAMETROS like ? AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
+                    PreparedStatement pst2 = con.prepareStatement(query);
+                    pst2.setString(1, ("%\"" + name + "\":" + jParam.get(name) + "%"));
+                    pst2.setLong(2, idEmpresa);
+                    pst2.setLong(3, idServi);
+                    ResultSet rs1 = pst2.executeQuery();
+                    if (rs1.next()) {
+                        fechaUltima = rs1.getDate("UPDATED_DATE");
+                        break;
+                    }
+                }
+                if (fechaUltima == null) {
+                    for (String name : JSONObject.getNames(jParam)) {
+                        query = "SELECT FECHA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE PARAMETROS like ? AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
+                        PreparedStatement pst = con.prepareStatement(query);
+                        pst.setString(1, ("%\"" + name + "\":" + jParam.get(name) + "%"));
+                        pst.setLong(2, idEmpresa);
+                        pst.setLong(3, idServi);
+                        ResultSet rs2 = pst.executeQuery();
+                        if (rs2.next()) {
+                            fechaUltima = rs2.getDate("FECHA");
+                            break;
+                        }
+                    }
+                }
+            } else {
+                query = "SELECT UPDATED_DATE FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE PARAMETROS like ? AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
+                PreparedStatement pst2 = con.prepareStatement(query);
+                pst2.setString(1, rut);
+                pst2.setLong(2, idEmpresa);
+                pst2.setLong(3, idServi);
+                ResultSet rs1 = pst2.executeQuery();
+                if (rs1.next()) {
+                    fechaUltima = rs1.getDate("UPDATED_DATE");
+                }
 
-            String query = "SELECT UPDATED_DATE FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE RUT = ? AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
-            PreparedStatement pst2 = con.prepareStatement(query);
-            pst2.setString(1, r[0]);
-            pst2.setLong(2, idEmpresa);
-            pst2.setLong(3, idServi);
-            ResultSet rs1 = pst2.executeQuery();
-            if (rs1.next()) {
-                fechaUltima = rs1.getDate("UPDATED_DATE");
-            }
-
-            if (fechaUltima == null) {
-                query = "SELECT FECHA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE RUT = ? AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
-                PreparedStatement pst = con.prepareStatement(query);
-                pst.setString(1, r[0]);
-                pst.setLong(2, idEmpresa);
-                pst.setLong(3, idServi);
-                ResultSet rs = pst.executeQuery();
-                if (rs.next()) {
-                    fechaUltima = rs.getDate("FECHA");
+                if (fechaUltima == null) {
+                    query = "SELECT FECHA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE PARAMETROS like ? AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
+                    PreparedStatement pst = con.prepareStatement(query);
+                    pst.setString(1, rut);
+                    pst.setLong(2, idEmpresa);
+                    pst.setLong(3, idServi);
+                    ResultSet rs = pst.executeQuery();
+                    if (rs.next()) {
+                        fechaUltima = rs.getDate("FECHA");
+                    }
                 }
             }
             if (fechaUltima != null) {
@@ -307,7 +377,7 @@ public class BnDatos {
                     cantidad = 3;//NO ESTA VIGENTE
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnResponse.class.getName(), ex.toString()});
             ex.printStackTrace(System.out);
             cantidad = 4;
@@ -370,22 +440,57 @@ public class BnDatos {
 
     }
 
-    public static void buscarEnCache(String rut, long idEmpresa, long idServicio, String token, String user) {
+    public static void buscarEnCache(String rut, long idEmpresa, long idServicio, String token, String user, String parametros, boolean web) {
         System.out.println("Buscando en Cache " + idServicio);
-        String[] r = rut.split("-");
         Connection con = Conexion.getConn();
         try {
-            PreparedStatement pst;
-            ResultSet rs;
-            String query = "SELECT ID, DATA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE RUT = ? AND SERVICIO = ? AND ID_EMPRESA = ? ORDER BY FECHA DESC LIMIT 1";
-            pst = con.prepareStatement(query);
-            pst.setString(1, r[0]);
-            pst.setLong(2, idServicio);
-            pst.setLong(3, idEmpresa);
-            rs = pst.executeQuery();
-            if (rs.next()) {
-                BigInteger idConsulta = BigInteger.valueOf(rs.getLong("ID"));
-                guardarRegistroConsulta(idEmpresa, idConsulta, user, token, 2);
+            JSONObject jParam = new JSONObject();
+            if (web) {
+                jParam = new JSONObject(parametros);
+                JSONObject jaux = new JSONObject();
+                String query = "SELECT credenciales FROM " + DEF.ESQUEMA + ".SERV_ORIGEN_EMPRESA WHERE ID=?;";
+                PreparedStatement pst1 = con.prepareStatement(query);
+                pst1.setLong(1, idServicio);
+                ResultSet rs1 = pst1.executeQuery();
+                while (rs1.next()) {
+                    JSONObject creden = new JSONObject((rs1.getString(1) == null || rs1.getString(1).equals("") ? "{}" : rs1.getString(1)));
+                    if (creden.has("parametros")) {
+                        JSONArray param = creden.getJSONArray("parametros");
+                        for (String name : JSONObject.getNames(jParam)) {
+                            for (int i = 0; i < param.length(); i++) {
+                                if (param.getString(i).equals(name)) {
+                                    jaux.put(name, jParam.get(name));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                jParam = jaux;
+                for (String name : JSONObject.getNames(jParam)) {
+                    query = "SELECT ID, DATA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE PARAMETROS like ? AND SERVICIO = ? AND ID_EMPRESA = ? ORDER BY FECHA DESC LIMIT 1";
+                    PreparedStatement pst = con.prepareStatement(query);
+                    pst.setString(1, ("%\"" + name + "\":" + jParam.get(name) + "%"));
+                    pst.setLong(2, idServicio);
+                    pst.setLong(3, idEmpresa);
+                    ResultSet rs = pst.executeQuery();
+                    if (rs.next()) {
+                        BigInteger idConsulta = BigInteger.valueOf(rs.getLong("ID"));
+                        guardarRegistroConsulta(idEmpresa, idConsulta, user, token, 2);
+                        break;
+                    }
+                }
+            } else {
+                String query = "SELECT ID, DATA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE PARAMETROS like ? AND SERVICIO = ? AND ID_EMPRESA = ? ORDER BY FECHA DESC LIMIT 1";
+                PreparedStatement pst = con.prepareStatement(query);
+                pst.setString(1, rut);
+                pst.setLong(2, idServicio);
+                pst.setLong(3, idEmpresa);
+                ResultSet rs = pst.executeQuery();
+                if (rs.next()) {
+                    BigInteger idConsulta = BigInteger.valueOf(rs.getLong("ID"));
+                    guardarRegistroConsulta(idEmpresa, idConsulta, user, token, 2);
+                }
             }
         } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
@@ -433,27 +538,56 @@ public class BnDatos {
         }
     }
 
-    public static BigInteger guardarEnCache(String rut, String data, long idEmpresa, String emailUsuario, long idServi) {
+    public static BigInteger guardarEnCache(String rut, String data, long idEmpresa, String emailUsuario, long idServi, String parametrosWeb, boolean web) {
         System.out.println("Guardar en Cache " + idServi);
         data = data.replace("\\\"", "");
         Connection con = Conexion.getConn();
         try {
-            String[] r = rut.split("-");
-            Statement stmt = null;
-            ResultSet rs;
-            stmt = con.createStatement();
+            JSONObject jsonParam = new JSONObject();
+            if (web) {
+                jsonParam = new JSONObject(parametrosWeb);
+                JSONObject jaux = new JSONObject();
+                String query = "SELECT credenciales FROM " + DEF.ESQUEMA + ".SERV_ORIGEN_EMPRESA WHERE ID=?;";
+                PreparedStatement pst = con.prepareStatement(query);
+                pst.setLong(1, idServi);
+                ResultSet rs = pst.executeQuery();
+                while (rs.next()) {
+                    JSONObject creden = new JSONObject((rs.getString(1) == null || rs.getString(1).equals("") ? "{}" : rs.getString(1)));
+                    if (creden.has("parametros")) {
+                        JSONArray param = creden.getJSONArray("parametros");
+                        for (String name : JSONObject.getNames(jsonParam)) {
+                            for (int i = 0; i < param.length(); i++) {
+                                if (param.getString(i).equals(name)) {
+                                    jaux.put(name, jsonParam.get(name));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                jsonParam = jaux;
+            } else {
+                jsonParam = new JSONObject(rut);
+            }
             if (data.length() > 2) {
-                stmt.executeUpdate("INSERT INTO " + DEF.ESQUEMA + ".DATA_RESPONSE\n"
-                        + "(ID_EMPRESA, RUT, DV, `DATA`, SERVICIO, FECHA, CREATED_BY, CREATED_DATE)\n"
-                        + "VALUES( " + idEmpresa + ", '" + r[0] + "', '" + r[1] + "', '" + data + "','" + idServi + "', CURRENT_TIMESTAMP,'" + emailUsuario + "', CURRENT_TIMESTAMP);", Statement.RETURN_GENERATED_KEYS);
-                rs = stmt.getGeneratedKeys();
+                String sql = "INSERT INTO " + DEF.ESQUEMA + ".DATA_RESPONSE\n"
+                        + "(ID_EMPRESA, PARAMETROS, `DATA`, SERVICIO, FECHA, CREATED_BY, CREATED_DATE)\n"
+                        + "VALUES( ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, CURRENT_TIMESTAMP);";
+                PreparedStatement pst2 = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                pst2.setLong(1, idEmpresa);
+                pst2.setString(2, jsonParam.toString());
+                pst2.setString(3, data);
+                pst2.setLong(4, idServi);
+                pst2.setString(5, emailUsuario);
+                pst2.executeUpdate();
+                ResultSet rs = pst2.getGeneratedKeys();
                 if (rs.next()) {
                     java.math.BigInteger idConsulta = rs.getBigDecimal(1).toBigInteger();
                     return idConsulta;
                 }
                 return new BigInteger("0");
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
             ex.printStackTrace(System.out);
         } finally {
@@ -462,35 +596,78 @@ public class BnDatos {
         return new BigInteger("0");
     }
 
-    public static BigInteger actualizarEnCache(String rut, String data, String correo_usuario, long idEmpresa, long idServicio) {
+    public static BigInteger actualizarEnCache(String rut, String data, String correo_usuario, long idEmpresa, long idServicio, String parametrosWeb, boolean web) {
         System.out.println("Actualizar datos Cache");
         data = data.replace("\\\"", "");
         Connection con = Conexion.getConn();
         try {
-            String[] r = rut.split("-");
-            if (data.length() > 2) {
-                String query = "SELECT ID FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE RUT = ?  AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1;";
-                PreparedStatement pst = con.prepareStatement(query);
-                pst.setString(1, r[0]);
-                pst.setLong(2, idEmpresa);
-                pst.setLong(3, idServicio);
-                ResultSet rs = pst.executeQuery();
-                if (rs.next()) {
-                    query = "UPDATE " + DEF.ESQUEMA + ".DATA_RESPONSE SET `DATA`=?, UPDATED_BY= ?, UPDATED_DATE=CURRENT_TIMESTAMP \n"
-                            + "WHERE ID=? AND ID_EMPRESA= ? AND  SERVICIO = ? AND RUT=?";
-                    PreparedStatement pst1 = con.prepareStatement(query);
-                    pst1.setString(1, data);
-                    pst1.setString(2, correo_usuario);
-                    pst1.setLong(3, rs.getLong(1));
-                    pst1.setLong(4, idEmpresa);
-                    pst1.setLong(5, idServicio);
-                    pst1.setString(6, r[0]);
-                    pst1.executeUpdate();
-                    return new BigInteger(rs.getString("ID"));
+            String query = "";
+            long idAc = 0;
+            JSONObject jsonParam = new JSONObject();
+            if (web) {
+                jsonParam = new JSONObject(parametrosWeb);
+                JSONObject jaux = new JSONObject();
+                query = "SELECT credenciales FROM " + DEF.ESQUEMA + ".SERV_ORIGEN_EMPRESA WHERE ID=?;";
+                PreparedStatement pst1 = con.prepareStatement(query);
+                pst1.setLong(1, idServicio);
+                ResultSet rs1 = pst1.executeQuery();
+                while (rs1.next()) {
+                    JSONObject creden = new JSONObject((rs1.getString(1) == null || rs1.getString(1).equals("") ? "{}" : rs1.getString(1)));
+                    if (creden.has("parametros")) {
+                        JSONArray param = creden.getJSONArray("parametros");
+                        for (String name : JSONObject.getNames(jsonParam)) {
+                            for (int i = 0; i < param.length(); i++) {
+                                if (param.getString(i).equals(name)) {
+                                    jaux.put(name, jsonParam.get(name));
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
+                jsonParam = jaux;
+                if (data.length() > 2) {
+                    for (String name : JSONObject.getNames(jsonParam)) {
+                        query = "SELECT ID FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE PARAMETROS = ?  AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1;";
+                        PreparedStatement pst = con.prepareStatement(query);
+                        pst.setString(1, ("%\"" + name + "\":" + jsonParam.get(name) + "%"));
+                        pst.setLong(2, idEmpresa);
+                        pst.setLong(3, idServicio);
+                        ResultSet rs = pst.executeQuery();
+                        if (rs.next()) {
+                            idAc = rs.getLong(1);
+                            break;
+                        }
+                    }
+                }
+            } else {
+                if (data.length() > 2) {
+                    query = "SELECT ID FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE PARAMETROS = ?  AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1;";
+                    PreparedStatement pst = con.prepareStatement(query);
+                    pst.setString(1, rut);
+                    pst.setLong(2, idEmpresa);
+                    pst.setLong(3, idServicio);
+                    ResultSet rs = pst.executeQuery();
+                    if (rs.next()) {
+                        idAc = rs.getLong(1);
+                    }
+                }
+            }
+            if (idAc > 0) {
+                query = "UPDATE " + DEF.ESQUEMA + ".DATA_RESPONSE SET `DATA`=?, UPDATED_BY= ?, UPDATED_DATE=CURRENT_TIMESTAMP \n"
+                        + "WHERE ID=? AND ID_EMPRESA= ? AND  SERVICIO = ?";
+                PreparedStatement pst1 = con.prepareStatement(query);
+                pst1.setString(1, data);
+                pst1.setString(2, correo_usuario);
+                pst1.setLong(3, idAc);
+                pst1.setLong(4, idEmpresa);
+                pst1.setLong(5, idServicio);
+                pst1.executeUpdate();
+                return new BigInteger(String.valueOf(idAc));
+            } else {
                 return new BigInteger("0");
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
             ex.printStackTrace(System.out);
         } finally {
@@ -499,11 +676,10 @@ public class BnDatos {
         return new BigInteger("0");
     }
 
-    public static String buscarDatosServicios(String token, long idEmpresa, String rut, long idServicio) throws IOException, JSONException {
+    public static String buscarDatosServicios(String token, long idEmpresa, long idServicio) {
         String datos = "";
         Connection con = Conexion.getConn();
         try {
-            String[] r = rut.split("-");
             String query = "SELECT RG.ID_DATA_RESPONSE FROM " + DEF.ESQUEMA + ".REGISTRO_CONSULTAS RG\n"
                     + "JOIN " + DEF.ESQUEMA + ".DATA_RESPONSE DT ON (RG.ID_DATA_RESPONSE = DT.ID)\n"
                     + "JOIN " + DEF.ESQUEMA + ".SERV_ORIGEN_EMPRESA SER ON (DT.SERVICIO = SER.ID)\n"
@@ -514,10 +690,9 @@ public class BnDatos {
             pst.setLong(3, idServicio);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
-                query = "SELECT `DATA` FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE ID = ? AND RUT = ?;";
+                query = "SELECT `DATA` FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE ID = ?;";
                 PreparedStatement pst2 = con.prepareStatement(query);
                 pst2.setLong(1, rs.getLong(1));
-                pst2.setString(2, r[0]);
                 ResultSet rs2 = pst2.executeQuery();
                 while (rs2.next()) {
                     datos = rs2.getString(1);
@@ -526,7 +701,7 @@ public class BnDatos {
             if (datos == "") {
                 datos = "SIN DATOS";
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
             ex.printStackTrace(System.out);
             datos = "ERROR";
@@ -579,7 +754,7 @@ public class BnDatos {
         Connection con = Conexion.getConn();
         try {
             String query = "SELECT SER.id_origen, ORI.DESCRIPCION FROM " + DEF.ESQUEMA + ".SERV_ORIGEN_EMPRESA SER\n"
-                    + "JOIN HUB_DP.ORIGEN ORI ON (SER.id_origen = ORI.ID)\n"
+                    + "JOIN " + DEF.ESQUEMA + ".ORIGEN ORI ON (SER.id_origen = ORI.ID)\n"
                     + "WHERE SER.id_empresa = ? GROUP BY SER.id_origen ORDER BY SER.id_origen ASC;";//origen
             PreparedStatement pst = con.prepareStatement(query);
             pst.setLong(1, idEmpresa);
@@ -589,7 +764,7 @@ public class BnDatos {
                 JSONArray servicio = new JSONArray();
                 origen.put("ID", rs.getLong(1));
                 origen.put("NOMBRE", rs.getString(2));
-                query = "SELECT ID, nombre FROM " + DEF.ESQUEMA + ".SERV_ORIGEN_EMPRESA WHERE id_origen = ? AND id_empresa = ?;";//servicio
+                query = "SELECT ID, nombre FROM " + DEF.ESQUEMA + ".SERV_ORIGEN_EMPRESA WHERE id_origen = ? AND id_empresa = ? AND activo = 1;";//servicio
                 PreparedStatement pst1 = con.prepareStatement(query);
                 pst1.setLong(1, rs.getLong(1));
                 pst1.setLong(2, idEmpresa);
@@ -704,4 +879,215 @@ public class BnDatos {
         }
         return rsp;
     }
+
+    public static JSONObject reemplDatConst(String credenciales, String parametrosWeb) {
+        JSONObject resp = new JSONObject();
+        try {
+            JSONObject jsonCreden = new JSONObject(credenciales);
+            JSONObject jsonParam = new JSONObject(parametrosWeb);
+            for (String Creden : JSONObject.getNames(jsonCreden)) {
+                boolean agregar = true;
+                for (String Param : JSONObject.getNames(jsonParam)) {
+                    if (Param.equals(Creden)) {
+                        resp.put(Param, jsonParam.get(Param));
+                        agregar = false;
+                        break;
+                    }
+                }
+                if (agregar) {
+                    resp.put(Creden, jsonCreden.get(Creden));
+                }
+            }
+            JSONObject aux = resp;
+            for (String Param : JSONObject.getNames(jsonParam)) {
+                boolean agregar = true;
+                for (String Aux : JSONObject.getNames(aux)) {
+                    if (Aux.equals(Param)) {
+                        agregar = false;
+                        break;
+                    }
+                }
+                if (agregar) {
+                    resp.put(Param, jsonParam.get(Param));
+                }
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        }
+        return resp;
+    }
+
+    public String obtenerURL(BigInteger id, BigInteger idEmp) {
+        Connection con = Conexion.getConn();
+        String resp = "";
+        try {
+            JSONArray json = new JSONArray();
+            String sql = "SELECT DATOS FROM " + DEF.ESQUEMA + ".RESPONSE_EMPRESA WHERE ID = ?;";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, id.toString());
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                JSONArray j = (rs.getString(1) == null || rs.getString(1).equals("") ? new JSONArray() : new JSONArray(rs.getString(1)));
+                for (int i = 0; i < j.length(); i++) {
+                    JSONObject aux = new JSONObject(j.get(i).toString());
+                    boolean existe = false;
+                    if (json.length() > 0) {
+                        for (int k = 0; k < json.length(); k++) {
+                            if (aux.getLong("idServicio") == json.getLong(k)) {
+                                existe = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!existe) {
+                        json.put(aux.getLong("idServicio"));
+                    }
+                }
+            }
+
+            for (int i = 0; i < json.length(); i++) {
+                resp = obtenerParam(new BigInteger(json.get(i).toString()), resp);
+            }
+            if (!resp.equals("")) {
+                String uResp = "?id=" + id + "&amp;empresa=" + idEmp + "&amp;user=<em>-</em>&amp;password=<em>-</em>&amp;parametros=" + resp;
+                resp = DEF.DOMINIO_WEB_SERV + "" + uResp;
+                sql = "UPDATE " + DEF.ESQUEMA + ".RESPONSE_EMPRESA SET URL = ? WHERE ID = ?;";
+                PreparedStatement pst2 = con.prepareStatement(sql);
+                pst2.setString(1, uResp);
+                pst2.setString(2, id.toString());
+                pst2.executeUpdate();
+            }
+            return resp;
+
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(con);
+        }
+        return "";
+    }
+
+    public String obtenerParam(BigInteger idServ, String comparar) {
+        Connection con = Conexion.getConn();
+        String resp = "";
+        try {
+            JSONObject json = new JSONObject();
+            String sql = "SELECT credenciales FROM " + DEF.ESQUEMA + ".SERV_ORIGEN_EMPRESA WHERE ID = ?;";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, idServ.toString());
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                json = (rs.getString(1) == null || rs.getString(1).equals("") ? new JSONObject() : new JSONObject(rs.getString(1)));
+            }
+            if (json.has("parametros")) {
+                JSONArray jParam = json.getJSONArray("parametros");
+                for (int i = 0; i < jParam.length(); i++) {
+                    if (!comparar.contains(jParam.getString(i))) {
+                        resp += (!comparar.equals("") ? "," : "") + jParam.getString(i) + ":<em>-</em>" + ((i + 1) == jParam.length() ? "" : ",");
+                    }
+                }
+            }
+            return resp;
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(con);
+        }
+        return "";
+    }
+
+    public boolean validarUSer(String user, String pass, BigInteger id, BigInteger idEmp) {
+        boolean val = false;
+        Connection con = Conexion.getConn();
+        try {
+            BigInteger bid = new BigInteger("0");
+            String sql = "SELECT ID FROM " + DEF.ESQUEMA + ".USUARIO WHERE usuario=? AND password=? AND estado = 1 AND id_empresa = ?;";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, user);
+            pst.setString(2, pass);
+            pst.setString(3, idEmp.toString());
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                bid = new BigInteger(rs.getString(1));
+            }
+            sql = "SELECT * FROM " + DEF.ESQUEMA + ".USUARIO_has_RESPONSE WHERE USUARIO=? AND RESPONSE=?;";
+            PreparedStatement pst1 = con.prepareStatement(sql);
+            pst1.setString(1, bid.toString());
+            pst1.setString(2, id.toString());
+            ResultSet rs2 = pst1.executeQuery();
+            while (rs2.next()) {
+                val = true;
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(con);
+        }
+        return val;
+    }
+
+    public JSONObject buscarDatUser(String user, String pass, BigInteger IDeMP) {
+        JSONObject rsp = new JSONObject();
+        Connection con = Conexion.getConn();
+        try {
+            String sql = "SELECT US.nombre, CU.historial, CU.ID FROM " + DEF.ESQUEMA + ".USUARIO US\n"
+                    + "JOIN " + DEF.ESQUEMA + ".cuentaEmpresa CU ON (US.id_empresa = CU.ID)\n"
+                    + "WHERE US.usuario = ? AND US.password = ? AND id_empresa = ?;";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, user);
+            pst.setString(2, pass);
+            pst.setString(3, IDeMP.toString());
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                rsp.put("user", rs.getString(1));
+                rsp.put("hist", rs.getInt(2));
+                rsp.put("idEmp", rs.getLong(3));
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(con);
+        }
+        return rsp;
+    }
+
+    public JSONArray obtenerRuta(long id) {
+        Connection con = Conexion.getConn();
+        JSONArray resp = new JSONArray();
+        try {
+            String sql = "SELECT NOMBRE, URL, ID FROM " + DEF.ESQUEMA + ".RESPONSE_EMPRESA WHERE EMPRESA = ?;";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setLong(1, id);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                JSONObject j = new JSONObject();
+                j.put("nombre", rs.getString(1));
+                j.put("ruta", (DEF.DOMINIO_WEB_SERV + "" + rs.getString(2)));
+                j.put("id", rs.getLong(3));
+                JSONArray user = new JSONArray();
+                String sql2 = "SELECT US.usuario FROM " + DEF.ESQUEMA + ".USUARIO_has_RESPONSE UR JOIN " + DEF.ESQUEMA + ".USUARIO US ON (UR.USUARIO = US.ID)\n"
+                        + "WHERE UR.RESPONSE = ?";
+                PreparedStatement pst2 = con.prepareStatement(sql2);
+                pst2.setLong(1, rs.getLong(3));
+                ResultSet rs2 = pst2.executeQuery();
+                while (rs2.next()) {
+                    user.put(rs2.getString(1));
+                }
+                j.put("user", user);
+                resp.put(j);
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(con);
+        }
+        return resp;
+    }
+
 }

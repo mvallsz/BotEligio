@@ -76,10 +76,10 @@
         <div class="login-box">
             <section class="login-box-top">
                 <header>
-                    <h2 class="logo ac">vPad Login</h2>
+                    <h2 class="logo ac"></h2>
                 </header>
                 <section>
-                    <form id="form" class="has-validation" action="index.html" method="post" style="margin-top: 30px">
+                    <form id="form" class="has-validation" action="index.html" method="post" style="margin-top: 20px">
                         <div class="user-pass">
                             <input type="text" id="username" class="full" value="" name="username" required="required" placeholder="Username" />
                             <input type="password" id="password" class="full" value="" name="password" required="required" placeholder="Password" />

@@ -651,7 +651,7 @@ public class BnServicios {
         Connection con = Conexion.getConn();
         try {
             String sql = "SELECT SER.ID, SER.nombre, ORI.DESCRIPCION, SER.activo, SER.tipo_rut FROM " + DEF.ESQUEMA + ".SERV_ORIGEN_EMPRESA SER\n"
-                    + "JOIN " + DEF.ESQUEMA + ".ORIGEN ORI ON (SER.id_origen = ORI.ID) WHERE SER.id_empresa = ?;";
+                    + "JOIN " + DEF.ESQUEMA + ".ORIGEN ORI ON (SER.id_origen = ORI.ID) WHERE ORI.EMPRESA=0 AND SER.id_empresa = ?;";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setLong(1, idEmpresa);
             ResultSet rs = pst.executeQuery();

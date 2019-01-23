@@ -23,7 +23,8 @@ $(document).ready(function () {
             },
             yaxis: {
                 tickOptions: {
-                    formatString: '$%.2f'
+//                    formatString: '$%.2f'
+                    formatString: '%.0f'
                 }
             }
         },
@@ -161,26 +162,26 @@ function listarEmpresas() {
         success: function (data, textStatus, jqXHR) {
             if (data.estado == 200) {
                 for (var dato in data.datos) {
-                    if (codigo != 23) {
-                        if (data.datos[dato].ID === idEmp) {
-                            $('#form-empresa1').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
-                            selectedF('form-empresa1', idEmp);
-                            initTables1(1);
-                            initBureauActivo();
-                            listarOrigen1();
-                            break;
-                        }
-                    } else {
+//                    if (codigo != 23) {
+                    if (data.datos[dato].ID === idEmp) {
                         $('#form-empresa1').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
+                        selectedF('form-empresa1', idEmp);
+                        initTables1(1);
+                        initBureauActivo();
+                        listarOrigen1();
+                        break;
                     }
+//                    } else {
+//                        $('#form-empresa1').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
+//                    }
                 }
-                if (codigo === 23) {
-                    $('#form-empresa1').attr('onchange', 'initTables1(1);initBureauActivo();listarOrigen1();');
-                    $('#divBureauActivo').append('<h3 style="margin-bottom: 0px;">Sin datos</h3>');
-                    $('#tableConsultas').DataTable().rows().remove().draw();
-                    $('#tableConsultas tbody').append('<tr id="trCargando" class="odd" style="text-align: center;"><td valign="top" colspan="7" class="dataTables_empty" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i>  Buscando Registros</td></tr>');
-                    listarConsultas();
-                }
+//                if (codigo === 23) {
+//                    $('#form-empresa1').attr('onchange', 'initTables1(1);initBureauActivo();listarOrigen1();');
+//                    $('#divBureauActivo').append('<h3 style="margin-bottom: 0px;">Sin datos</h3>');
+//                    $('#tableConsultas').DataTable().rows().remove().draw();
+//                    $('#tableConsultas tbody').append('<tr id="trCargando" class="odd" style="text-align: center;"><td valign="top" colspan="7" class="dataTables_empty" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i>  Buscando Registros</td></tr>');
+//                    listarConsultas();
+//                }
             }
         }
     });

@@ -81,6 +81,8 @@ public class Svl_Servicios extends HttpServlet {
                                     JSONObject j2 = new JSONObject(jr.get(k).toString());
                                     result = bn.guardarVariablesHijo(idr, j2);
                                 }
+                            } else {
+                                result = true;
                             }
                         }
                         if (result) {

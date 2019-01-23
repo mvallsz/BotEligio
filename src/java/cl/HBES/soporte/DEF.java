@@ -11,12 +11,17 @@ package cl.HBES.soporte;
  */
 public class DEF {
 
-    public static final String DIRECCION = "jdbc:mysql://192.168.100.131:3306/";
-    public static final String USER = "desarrollo";
-    public static final String PASSWORD = "clavetemporal";
-    public static final String ESQUEMA = "HUB_DP";
+    static BnProperties prop = BnProperties.getInstancia();
+    public static final String DIRECCION = prop.getPropiedad("DIRECCION");
+    public static final String USER = prop.getPropiedad("USER");
+    public static final String PASSWORD = prop.getPropiedad("PASSWORD");
+    public static final String ESQUEMA = prop.getPropiedad("ESQUEMA");
+    
+    public static final String DOMINIO_WEB_SERV = prop.getPropiedad("DOMINIO_WEB_SERV");
 
     public static final String SESSION_USUARIO = "user_session";
     public static final String TITULO = "HBES";
     public static final String PAGE_LOGIN = "/login.jsp";
+
+
 }

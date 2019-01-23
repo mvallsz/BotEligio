@@ -9,6 +9,7 @@ import cl.HBES.beans.BnDatos;
 import cl.HBES.beans.BnUsuario;
 import cl.HBES.beans.BnResponse;
 import cl.HBES.beans.BnServicios;
+import cl.HBES.soporte.DEF;
 import cl.HBES.soporte.Soporte;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -53,11 +54,11 @@ public class Svl_Datos extends HttpServlet {
                     BnDatos dat = new BnDatos();
                     String r = request.getParameter("rut").replace(".", "");
                     String dv = request.getParameter("dv");
-                    String rut = r + "-" + dv;
+                    String rut = "{\"rut\": " + r + ", \"dv\": \"" + dv + "\"}";
                     JSONArray servicios = new JSONArray(request.getParameter("servicios"));
                     long idEmp = Long.parseLong(request.getParameter("emp"));
                     JSONObject j = dat.buscarNom(Soporte.getUsuarioSesion(request).getId());
-                    JSONObject datos = respo.buscarDatos(servicios, rut, idEmp, j.getString("user"), j.getInt("hist"));
+                    JSONObject datos = respo.buscarDatos(servicios, rut, idEmp, j.getString("user"), j.getInt("hist"), "", false);
                     if (datos.length() > 0) {
                         json.put("estado", 200);
                         json.put("datos", datos);
@@ -80,7 +81,9 @@ public class Svl_Datos extends HttpServlet {
                         }
                     }
                     if (agre) {
+                        String url = new BnDatos().obtenerURL(id, idEmp);
                         json.put("estado", 200);
+                        json.put("url", url);
                     } else {
                         json.put("estado", 300);
                     }
@@ -107,6 +110,18 @@ public class Svl_Datos extends HttpServlet {
                         json.put("datos", datos);
                     } else {
                         json.put("estado", 300);
+                    }
+                    response.getWriter().print(json);
+                    break;
+                }
+                case "listarWebServise": {
+                    long empresa = Long.parseLong(request.getParameter("idEmp"));
+                    JSONArray rutas = new BnDatos().obtenerRuta(empresa);
+                    if (rutas.length() > 0) {
+                        json.put("estado", 200);
+                        json.put("datos", rutas);
+                    } else {
+                        json.put("estado", 400);
                     }
                     response.getWriter().print(json);
                     break;

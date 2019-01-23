@@ -14,7 +14,7 @@
 <div class="container_12 clearfix leading">
     <section class="grid_12"> 
         <div class="message success">
-            <h2 style="margin-bottom: 10px;">Bureau Activos</h2> 
+            <h2 style="margin-bottom: 10px;">Conexiones Activas</h2> 
             <div id="divBureauActivo"></div>
             <!--<h3 style="margin-bottom: 0px;">Sinacofi</h3>
                 <h3 style="margin-bottom: 0px;">Equifax</h3>
@@ -69,7 +69,7 @@
                 </div>
             </div>
             <br>
-            <div class="clearfix">
+            <div class="clearfix" style="display:none;">
                 <div class="grid_3">
                     <label for="form-empresa1" class="form-label">Empresa</label>
                     <div class="form-input">

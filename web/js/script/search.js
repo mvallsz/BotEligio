@@ -1,4 +1,5 @@
 //console.log('search');
+console.log('Search');
 var SERV = [];
 var contS = 1;
 var DATASERV = [];
@@ -15,20 +16,20 @@ function listarEmpresaSearch() {
         success: function (data, textStatus, jqXHR) {
             if (data.estado == 200) {
                 for (var dato in data.datos) {
-                    if (codigo != 23) {
-                        if (data.datos[dato].ID === idEmp) {
-                            $('#form-empresaS').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
-                            selectedF('form-empresaS', idEmp);
-                            listarServ();
-                            break;
-                        }
-                    } else {
+//                    if (codigo != 23) {
+                    if (data.datos[dato].ID === idEmp) {
                         $('#form-empresaS').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
+                        selectedF('form-empresaS', idEmp);
+                        listarServ();
+                        break;
                     }
+//                    } else {
+//                        $('#form-empresaS').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
+//                    }
                 }
-                if (codigo === 23) {
-                    $('#form-empresaS').attr('onchange', 'listarServ();');
-                }
+//                if (codigo === 23) {
+//                    $('#form-empresaS').attr('onchange', 'listarServ();');
+//                }
             }
         }
     });
@@ -121,9 +122,6 @@ function limpiar() {
     });
     $("#form-serv-0").prop('checked', false);
     $("#form-serv-0").parent().removeClass("checked");
-    if (codigo === 23) {
-        selectedF('form-empresaS', 0);
-    }
 }
 
 function addSerr() {

@@ -152,9 +152,9 @@
                                                                         </h1>-->
                         <ul class="tlm">
                             <li class="current"><a href="#dashboard_comercial.jsp" title="Dashboard"><img src="images/navicons/81.png" alt=""/><span>Dashboard</span></a></li>
-                            <li class="current"><a href="#conectionBureau_comercial.jsp" title="Conection Bureau"><img src="images/navicons/130.png" alt=""/><span>Creation of Connections</span></a></li>
-                            <li class="current"><a href="#user.jsp" title="User for Web Service"><img src="images/navicons/112.png" alt=""/><span>User for Web Service</span></a></li>
-                            <li class="current"><a href="#output_ws.jsp" title="Generate Web Service Request"><img src="images/navicons/122.png" alt=""/><span>Generate Web Service</span></a></li>
+                            <li class="current"><a href="#conectionBureau_comercial.jsp" title="Data Source Integration"><img src="images/navicons/130.png" alt=""/><span>Data Source Integration</span></a></li>
+                            <li class="current"><a href="#user.jsp" title="Web Service Users"><img src="images/navicons/112.png" alt=""/><span>Web Service Users</span></a></li>
+                            <li class="current"><a href="#output_ws.jsp" title="Web Service Generation"><img src="images/navicons/122.png" alt=""/><span>Web Service Generation</span></a></li>
                             <li class="current"><a href="#search.jsp" title="Search"><img src="images/navicons/06.png" alt=""/><span>Search</span></a></li>
                         </ul>
                     </nav>

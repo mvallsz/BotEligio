@@ -13,11 +13,11 @@
 //        $('input[type=text], input[type=password], input[type=url], input[type=email], input[type=number], textarea', '.form').iTextClear();
 //    });
 </script>
-<h1 class="page-title">Creation of Connections</h1>
+<h1 class="page-title">Data Source Integration</h1>
 <div class="container_12 clearfix leading">
     <div class="grid_12">
         <div class="form has-validation box">
-            <div class="clearfix">
+            <div class="clearfix" style="display:none;">
                 <label for="form-empresa" class="form-label">Empresa<em>*</em></label>
                 <div class="form-input">
                     <select id="form-empresa">
@@ -107,6 +107,7 @@
                     <div class="checkgroup" >
                         <label style="font-size: 12px;">Rut </label><input type="checkbox" id="form-chkRut1" onchange="EditVarRut(1)"/>
                         <label style="font-size: 12px;">XML Header </label><input type="checkbox" id="form-chkHeader1" onchange="EditVarHeader(1)"/>
+                        <label style="font-size: 12px;" title="Parametro para Web Service Users">Parametro </label><input type="checkbox" id="form-chkParametro1" onchange="EditParametroHeader(1)"/>
                     </div>
                 </label>
                 <div class="form-input">

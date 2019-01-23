@@ -10,6 +10,7 @@ var contVar = 1;
 var contVarHijo = 1;
 var contUser = 1;
 var USER = [];
+var webSEr = [];
 $(document).ready(function () {
     listarEmp();
 });
@@ -591,16 +592,16 @@ function guardarDatos() {
                             for (var l = 1; l <= contVarHijo; l++) {
                                 var hijo = $("select#form-Hijo" + i + "_" + j + "_" + k + "_" + l + " option:checked").val();
                                 var json2 = {};
-                                json2.idOrigen = parseInt(servicio);
-                                json2.idServicio = parseInt(origen);
+                                json2.idOrigen = parseInt(origen);
+                                json2.idServicio = parseInt(servicio);
                                 json2.idVariable = parseInt(variable);
                                 json2.idHijo = parseInt(hijo);
                                 datos.push(json2);
                             }
                         } else {
                             var json1 = {};
-                            json1.idOrigen = parseInt(servicio);
-                            json1.idServicio = parseInt(origen);
+                            json1.idOrigen = parseInt(origen);
+                            json1.idServicio = parseInt(servicio);
                             json1.idVariable = parseInt(variable);
                             json1.idHijo = parseInt(0);
                             datos.push(json1);
@@ -608,8 +609,8 @@ function guardarDatos() {
                     }
                 } else {
                     var json = {};
-                    json.idOrigen = parseInt(servicio);
-                    json.idServicio = parseInt(origen);
+                    json.idOrigen = parseInt(origen);
+                    json.idServicio = parseInt(servicio);
                     json.idVariable = parseInt(0);
                     json.idHijo = parseInt(0);
                     datos.push(json);
@@ -631,6 +632,9 @@ function guardarDatos() {
                 if (data.estado == 200) {
                     limpiarDatos(0);
                     alert('Datos Guardados Exitosamente');
+                    $('#form-urlWeb').html(data.url);
+                    $('#form-URLW').show();
+                    buscarRutas();
                 } else {
                     alert('Error al guardar los datos');
                 }
@@ -640,11 +644,6 @@ function guardarDatos() {
 }
 
 function limpiarDatos(tipo) {
-    if (tipo != 1) {
-        if (codigo === 23) {
-            selectedF('form-empresao', '0');
-        }
-    }
     limpiarSelect('form-usuarioo1', '0');
     $('#form-nombreWs').val('');
     cont = 1;
@@ -752,21 +751,22 @@ function listarEmp() {
         success: function (data, textStatus, jqXHR) {
             if (data.estado == 200) {
                 for (var dato in data.datos) {
-                    if (codigo != 23) {
-                        if (data.datos[dato].ID === idEmp) {
-                            $('#form-empresao').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
-                            selectedF('form-empresao', idEmp);
-                            BuscarUser();
-                            buscarOrigen3();
-                            break;
-                        }
-                    } else {
+//                    if (codigo != 23) {
+                    if (data.datos[dato].ID === idEmp) {
                         $('#form-empresao').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
+                        selectedF('form-empresao', idEmp);
+                        BuscarUser();
+                        buscarOrigen3();
+                        buscarRutas();
+                        break;
                     }
+//                    } else {
+//                        $('#form-empresao').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nom_empresa + '</option>');
+//                    }
                 }
-                if (codigo === 23) {
-                    $('#form-empresao').attr('onchange', 'limpiarDatos(1);buscarOrigen3();BuscarUser();');
-                }
+//                if (codigo === 23) {
+//                    $('#form-empresao').attr('onchange', 'limpiarDatos(1);buscarOrigen3();BuscarUser();');
+//                }
             }
         }
     });
@@ -825,4 +825,82 @@ function veriUser(select) {
             break;
         }
     }
+}
+
+function buscarRutas() {
+    var idEmp = $("select#form-empresao option:checked").val();
+    $('#tblWebSer').DataTable().rows().remove().draw();
+    $.ajax({
+        url: 'Svl_Datos',
+        type: 'POST',
+        dataType: 'json',
+        data: {accion: 'listarWebServise', idEmp: idEmp},
+        beforeSend: function (xhr) {
+            $('#tblWebSer tbody').append('<tr id="trCargando" class="odd" style="text-align: center;"><td valign="top" colspan="7" class="dataTables_empty" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i>  Buscando Registros</td></tr>');
+        },
+        success: function (data, textStatus, jqXHR) {
+            if (data.estado == 200) {
+                webSEr = data.datos;
+            }
+            listarWebServ();
+        }
+    });
+}
+
+function listarWebServ() {
+    $('#trCargando').remove();
+    $('#tblWebSer').DataTable().destroy();
+    $('#tblWebSer').DataTable({
+        "language": {
+                   "lengthMenu": "Mostrar _MENU_ registros por página.",
+                   "zeroRecords": "Lo sentimos. No se encontraron registros.",
+                         "info": "Mostrando página _PAGE_ de _PAGES_",
+                         "infoEmpty": "No hay registros aún.",
+                         "infoFiltered": "(filtrados de un total de _MAX_ registros)",
+                         "search": "Búsqueda",
+                         "LoadingRecords": "Cargando ...",
+                         "Processing": "Procesando...",
+                         "SearchPlaceholder": "Comience a teclear...",
+                         "paginate": {
+                     "previous": "Anterior",
+                     "next": "Siguiente"
+                 }
+              },
+        "data": webSEr,
+        "bSort": true,
+        "columnDefs": [
+            {"width": "30%", "targets": 0},
+            {"width": "70%", "targets": 1}
+        ],
+        "columns": [
+            {data: 'nombre', class: 'txt-center'},
+            {data: 'ruta', class: 'txt-center'},
+            {data: null, "render": function (data, type, row) {
+                    return '<input type="button" id="popover-button-' + data.id + '" onclick="popupU(' + data.id + ');" class="popoverClass popover-buttonn" value="Ver"/>';
+                }}
+        ]
+    });
+    $('.popover-buttonn').popover(
+            '#popover-div', {
+                preventRight: true,
+                preventLeft: true,
+                preventBottom: true,
+                preventTop: true}
+    );
+}
+
+function popupU(id) {
+    var user = new Array;
+    for (var i = 0; i < webSEr.length; i++) {
+        if (webSEr[i].id == id) {
+            user = webSEr[i].user;
+        }
+    }
+    var textU = '';
+    if (user.length > 0) {
+        for (var i = 0; i < user.length; i++) {
+            textU += '<li class="read"><a><span class="avatar"></span>' + user[i] + '</a></li>';
+        }
+    }
+    $('#modal-web').html((textU === '' ? 'Sin Usuarios Asignados' : textU));
 }

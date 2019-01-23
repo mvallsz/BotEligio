@@ -13,10 +13,10 @@ html, body {
  * Base Styles
  */
 body {
-	color: rgb(60,60,60);
+    color: rgb(60,60,60);
     font: normal normal normal 11px/160% 'Lucida Grande', Verdana, Helvetica, Arial, sans-serif;
     margin: 0 auto;
-	-webkit-text-size-adjust: 100%; /* Stops Mobile Safari from auto-adjusting font-sizes */
+    -webkit-text-size-adjust: 100%; /* Stops Mobile Safari from auto-adjusting font-sizes */
     max-width: 1280px;
 }
 
@@ -76,7 +76,7 @@ h1,h2,h3,h4,h5,h6,p {
     margin:0 0 1em 0;
 }
 h1,h2,h3 {
-	font-weight: normal;
+    font-weight: normal;
 }
 h4,h5,h6,b,strong,caption,th,thead,dt,legend{
     font-weight:bold; 
@@ -87,9 +87,9 @@ ul, ol {
 }
 
 li ul, li ol, ul ul, ol ol, dl dd {
-margin-bottom: 0px;
-margin-left: 0px;
-margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-top: 0px;
 }
 
 small, sup, sub {
@@ -137,8 +137,8 @@ small, sup, sub {
 }
 
 nav ul {
-	padding: 0;
-	margin: 0;
+    padding: 0;
+    margin: 0;
 }
 
 /**
@@ -155,20 +155,20 @@ body.login {
     margin-top: -135px;
     margin-left: -160px;
     position: absolute;
-    top: 50%;
+    top: 38%;
     left: 50%;
     width:320px;
 }
 .login-box-top {
-    padding:20px;
+    /*padding:20px;*/
 }
 .login-box .logo {
-    background: transparent url(../../images/HBES_SHIELD.png) no-repeat center center;
+    background: transparent url(../../images/HBES_SHIELD2.png) no-repeat center center;
     display: block;
     height: 30px;
     margin: 0 auto;
     text-indent: -9999em;
-    width: 90px;
+    padding: 92px;
 }
 .login-box form {
     margin:10px 0 20px 0;
@@ -218,10 +218,10 @@ body.login {
 
 #wrapper > header > h1 {
     background: url(../../images/HBES_SHIELD.png) no-repeat 20px center;
-	float: left;
+    float: left;
     font-size: 18px;
-	line-height: 46px;
-	margin: 0;
+    line-height: 46px;
+    margin: 0;
     width: 320px;
     text-indent: -9999em;
 }
@@ -231,7 +231,7 @@ body.login {
     display: block;
     padding-left: 25px;
     padding-right: 25px;
-	text-shadow: 0 1px 1px #FFF;
+    text-shadow: 0 1px 1px #FFF;
 }
 
 #wrapper > header > nav {
@@ -282,15 +282,15 @@ body.login {
     background: transparent url(../../images/sidebar-shadow.png) no-repeat right top;
     bottom: 0;
     left: 0;
-	padding: 0;
-	position: absolute;
+    padding: 0;
+    position: absolute;
     top: 0;
-	width: 320px;
+    width: 320px;
 }
 
 #wrapper > section > aside > nav > #searchform {
-	color: #000;
-	position: relative;
+    color: #000;
+    position: relative;
 }
 
 #wrapper > section > aside > nav > #searchform .searchcontainer {
@@ -310,31 +310,31 @@ body.login {
 }
 
 #wrapper > section > aside > nav > #searchform .search_results ul {
-	list-style: none;
-	margin: 0px;
-	padding: 0px;
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
 }
 
 #wrapper > section > aside > nav > #searchform .search_results ul li {
-	margin-bottom: 20px;
-	line-height: 120%;
+    margin-bottom: 20px;
+    line-height: 120%;
 }
 
 #wrapper > section > aside > nav > #searchform .search_results ul li a {
-	display: block;
-	color: #222;
+    display: block;
+    color: #222;
 }
 
 #wrapper > section > aside > nav > #searchform .search_results ul li span {
-	display: block;
-	color: #999;
-	font-size: 9pt;
+    display: block;
+    color: #999;
+    font-size: 9pt;
 }
 
 #wrapper > section > aside > nav > #searchform .search_results ul li em {
-	display: block;
-	color: #080;
-	font-size: 9pt;
+    display: block;
+    color: #080;
+    font-size: 9pt;
 }
 
 #wrapper > section > aside > nav > #searchform > #q {
@@ -355,8 +355,8 @@ body.login {
 }
 
 #wrapper > section > aside > nav > h1 {
-	background: #777;
-	background: rgba(0,0,0,0.1);
+    background: #777;
+    background: rgba(0,0,0,0.1);
     color: #EEE;
     font-size: 14px;
     line-height: 46px;
@@ -377,8 +377,8 @@ body.login {
 }
 
 #wrapper > section > aside > nav > ul li {
-	display: block;
-	margin: 0;
+    display: block;
+    margin: 0;
     position: relative;
     -o-transition: all 0.3s ease-out;
     -ms-transition: all 0.3s ease-out;
@@ -399,14 +399,14 @@ body.login {
 }
 
 #wrapper > section > aside > nav > ul li > a > span {
-	color: #111;
-	cursor: pointer;
-	display: block;
-	font-size: 14px;
+    color: #111;
+    cursor: pointer;
+    display: block;
+    font-size: 14px;
     height: 44px;
     line-height: 44px;
-	padding: 0 25px 0 60px;
-	text-shadow: #FFF 0 1px 1px;
+    padding: 0 25px 0 60px;
+    text-shadow: #FFF 0 1px 1px;
     -o-transition: all 0.3s ease-out;
     -ms-transition: all 0.3s ease-out;
     -moz-transition: all 0.3s ease-out;
@@ -424,13 +424,13 @@ body.login {
 
 #wrapper > section > aside > nav > ul li.current {
     background-color: #A9B6BF;
-	background-image: -o-linear-gradient(top, #A9B6BF, #899AAA);
-	background-image: -ms-linear-gradient(top, #A9B6BF, #899AAA);
-	background-image: -moz-linear-gradient(top, #A9B6BF, #899AAA);
-	background-image: -khtml-linear-gradient(top, #A9B6BF, #899AAA);
-	background-image: -webkit-gradient(linear, left top, left bottom, from(#A9B6BF), to(#899AAA));
-	background-image: -webkit-linear-gradient(top, #A9B6BF, #899AAA);
-	background-image: linear-gradient(top, #A9B6BF, #899AAA);
+    background-image: -o-linear-gradient(top, #A9B6BF, #899AAA);
+    background-image: -ms-linear-gradient(top, #A9B6BF, #899AAA);
+    background-image: -moz-linear-gradient(top, #A9B6BF, #899AAA);
+    background-image: -khtml-linear-gradient(top, #A9B6BF, #899AAA);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#A9B6BF), to(#899AAA));
+    background-image: -webkit-linear-gradient(top, #A9B6BF, #899AAA);
+    background-image: linear-gradient(top, #A9B6BF, #899AAA);
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#A9B6BF,endColorstr=#899AAA);
 }
 
@@ -441,27 +441,27 @@ body.login {
 #wrapper > section > aside > nav > ul li.current > a {
     border-top-color: #222;
     border-top-color: rgba(0,0,0,0.1);
-	color: black;
+    color: black;
 }
 
 #wrapper > section > aside > nav > ul li > a:hover {
-	-o-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1), 0px 0px 3px rgba(0,0,0,0.2);
-	-ms-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1), 0px 0px 3px rgba(0,0,0,0.2);
-	-moz-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1), 0px 0px 3px rgba(0,0,0,0.2);
-	-khtml-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1), 0px 0px 3px rgba(0,0,0,0.2);
-	-webkit-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1), 0px 0px 3px rgba(0,0,0,0.2);
-	box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1), 0px 0px 3px rgba(0,0,0,0.2);
+    -o-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1), 0px 0px 3px rgba(0,0,0,0.2);
+    -ms-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1), 0px 0px 3px rgba(0,0,0,0.2);
+    -moz-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1), 0px 0px 3px rgba(0,0,0,0.2);
+    -khtml-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1), 0px 0px 3px rgba(0,0,0,0.2);
+    -webkit-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1), 0px 0px 3px rgba(0,0,0,0.2);
+    box-shadow: inset 0 -1px 3px rgba(0,0,0,0.1), 0px 0px 3px rgba(0,0,0,0.2);
     zoom: 1;
 }
 
 #wrapper > section > aside > nav > ul li > a:hover > span {
     padding-left: 80px;
-	-o-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.05), 0px 0px 3px rgba(0,0,0,0.2);
-	-ms-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.05), 0px 0px 3px rgba(0,0,0,0.2);
-	-moz-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.05), 0px 0px 3px rgba(0,0,0,0.2);
-	-khtml-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.05), 0px 0px 3px rgba(0,0,0,0.2);
-	-webkit-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.05), 0px 0px 3px rgba(0,0,0,0.2);
-	box-shadow: inset 0 -1px 3px rgba(0,0,0,0.05), 0px 0px 3px rgba(0,0,0,0.2);
+    -o-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.05), 0px 0px 3px rgba(0,0,0,0.2);
+    -ms-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.05), 0px 0px 3px rgba(0,0,0,0.2);
+    -moz-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.05), 0px 0px 3px rgba(0,0,0,0.2);
+    -khtml-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.05), 0px 0px 3px rgba(0,0,0,0.2);
+    -webkit-box-shadow: inset 0 -1px 3px rgba(0,0,0,0.05), 0px 0px 3px rgba(0,0,0,0.2);
+    box-shadow: inset 0 -1px 3px rgba(0,0,0,0.05), 0px 0px 3px rgba(0,0,0,0.2);
     -o-transition-duration: 0.2s;
     -ms-transition-duration: 0.2s;
     -moz-transition-duration: 0.2s;
@@ -497,7 +497,7 @@ body.login {
     -khtml-border-radius: 6px 6px 0 0;
     -webkit-border-radius: 6px 6px 0 0;
     border-radius: 6px 6px 0 0;
-	margin-left: 320px;
+    margin-left: 320px;
 }
 
 #wrapper > section > section > header {
@@ -534,12 +534,12 @@ body.login {
 }
 
 #wrapper > section > section > header h1{
-	color: #FFF;
+    color: #FFF;
     font-size: 20px;
-	line-height: 46px;
-	margin: 0;
+    line-height: 46px;
+    margin: 0;
     text-align: center;
-	text-shadow: #000 0 -1px 1px;
+    text-shadow: #000 0 -1px 1px;
 }
 
 #wrapper > section > section > header .showmenu {
@@ -578,7 +578,7 @@ body.login {
  */
 #wrapper > section > section > footer {
     background-color: #FFF;
-	padding: 20px 0;
+    padding: 20px 0;
 }
 
 /**
@@ -683,49 +683,49 @@ body.login {
 }
 
 .isotope-item {
-  z-index: 2;
+    z-index: 2;
 }
 
 .isotope-hidden.isotope-item {
-  pointer-events: none;
-  z-index: 1;
+    pointer-events: none;
+    z-index: 1;
 }
 
 .isotope,
 .isotope .isotope-item {
-  -webkit-transition-duration: 0.8s;
-   -khtml-transition-duration: 0.8s;
-     -moz-transition-duration: 0.8s;
-      -ms-transition-duration: 0.8s;
-       -o-transition-duration: 0.8s;
-          transition-duration: 0.8s;
+    -webkit-transition-duration: 0.8s;
+    -khtml-transition-duration: 0.8s;
+    -moz-transition-duration: 0.8s;
+    -ms-transition-duration: 0.8s;
+    -o-transition-duration: 0.8s;
+    transition-duration: 0.8s;
 }
 
 .isotope {
-  -webkit-transition-property: height, width;
-   -khtml-transition-property: height, width;
-     -moz-transition-property: height, width;
-      -ms-transition-property: height, width;
-       -o-transition-property: height, width;
-          transition-property: height, width;
+    -webkit-transition-property: height, width;
+    -khtml-transition-property: height, width;
+    -moz-transition-property: height, width;
+    -ms-transition-property: height, width;
+    -o-transition-property: height, width;
+    transition-property: height, width;
 }
 
 .isotope .isotope-item {
-  -webkit-transition-property: -webkit-transform, opacity, background, -webkit-box-shadow;
-   -khtml-transition-property:  -khtml-transform, opacity, background, -khtml-box-shadow;
-     -moz-transition-property:    -moz-transform, opacity, background, -moz-box-shadow;
-      -ms-transition-property:     -ms-transform, opacity, background, -ms-box-shadow;
-       -o-transition-property:      -o-transform, opacity, background, -o-box-shadow;
-          transition-property:         transform, opacity, background, box-shadow;
+    -webkit-transition-property: -webkit-transform, opacity, background, -webkit-box-shadow;
+    -khtml-transition-property:  -khtml-transform, opacity, background, -khtml-box-shadow;
+    -moz-transition-property:    -moz-transform, opacity, background, -moz-box-shadow;
+    -ms-transition-property:     -ms-transform, opacity, background, -ms-box-shadow;
+    -o-transition-property:      -o-transform, opacity, background, -o-box-shadow;
+    transition-property:         transform, opacity, background, box-shadow;
 }
 
 .isotope .isotope-item {
-  -webkit-transition-property: top, left, opacity;
-   -khtml-transition-property: top, left, opacity;
-     -moz-transition-property: top, left, opacity;
-      -ms-transition-property: top, left, opacity;
-       -o-transition-property: top, left, opacity;
-          transition-property: top, left, opacity;
+    -webkit-transition-property: top, left, opacity;
+    -khtml-transition-property: top, left, opacity;
+    -moz-transition-property: top, left, opacity;
+    -ms-transition-property: top, left, opacity;
+    -o-transition-property: top, left, opacity;
+    transition-property: top, left, opacity;
 }
 
 /*
@@ -736,31 +736,31 @@ body.login {
 */
 
 #toTop {
-	display:none;
-	text-decoration:none;
-	position:fixed;
-	bottom:10px;
-	right:10px;
-	overflow:hidden;
-	width:51px;
-	height:51px;
-	border:none;
-	text-indent:-999px;
-	background:url(../../images/ui.totop.png) no-repeat left top;
+    display:none;
+    text-decoration:none;
+    position:fixed;
+    bottom:10px;
+    right:10px;
+    overflow:hidden;
+    width:51px;
+    height:51px;
+    border:none;
+    text-indent:-999px;
+    background:url(../../images/ui.totop.png) no-repeat left top;
 }
 
 #toTopHover {
-	background:url(../../images/ui.totop.png) no-repeat left -51px;
-	width:51px;
-	height:51px;
-	display:block;
-	overflow:hidden;
-	float:left;
-	opacity: 0;
-	-moz-opacity: 0;
-	filter:alpha(opacity=0);
+    background:url(../../images/ui.totop.png) no-repeat left -51px;
+    width:51px;
+    height:51px;
+    display:block;
+    overflow:hidden;
+    float:left;
+    opacity: 0;
+    -moz-opacity: 0;
+    filter:alpha(opacity=0);
 }
 
 #toTop:active, #toTop:focus {
-	outline:none;
+    outline:none;
 }

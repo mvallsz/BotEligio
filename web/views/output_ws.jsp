@@ -13,11 +13,11 @@
 //        $('input[type=text], input[type=password], input[type=url], input[type=email], input[type=number], textarea', '.form').iTextClear();
 //    });
 </script>
-<h1 class="page-title">Generate Web Service Request</h1>
+<h1 class="page-title">Web Service Generation</h1>
 <div class="container_12 clearfix leading">
     <div class="grid_12">
         <div class="form has-validation box recorrer">
-            <div class="clearfix">
+            <div class="clearfix" style="display: none;">
                 <label for="form-empresao" class="form-label">Empresa <em>*</em></label>
                 <div class="form-input">
                     <select id="form-empresao">
@@ -112,9 +112,43 @@
                 <button class="button" type="reset" onclick="limpiarDatos();">Reset</button>
             </div>
         </div>
+        <br>
+        <div class="form has-validation" style="display: none;text-align: center;" id="form-URLW">
+            <section class="grid_12"> 
+                <div class="message info">
+                    <h3><em>*</em> Para acceder al Web Service creado debe dirigirse a la ruta indicada abajo <span style="font-size: 10px;">(Debe reemplazar los '-')</span></h3> 
+                    <p id="form-urlWeb" style="font-size: 15px;font-weight: bold;"> </p> 
+                </div>
+            </section>
+        </div>
     </div>
 </div>
-<br><br>
+<br>
+<div class="container_12 clearfix leading">
+    <div class="grid_12">
+        <table class="display" id="tblWebSer"> 
+            <thead>
+                <tr>
+                    <th >Nombre Web Service</th>
+                    <th >Ruta</th>
+                    <th >Usuarios</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <div id="popover-div" class="popover">
+            <header>Usuarios</header>
+            <section>
+                <div class="content">
+                    <nav>
+                        <ul id="modal-web"></ul>
+                    </nav>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript" src="js/script/output.js"></script>
 <script type="text/javascript" src="js/script/funciones.js"></script>

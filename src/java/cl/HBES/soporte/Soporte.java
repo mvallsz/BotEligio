@@ -252,17 +252,17 @@ public class Soporte {
                             String nombre = jHi.getString("nombre");
                             try {
                                 Long.parseLong(valor);
-                                val += "\"" + nombre + "\":" + valor;
+                                val += "\"" + jHi.getString("busqueda") + "\":" + Long.parseLong(valor);
                             } catch (Exception e) {
                                 try {
                                     Float.parseFloat(valor);
-                                    val += "\"" + nombre + "\":" + valor;
+                                    val += "\"" + jHi.getString("busqueda") + "\":" + Float.parseFloat(valor);
                                 } catch (Exception ex) {
                                     try {
                                         Double.parseDouble(valor);
-                                        val += "\"" + nombre + "\":" + valor;
+                                        val += "\"" + jHi.getString("busqueda") + "\":" + Double.parseDouble(valor);
                                     } catch (Exception exs) {
-                                        val += "\"" + nombre + "\":\"" + valor + "\"";
+                                        val += "\"" + jHi.getString("busqueda") + "\":\"" + valor + "\"";
                                     }
                                 }
                             }

@@ -14,11 +14,11 @@
 //        $('input[type=text], input[type=password], input[type=url], input[type=email], input[type=number], textarea', '.form').iTextClear();
 //    });
 </script>
-<h1 class="page-title">User for Web Service</h1>
+<h1 class="page-title">Web Service Users</h1>
 <div class="container_12 clearfix leading">
     <div class="grid_12">
         <form class="form has-validation">
-            <div class="clearfix">
+            <div class="clearfix" style="display: none;">
                 <label for="form-empresau" class="form-label">Empresa<em>*</em></label>
                 <div class="form-input">
                     <select id="form-empresau">

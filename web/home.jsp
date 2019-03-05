@@ -44,8 +44,7 @@
         <!-- FAVICON ICONS END -->
 
 
-        <!--STYLESHEETS--> 
-
+        <!--STYLESHEETS-->         
         <link rel="stylesheet" href="css/reset.css" media="screen" />
         <link rel="stylesheet" href="css/grids.css" media="screen" />
         <link rel="stylesheet" href="css/ui.css" media="screen" />
@@ -61,8 +60,7 @@
         <link rel="stylesheet" href="css/jquery.itextsuggest.css" media="screen">
         <link rel="stylesheet" href="css/themes/gray/style.css" media="screen" />
         <!--<link rel="stylesheet" href="css/themes/lightblue/style.css" media="screen" />-->
-
-
+        <link href="css/device/style_tree.css" rel="stylesheet" type="text/css"/>
         <style type = "text/css">
             #loading-container {position: absolute; top:50%; left:50%;}
             #loading-content {width:800px; text-align:center; margin-left: -400px; height:50px; margin-top:-25px; line-height: 50px;}

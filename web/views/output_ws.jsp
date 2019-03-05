@@ -7,7 +7,6 @@
     }
 %>
 <script type="text/javascript" src="js/jquery.itextclear.js"></script>
-<!--<script type="text/javascript" src="js/jquery.min"></script>-->
 <script type="text/javascript">
 //    $(document).ready(function () {
 //        $('input[type=text], input[type=password], input[type=url], input[type=email], input[type=number], textarea', '.form').iTextClear();
@@ -44,69 +43,22 @@
                 <label for="form-nombreWs" class="form-label">Nombre<em>*</em></label>
                 <div class="form-input"><input type="text" id="form-nombreWs" name="name" required="required" placeholder="Busqueda de Morosidades" /></div>
             </div>
-            <div class="clearfix">
-                <label for="form-origen1" class="form-label">Origen<em>*</em></label>
-                <div class="form-input">
-                    <select id="form-origen1" onchange="listarServicio('form-servicio1_1', 1);">
-                        <option value="0" selected disabled>Select Option</option>
-                    </select>
-                </div>
-            </div>
-            <div id="ser1" class="servVar">
-                <div class="clearfix">
-                    <label for="form-servicio1_1" class="form-label">Servicio<em>*</em></label>
-                    <div class="form-input">
-                        <select id="form-servicio1_1" class="ser" onchange="listarVariables('form-variable1_1_1', 1);">
-                            <option value="0" selected disabled>Select Option</option>
-                        </select>
-                    </div>
-                </div>
-                <div id="var1_1" class="servVar">
-                    <div class="clearfix">
-                        <label for="form-variable1_1_1" class="form-label">Variable<em>*</em></label>
-                        <div class="form-input">
-                            <select id="form-variable1_1_1" class="var" onchange="listarVariablesHijo('form-Hijo1_1_1_1', 1);">
-                                <option value="0" selected>Todo</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div id="hijo1_1_1" style="display: none;" class="servVar">
-                        <div class="clearfix">
-                            <label for="form-Hijo1_1_1_1" class="form-label">Variable Hijo<em>*</em></label>
-                            <div class="form-input">
-                                <select id="form-Hijo1_1_1_1" class="hijo" onchange="verificarHijo();">
-                                    <option value="0" selected>Todo</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div id="addHijos1_1_1"></div>
-                        <br>
-                        <div class="clearfix" id="buttonVarHijo1_1_1" style="display: none;">
-                            <button class="button" onclick="AddVariableHijo()">Añadir Variable Hijo</button>
-                            <button class="button" onclick="ResVariableHijo()" id="btnEliminarHijo1_1_1" style="display: none">Eliminar Variable Hijo</button>
-                        </div>
-                    </div>
-                    <div id="addvariables1_1"></div>
-                    <div class="clearfix" id="buttonVar1_1" style="display: none;">
-                        <br>
-                        <button class="button" onclick="AddVariable()">Añadir Variable</button>
-                        <button class="button" onclick="ResVariable()" id="btnEliminarVar1_1" style="display: none">Eliminar Variable</button>
-                    </div>
-                </div>
-                <br>
-                <div id="addservicio1"></div>
-                <div class="clearfix" id="buttonSer1" style="display: none;">
-                    <br> 
-                    <button class="button" onclick="AddServicio()">Añadir Servicio</button>
-                    <button class="button" onclick="ResServicio()" id="btnEliminarServ1" style="display: none">Eliminar Servicio</button>
-                </div>
-            </div>
-            <div id="addoutput"></div>
             <br>
-            <div class="clearfix">
-                <button class="button" onclick="AddOutput()">Añadir Origen</button>
-                <button class="button" onclick="ResOutput()" id="btnEliminar" style="display: none">Eliminar Origen</button>
+            <div class="clearfix" id="text-arbol">
+                <label for="form-nombreWs" class="form-label">Selección de  variables<em>*</em></label>
             </div>
+            <div class="clearfix">
+                <div id="arbolOrigen">
+                </div>
+            </div>
+            <div class="form has-validation" style="display: none;text-align: center;" id="form-arbol">
+                <section class="grid_12"> 
+                    <div class="message info">
+                        <h3><em>*</em> Los Servicios no se encuentran disponibles, diríjase a <span style="font-size: 14px;font-weight: 700;">'Data Source Integration'</span> para poder activarlos.</h3> 
+                    </div>
+                </section>
+            </div>
+            <br>
             <div class="form-action clearfix">
                 <button class="button" type="button" onclick="guardarDatos();">OK</button>
                 <button class="button" type="reset" onclick="limpiarDatos();">Reset</button>

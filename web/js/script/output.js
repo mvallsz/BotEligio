@@ -24,55 +24,7 @@ function buscarOrigen3() {
         success: function (data, textStatus, jqXHR) {
             if (data.estado === 200) {
                 DATOS = data.datos;
-                ORIGENES = [];
-                SERVICIOS = [];
-                VARIABLES = [];
-                VARIHIJOS = [];
-                if (DATOS.length > 0) {
-                    for (var i = 0; i < DATOS.length; i++) {
-                        var jsonori = {};
-                        jsonori.ID = DATOS[i].ID;
-                        jsonori.NOMBRE = DATOS[i].NOMBRE;
-                        ORIGENES.push(jsonori);
-                        var ser = DATOS[i].SERVICIO;
-                        var serv = [];
-                        var serv1 = {};
-                        for (var j = 0; j < ser.length; j++) {
-                            var jsonvar = {};
-                            jsonvar.ID = ser[j].ID;
-                            jsonvar.NOMBRE = ser[j].NOMBRE;
-                            serv.push(jsonvar);
-                            var vari = ser[j].VARIABLE;
-                            var variv = [];
-                            var vari1 = {};
-                            for (var k = 0; k < vari.length; k++) {
-                                var jsonvari = {};
-                                jsonvari.ID = vari[k].ID;
-                                jsonvari.NOMBRE = vari[k].NOMBRE;
-                                variv.push(jsonvari);
-                                var variH = vari[k].VARHIJO;
-                                var variHv = [];
-                                var variH1 = {};
-                                for (var l = 0; l < variH.length; l++) {
-                                    var jsonvariH = {};
-                                    jsonvariH.ID = variH[l].ID;
-                                    jsonvariH.NOMBRE = variH[l].NOMBRE;
-                                    variHv.push(jsonvariH);
-                                }
-                                variH1.IDVAR = vari[k].ID;
-                                variH1.HIJO = variHv;
-                                VARIHIJOS.push(variH1);
-                            }
-                            vari1.IDSER = ser[j].ID;
-                            vari1.VARIABLE = variv;
-                            VARIABLES.push(vari1);
-                        }
-                        serv1.IDORI = DATOS[i].ID;
-                        serv1.SERVICIO = serv;
-                        SERVICIOS.push(serv1);
-                    }
-                }
-                listarOrigen2('form-origen1');
+                listarArbol();
             }
         }
     });
@@ -93,7 +45,6 @@ function listarServicio(nombre, tipo) {
         $('#addservicio' + cont).html('');
         $('#addvariables' + cont + '_' + contSer).html('');
         $('#addHijos' + cont + '_' + contSer + '_' + contVar).html('');
-
         $('#buttonVarHijo' + cont + '_' + contSer + '_' + contVar).hide();
         $('#buttonVar' + cont + '_' + contSer).hide();
         $('#buttonSer' + cont).hide();
@@ -126,7 +77,6 @@ function listarVariables(nombre, tipo) {
         $('#hijo' + cont + '_' + contSer + '_' + contVar).hide();
         $('#addvariables' + cont + '_' + contSer).html('');
         $('#addHijos' + cont + '_' + contSer + '_' + contVar).html('');
-
         $('#buttonVarHijo' + cont + '_' + contSer + '_' + contVar).hide();
         $('#buttonVar' + cont + '_' + contSer).hide();
         habilitarEliminar();
@@ -155,7 +105,6 @@ function listarVariablesHijo(nombre, tipo) {
         contVarHijo = 1;
         $('#hijo' + cont + '_' + contSer + '_' + contVar).hide();
         $('#addHijos' + cont + '_' + contSer + '_' + contVar).html('');
-
         $('#buttonVarHijo' + cont + '_' + contSer + '_' + contVar).hide();
         habilitarEliminar();
     }
@@ -507,67 +456,17 @@ function validar(tipo) {
         alert('Debe ingresar un Nombre');
         return false;
     } else {
-        var sinDatos = false;
-        for (var i = 1; i <= cont; i++) {
-            var origen = $("select#form-origen" + i + " option:checked").val();
-            if (origen === "0") {
-                alert('Debe ingresar el Origen');
-                sinDatos = true;
-            } else {
-                verificarSer(i);
-                if (contSer > 0) {
-                    for (var j = 1; j <= contSer; j++) {
-                        var servicio = $("select#form-servicio" + i + "_" + j + " option:checked").val();
-                        if (servicio === "0") {
-                            alert('Debe ingresar el Servicio');
-                            sinDatos = true;
-                        } else {
-                            verificarVar(i, j);
-                            if (contVar > 0) {
-                                for (var k = 1; k <= contVar; k++) {
-                                    var variable = $("select#form-variable" + i + "_" + j + "_" + k + " option:checked").val();
-                                    if (variable === "0" && k > 1) {
-                                        alert('Debe ingresar una variable');
-                                        sinDatos = true;
-                                    } else {
-                                        verificarH(i, j, k);
-                                        for (var l = 1; l <= contVarHijo; l++) {
-                                            var hijo = $("select#form-Hijo" + i + "_" + j + "_" + k + "_" + l + " option:checked").val();
-                                            if (hijo === "0" && l > 1) {
-                                                alert('Debe ingresar Variable Hijo');
-                                                sinDatos = true;
-                                            }
-                                        }
-                                    }
-                                    if (sinDatos) {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        if (sinDatos) {
-                            break;
-                        }
-                    }
-                } else {
-                    sinDatos = true;
-                    break;
-                }
-            }
-            if (sinDatos) {
-                break;
-            }
-        }
-
-        if (sinDatos) {
-            return false;
-        } else {
+        var conDatos = validarArbol();
+        if (conDatos) {
             return true;
+        } else {
+            alert('Debe Seleccionar por lo menos una variable');
+            return false;
         }
     }
 
 }
-//var datos = [];
+
 function guardarDatos() {
     if (validar(1)) {
         var nombre = $('#form-nombreWs').val().trim();
@@ -577,46 +476,7 @@ function guardarDatos() {
             var us = $('select#form-usuarioo' + k + ' option:checked').val();
             usuarios.push(us);
         }
-        var datos = [];
-        for (var i = 1; i <= cont; i++) {
-            var origen = $("select#form-origen" + i + " option:checked").val();
-            verificarSer(i);
-            for (var j = 1; j <= contSer; j++) {
-                var servicio = $("select#form-servicio" + i + "_" + j + " option:checked").val();
-                verificarVar(i, j);
-                if (contVar > 0) {
-                    for (var k = 1; k <= contVar; k++) {
-                        var variable = $("select#form-variable" + i + "_" + j + "_" + k + " option:checked").val();
-                        verificarH(i, j, k);
-                        if (contVarHijo > 0) {
-                            for (var l = 1; l <= contVarHijo; l++) {
-                                var hijo = $("select#form-Hijo" + i + "_" + j + "_" + k + "_" + l + " option:checked").val();
-                                var json2 = {};
-                                json2.idOrigen = parseInt(origen);
-                                json2.idServicio = parseInt(servicio);
-                                json2.idVariable = parseInt(variable);
-                                json2.idHijo = parseInt(hijo);
-                                datos.push(json2);
-                            }
-                        } else {
-                            var json1 = {};
-                            json1.idOrigen = parseInt(origen);
-                            json1.idServicio = parseInt(servicio);
-                            json1.idVariable = parseInt(variable);
-                            json1.idHijo = parseInt(0);
-                            datos.push(json1);
-                        }
-                    }
-                } else {
-                    var json = {};
-                    json.idOrigen = parseInt(origen);
-                    json.idServicio = parseInt(servicio);
-                    json.idVariable = parseInt(0);
-                    json.idHijo = parseInt(0);
-                    datos.push(json);
-                }
-            }
-        }
+        var datos = guardarArbol();
         $.ajax({
             url: 'Svl_Datos',
             type: 'POST',
@@ -651,21 +511,9 @@ function limpiarDatos(tipo) {
     contVar = 1;
     contVarHijo = 1;
     contUser = 1;
-    limpiarSelect('form-origen1', '0');
-    limpiarSelect('form-servicio1_1', '0');
-    limpiarSelect('form-variable1_1_1', '0');
-    limpiarSelect('form-Hijo1_1_1_1', '0');
-    $('#hijo1_1_1').hide();
-    $('#addoutput').html('');
-    $('#addservicio1').html('');
-    $('#addvariables1_1').html('');
-    $('#addHijos1_1_1').html('');
+    $('#arbolOrigen').html('');
+    listarArbol();
     $('#addUsuario').html('');
-
-    $('#buttonVarHijo1_1_1').hide();
-    $('#buttonVar1_1').hide();
-    $('#buttonSer1').hide();
-    habilitarEliminar();
 }
 
 function habilitarEliminar() {
@@ -817,12 +665,15 @@ function habilitarUser() {
 
 function veriUser(select) {
     var sel = $(select).val();
-    for (var k = 1; k < contUser; k++) {
-        var us = $('select#form-usuarioo' + k + ' option:checked').val();
-        if (sel === us) {
-            selectedF('form-usuarioo' + contUser, '0');
-            alert('El usuario ya ha sido seleccionado');
-            break;
+    var id = $(select).attr('id').split('-')[1].substring(8);
+    if (id != '1') {
+        for (var k = 1; k < contUser; k++) {
+            var us = $('select#form-usuarioo' + k + ' option:checked').val();
+            if (sel === us) {
+                selectedF('form-usuarioo' + contUser, '0');
+                alert('El usuario ya ha sido seleccionado');
+                break;
+            }
         }
     }
 }
@@ -903,4 +754,418 @@ function popupU(id) {
         }
     }
     $('#modal-web').html((textU === '' ? 'Sin Usuarios Asignados' : textU));
+}
+
+function fontClick(font, nameli) {
+    var val = $(font).attr("class");
+    if (val === 'closeFont') {
+        $(font).removeClass("closeFont").addClass("openFont");
+        $('#' + nameli).toggle(300);
+    }
+    if (val === 'openFont') {
+        $(font).removeClass("openFont").addClass("closeFont");
+        $('#' + nameli).toggle(300);
+    }
+}
+
+function listarArbol() {
+    var sinDatos = true;
+    var html = '<ul class="treejs">';
+    if (DATOS.length > 0) {
+        for (var i = 0; i < DATOS.length; i++) {
+            var ser = DATOS[i].SERVICIO;
+            if (ser.length > 0) {
+                sinDatos = false;
+                contSer = 1;
+                html += '<li class="origenes" id="id_' + DATOS[i].ID + '"><i class="openFont" onclick="fontClick(this, \'origen_' + cont + '\');"  style="' + (ser.length > 0 ? '' : 'display: none;') + '"></i> ';
+                html += (ser.length > 0 ? '' : '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+                html += '<label><div class="checker checkboxTree" id="uniform-check_' + cont + '"><span class=""><input onchange="changee(this,\'id_' + DATOS[i].ID + '\', 1);" type="checkbox" id="check_' + cont + '" /></span></div> ' + DATOS[i].NOMBRE + '</label>';
+                html += (ser.length > 0 ? '<ul class="treejs" id="origen_' + cont + '">' : '');
+                for (var j = 0; j < ser.length; j++) {
+                    contVar = 1;
+                    var vari = ser[j].VARIABLE;
+                    html += '<li class="servicios" id="id_' + ser[j].ID + '"><i class="openFont" onclick="fontClick(this, \'origen_' + cont + '_' + contSer + '\');" style="' + (vari.length > 0 ? '' : 'display: none;') + '"></i> ';
+                    html += (vari.length > 0 ? '' : '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+                    html += '<label><div class="checker checkboxTree" id="uniform-check_' + cont + '_' + contSer + '"><span class=""><input onchange="changee(this,\'id_' + ser[j].ID + '\', 2);" type="checkbox" id="check_' + cont + '_' + contSer + '" /></span></div> ' + ser[j].NOMBRE + '</label>';
+                    html += (vari.length > 0 ? '<ul  class="treejs" id="origen_' + cont + '_' + contSer + '">' : '');
+                    for (var k = 0; k < vari.length; k++) {
+                        contVarHijo = 1;
+                        var variH = vari[k].VARHIJO;
+                        html += '<li class="variables" id="id_' + vari[k].ID + '"><i class="openFont" onclick="fontClick(this, \'origen_' + cont + '_' + contSer + '_' + contVar + '\');"  style="' + (variH.length > 0 ? '' : 'display: none;') + '"></i> ';
+                        html += (variH.length > 0 ? '' : '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+                        html += '<label><div class="checker checkboxTree" id="uniform-check_' + cont + '_' + contSer + '_' + contVar + '"><span class=""><input onchange="changee(this,\'id_' + vari[k].ID + '\', 3);" type="checkbox" id="check_' + cont + '_' + contSer + '_' + contVar + '" /></span></div> ' + vari[k].NOMBRE + '</label>';
+                        html += (variH.length > 0 ? '<ul  class="treejs" id="origen_' + cont + '_' + contSer + '_' + contVar + '">' : '');
+                        for (var l = 0; l < variH.length; l++) {
+                            html += '<li class="variHijos" id="id_' + variH[l].ID + '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label><div class="checker checkboxTree" id="uniform-check_' + cont + '_' + contSer + '_' + contVar + '_' + contVarHijo + '"><span class=""><input onchange="changee(this,\'id_' + variH[l].ID + '\', 4);" type="checkbox" id="check_' + cont + '_' + contSer + '_' + contVar + '_' + contVarHijo + '" /></span></div> ' + variH[l].NOMBRE + '</label></li>';
+                            contVarHijo++;
+                        }
+                        html += (variH.length > 0 ? '</ul>' : '');
+                        html += '</li>';
+                        contVar++;
+                    }
+                    html += (vari.length > 0 ? '</ul>' : '');
+                    html += '</li>';
+                    contSer++;
+                }
+                html += (ser.length > 0 ? '</ul>' : '');
+                html += '</li>';
+                cont++;
+            }
+        }
+    }
+    html += '</ul>';
+    $('#arbolOrigen').html(html);
+    togglee();
+    if (sinDatos) {
+        $('#form-arbol').show();
+        $('#text-arbol').hide();
+    } else {
+        $('#form-arbol').hide();
+        $('#text-arbol').show();
+    }
+}
+
+function changee(sel, idO, tipo) {//tipo = 1: origen, 2: servicio, 3:variable, 4: variable hijo
+    var check = $(sel).prop("checked");
+    var asing;
+    if (check) {
+        $(sel).parent().addClass("checked");
+        $(sel).prop("checked", true);
+        asing = true;
+    } else {
+        $(sel).parent().removeClass("checked");
+        $(sel).prop("checked", false);
+        asing = false;
+    }
+    activarDescArbol(idO, tipo, asing);
+}
+
+function togglee() {
+    for (var i = 1; i < (cont + 1); i++) {
+        var contS = 0;
+        $('#origen_' + i + ' .servicios').each(function () {
+            var contV = 0;
+            contS++;
+            var idS = $(this).attr("id");
+            $('#' + idS + ' .variables').each(function () {
+                var contVH = 0;
+                contV++;
+                var idV = $(this).attr("id");
+                $('#' + idV + ' .variHijos').each(function () {
+                    contVH++;
+                    $('#origen_' + i + '_' + contS + '_' + contV + '_' + contVH).toggle();
+                });
+                $('#origen_' + i + '_' + contS + '_' + contV).toggle();
+            });
+            $('#origen_' + i + '_' + contS).toggle();
+        });
+        $('#origen_' + i).toggle();
+    }
+}
+
+function guardarArbol() {
+    var datos = [];
+    var conO = 0;
+    $('#arbolOrigen .origenes').each(function () {
+        var id = $(this).attr("id");
+        conO++;
+        var conS = 0;
+        var check = $('#check_' + conO).prop("checked");
+
+        if (check) {
+            $('#' + id + ' .servicios').each(function () {
+                var idSer = $(this).attr("id");
+                conS++;
+                var conV = 0;
+                var checkS = $('#check_' + conO + '_' + conS).prop("checked");
+                var json = {};
+
+                if ($('#' + idSer + ' .variables').html() != null) {
+                    var tieneV = false;
+
+                    $('#' + idSer + ' .variables').each(function () {
+                        var idvar = $(this).attr("id");
+                        conV++;
+                        var conVH = 0;
+                        var checkV = $('#check_' + conO + '_' + conS + '_' + conV).prop("checked");
+                        var json1 = {};
+
+                        if ($('#' + idvar + ' .variHijos').html() != null) {
+                            var tieneVH = false;
+
+                            $('#' + idvar + ' .variHijos').each(function () {
+                                var idvarH = $(this).attr("id");
+                                conVH++;
+                                var checkVh = $('#check_' + conO + '_' + conS + '_' + conV + '_' + conVH).prop("checked");
+                                if (checkVh) {
+                                    tieneVH = true;
+                                    tieneV = true;
+                                    var json2 = {};
+                                    json2.idOrigen = parseInt(parseInt(id.split('_')[1]));
+                                    json2.idServicio = parseInt(parseInt(idSer.split('_')[1]));
+                                    json2.idVariable = parseInt(parseInt(idvar.split('_')[1]));
+                                    json2.idHijo = parseInt(parseInt(idvarH.split('_')[1]));
+                                    datos.push(json2);
+                                }
+                            });
+                            if (checkV && !tieneVH) {
+                                tieneV = true;
+                                json1.idOrigen = parseInt(parseInt(id.split('_')[1]));
+                                json1.idServicio = parseInt(parseInt(idSer.split('_')[1]));
+                                json1.idVariable = parseInt(parseInt(idvar.split('_')[1]));
+                                json1.idHijo = parseInt(0);
+                                datos.push(json1);
+                            }
+                        } else {
+                            if (checkV) {
+                                tieneV = true;
+                                json1.idOrigen = parseInt(parseInt(id.split('_')[1]));
+                                json1.idServicio = parseInt(parseInt(idSer.split('_')[1]));
+                                json1.idVariable = parseInt(parseInt(idvar.split('_')[1]));
+                                json1.idHijo = parseInt(0);
+                                datos.push(json1);
+                            }
+                        }
+
+                    });
+
+                    if (checkS && !tieneV) {
+                        json.idOrigen = parseInt(parseInt(id.split('_')[1]));
+                        json.idServicio = parseInt(parseInt(idSer.split('_')[1]));
+                        json.idVariable = parseInt(0);
+                        json.idHijo = parseInt(0);
+                        datos.push(json);
+                    }
+                } else {
+                    if (checkS) {
+                        json.idOrigen = parseInt(parseInt(id.split('_')[1]));
+                        json.idServicio = parseInt(parseInt(idSer.split('_')[1]));
+                        json.idVariable = parseInt(0);
+                        json.idHijo = parseInt(0);
+                        datos.push(json);
+                    }
+                }
+
+            });
+        }
+    });
+    return datos;
+}
+
+function validarArbol() {
+    var conO = 0;
+    var varli = false;
+    $('#arbolOrigen .origenes').each(function () {
+        var id = $(this).attr("id");
+        conO++;
+        var check = $('#check_' + conO).prop("checked");
+        if (check) {
+            varli = true;
+        }
+    });
+    return varli;
+}
+
+function activarDescArbol(idO, tipo, asing) {
+    var conO = 0;
+    $('#arbolOrigen .origenes').each(function () {
+        var id = $(this).attr("id");
+        conO++;
+        var conS = 0;
+        var tipo1 = false;
+        if (tipo === 1) {
+            tipo1 = (id === idO ? true : false);
+        } else {
+            tipo1 = true;
+        }
+
+        if (tipo1) {
+            $('#' + id + ' .servicios').each(function () {
+                var idSer = $(this).attr("id");
+                conS++;
+                var conV = 0;
+                var tipo2 = false;
+                if (tipo === 2) {
+                    tipo2 = (idSer === idO ? true : false);
+                } else {
+                    tipo2 = true;
+                }
+                if (tipo2) {
+                    $('#' + idSer + ' .variables').each(function () {
+                        var idvar = $(this).attr("id");
+                        conV++;
+                        var conVH = 0;
+                        var tipo3 = false;
+                        if (tipo === 3) {
+                            tipo3 = (idvar === idO ? true : false);
+                        } else {
+                            tipo3 = true;
+                        }
+                        if (tipo3) {
+                            $('#' + idvar + ' .variHijos').each(function () {
+                                conVH++;
+                                if (tipo === 1 || tipo === 2 || tipo === 3) {
+                                    if (asing) {
+                                        $('#check_' + conO + '_' + conS + '_' + conV + '_' + conVH).parent().addClass("checked");
+                                        $('#check_' + conO + '_' + conS + '_' + conV + '_' + conVH).prop("checked", true);
+                                    } else {
+                                        $('#check_' + conO + '_' + conS + '_' + conV + '_' + conVH).parent().removeClass("checked");
+                                        $('#check_' + conO + '_' + conS + '_' + conV + '_' + conVH).prop("checked", false);
+                                    }
+                                }
+                            });
+                            if (tipo === 1 || tipo === 2) {
+                                if (asing) {
+                                    $('#check_' + conO + '_' + conS + '_' + conV).parent().addClass("checked");
+                                    $('#check_' + conO + '_' + conS + '_' + conV).prop("checked", true);
+                                } else {
+                                    $('#check_' + conO + '_' + conS + '_' + conV).parent().removeClass("checked");
+                                    $('#check_' + conO + '_' + conS + '_' + conV).prop("checked", false);
+                                }
+                            }
+                        }
+                    });
+                    if (tipo === 1) {
+                        if (asing) {
+                            $('#check_' + conO + '_' + conS).parent().addClass("checked");
+                            $('#check_' + conO + '_' + conS).prop("checked", true);
+                        } else {
+                            $('#check_' + conO + '_' + conS).parent().removeClass("checked");
+                            $('#check_' + conO + '_' + conS).prop("checked", false);
+                        }
+                    }
+                }
+            });
+        }
+    });
+    verificarNodosP(tipo);
+}
+
+function verificarNodosP(tipo) {
+    var conO = 0;
+    var conS = 0;
+    var conV = 0;
+    var conVH = 0;
+
+    switch (tipo) {
+        case 2:
+        {
+            $('#arbolOrigen .origenes').each(function () {
+                var activarO2 = false;
+                var id = $(this).attr("id");
+                conO++;
+                conS = 0;
+                $('#' + id + ' .servicios').each(function () {
+                    conS++;
+                    if ($('#check_' + conO + '_' + conS).prop("checked")) {
+                        activarO2 = true;
+                    }
+                });
+                if (activarO2) {
+                    $('#check_' + conO).parent().addClass("checked");
+                    $('#check_' + conO).prop("checked", true);
+                } else {
+                    $('#check_' + conO).parent().removeClass("checked");
+                    $('#check_' + conO).prop("checked", false);
+                }
+            });
+            break;
+        }
+        case 3:
+        {
+            $('#arbolOrigen .origenes').each(function () {
+                var activarO = false;
+                var id = $(this).attr("id");
+                conO++;
+                conS = 0;
+                $('#' + id + ' .servicios').each(function () {
+                    var activarOS = false;
+                    var idSer = $(this).attr("id");
+                    conS++;
+                    conV = 0;
+                    $('#' + idSer + ' .variables').each(function () {
+                        conV++;
+                        if ($('#check_' + conO + '_' + conS + '_' + conV).prop("checked")) {
+                            activarOS = true;
+                            activarO = true;
+                        }
+                    });
+                    if (activarOS) {
+                        $('#check_' + conO + '_' + conS).parent().addClass("checked");
+                        $('#check_' + conO + '_' + conS).prop("checked", true);
+                    } else {
+                        $('#check_' + conO + '_' + conS).parent().removeClass("checked");
+                        $('#check_' + conO + '_' + conS).prop("checked", false);
+                    }
+                });
+                if (activarO) {
+                    $('#check_' + conO).parent().addClass("checked");
+                    $('#check_' + conO).prop("checked", true);
+                } else {
+                    $('#check_' + conO).parent().removeClass("checked");
+                    $('#check_' + conO).prop("checked", false);
+                }
+            });
+            break;
+        }
+        case 4:
+        {
+            $('#arbolOrigen .origenes').each(function () {
+                var activarO = false;
+                var id = $(this).attr("id");
+                conO++;
+                conS = 0;
+                $('#' + id + ' .servicios').each(function () {
+                    var activarOS = false;
+                    var idSer = $(this).attr("id");
+                    conS++;
+                    conV = 0;
+                    $('#' + idSer + ' .variables').each(function () {
+                        var activarOSV = false;
+                        var idvar = $(this).attr("id");
+                        conV++;
+                        conVH = 0;
+                        if ($('#' + idvar + ' .variHijos').html() != null) {
+                            $('#' + idvar + ' .variHijos').each(function () {
+                                conVH++;
+                                if ($('#check_' + conO + '_' + conS + '_' + conV + '_' + conVH).prop("checked")) {
+                                    activarOSV = true;
+                                    activarO = true;
+                                    activarOS = true;
+                                }
+                            });
+                        } else {
+                            if ($('#check_' + conO + '_' + conS + '_' + conV).prop("checked")) {
+                                activarOSV = true;
+                                activarO = true;
+                                activarOS = true;
+                            }
+                        }
+                        if (activarOSV) {
+                            $('#check_' + conO + '_' + conS + '_' + conV).parent().addClass("checked");
+                            $('#check_' + conO + '_' + conS + '_' + conV).prop("checked", true);
+                        } else {
+                            $('#check_' + conO + '_' + conS + '_' + conV).parent().removeClass("checked");
+                            $('#check_' + conO + '_' + conS + '_' + conV).prop("checked", false);
+                        }
+                    });
+                    if (activarOS) {
+                        $('#check_' + conO + '_' + conS).parent().addClass("checked");
+                        $('#check_' + conO + '_' + conS).prop("checked", true);
+                    } else {
+                        $('#check_' + conO + '_' + conS).parent().removeClass("checked");
+                        $('#check_' + conO + '_' + conS).prop("checked", false);
+                    }
+                });
+                if (activarO) {
+                    $('#check_' + conO).parent().addClass("checked");
+                    $('#check_' + conO).prop("checked", true);
+                } else {
+                    $('#check_' + conO).parent().removeClass("checked");
+                    $('#check_' + conO).parent().prop("checked", false);
+                }
+            });
+            break;
+        }
+    }
 }

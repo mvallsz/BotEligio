@@ -1,0 +1,41 @@
+.treejs{
+    list-style-type: none !important;
+}
+
+.treejs li label,.checkboxTree{
+    vertical-align: middle;
+}
+
+.checkboxTree{
+    margin-left: 4px;
+    margin-right: 4px !important;
+}
+
+.treejs li label{
+    line-height: 24px;
+    height: 24px;
+    color: inherit;
+    padding: 0 4px 0 1px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.openFont:before {
+    content: "\f0fe"; 
+    font-family: "Font Awesome 5 Free";
+    font-weight: 400;
+    font-style: normal;
+    cursor: pointer;
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+.closeFont:before {
+    content: "\f146"; 
+    font-family: "Font Awesome 5 Free";
+    font-weight: 400;
+    font-style: normal;
+    cursor: pointer;
+    font-size: 16px;
+    vertical-align: middle;
+}

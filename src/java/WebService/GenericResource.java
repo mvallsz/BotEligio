@@ -98,13 +98,13 @@ public class GenericResource {
 
     public boolean ValidarErrores(String user, String pass, String param) {
         boolean resp = false;
-        if (user.equals("?")) {
+        if (user.equals("-")) {
             resp = true;
         } else {
-            if (pass.equals("?")) {
+            if (pass.equals("-")) {
                 resp = true;
             } else {
-                if (param.contains("?")) {
+                if (param.contains("-")) {
                     resp = true;
                 }
             }

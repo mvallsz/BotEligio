@@ -58,7 +58,7 @@ public class GenericResource {
                 boolean validar = ValidarErrores(user, password, parametros);
                 if (validar) {
                     jsonResp.put("estado", 203);
-                    jsonResp.put("descripcion", "Algunos de los parametros de entrada estan con '?'");
+                    jsonResp.put("descripcion", "Algunos de los parametros de entrada estan con '-'");
                 } else {
                     if (new BnDatos().validarUSer(user, password, new BigInteger(id), new BigInteger(ideMP))) {
                         JSONObject parametrosWeb = new JSONObject();

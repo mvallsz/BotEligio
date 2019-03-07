@@ -470,7 +470,7 @@ public class BnDatos {
                 for (String name : JSONObject.getNames(jParam)) {
                     query = "SELECT ID, DATA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE PARAMETROS like ? AND SERVICIO = ? AND ID_EMPRESA = ? ORDER BY FECHA DESC LIMIT 1";
                     PreparedStatement pst = con.prepareStatement(query);
-                    pst.setString(1, ("%\"" + name + "\":" + jParam.get(name) + "%"));
+                    pst.setString(1, ("%\"" + name + "\":\"" + jParam.get(name) + "\"%"));
                     pst.setLong(2, idServicio);
                     pst.setLong(3, idEmpresa);
                     ResultSet rs = pst.executeQuery();

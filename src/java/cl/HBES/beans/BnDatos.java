@@ -321,7 +321,7 @@ public class BnDatos {
                 for (String name : JSONObject.getNames(jParam)) {
                     query = "SELECT UPDATED_DATE FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE PARAMETROS like ? AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
                     PreparedStatement pst2 = con.prepareStatement(query);
-                    pst2.setString(1, ("%\"" + name + "\":" + jParam.get(name) + "%"));
+                    pst2.setString(1, ("%\"" + name + "\":\"" + jParam.get(name) + "\"%"));
                     pst2.setLong(2, idEmpresa);
                     pst2.setLong(3, idServi);
                     ResultSet rs1 = pst2.executeQuery();
@@ -334,7 +334,7 @@ public class BnDatos {
                     for (String name : JSONObject.getNames(jParam)) {
                         query = "SELECT FECHA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE PARAMETROS like ? AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
                         PreparedStatement pst = con.prepareStatement(query);
-                        pst.setString(1, ("%\"" + name + "\":" + jParam.get(name) + "%"));
+                        pst.setString(1, ("%\"" + name + "\":\"" + jParam.get(name) + "\"%"));
                         pst.setLong(2, idEmpresa);
                         pst.setLong(3, idServi);
                         ResultSet rs2 = pst.executeQuery();

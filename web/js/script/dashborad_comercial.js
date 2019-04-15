@@ -1,4 +1,4 @@
-//console.log("Entra");
+console.log("Entra");
 var Dataaa = [];
 $(document).ready(function () {
     addAnio();

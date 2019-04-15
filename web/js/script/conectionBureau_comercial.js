@@ -10,7 +10,7 @@ console.log("entra");
 $(document).ready(function () {
     listarEmpresas();
     buscarTipoDato('#form-TipoDato1', '#form-tipoDatoHijo1_1');
-    listarServiciosDefault();
+//    listarServiciosDefault();
 });
 
 function initTables(tablaN) {
@@ -628,8 +628,8 @@ function listarOrigen() {
                 for (var dato in data.datos) {
                     $('#form-bureau').append('<option value="' + data.datos[dato].ID + '">' + data.datos[dato].nombre_origen + '</option>');
                 }
-                $('#form-bureau').append('<option value="-1" class="agregarConexion">Agregar Conexión</option>');
             }
+            $('#form-bureau').append('<option value="-1" class="agregarConexion">Agregar Conexión</option>');
         }
     });
 }

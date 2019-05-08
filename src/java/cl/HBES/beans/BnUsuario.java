@@ -54,7 +54,7 @@ public class BnUsuario {
             }
         } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnUsuario.class.getName(), ex.toString()});
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         } finally {
             Conexion.desconectar(conn);
         }

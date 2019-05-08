@@ -389,7 +389,7 @@ public class BnServicios {
         try {
             conn = Conexion.getConn();
             String sql = "SELECT RC.ID, RC.ID_EMPRESA, SER.nombre, ORI.DESCRIPCION, RC.FECHA, RC.USUARIO, RC.ID_DATA_RESPONSE, RC.TOKEN, RC.BUSCAR_DATOS\n"
-                    + "FROM " + DEF.ESQUEMA + ".REGISTRO_CONSULTAS RC JOIN  HUB_DP.DATA_RESPONSE DATR ON (RC.ID_DATA_RESPONSE = DATR.ID)\n"
+                    + "FROM " + DEF.ESQUEMA + ".REGISTRO_CONSULTAS RC JOIN  " + DEF.ESQUEMA + ".DATA_RESPONSE DATR ON (RC.ID_DATA_RESPONSE = DATR.ID)\n"
                     + "JOIN " + DEF.ESQUEMA + ".DATA_RESPONSE DAT ON (DATR.ID = DAT.ID)\n"
                     + "JOIN " + DEF.ESQUEMA + ".SERV_ORIGEN_EMPRESA SER ON (DAT.SERVICIO = SER.ID)\n"
                     + "JOIN  " + DEF.ESQUEMA + ".ORIGEN ORI ON (SER.id_origen = ORI.ID)\n"

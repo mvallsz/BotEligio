@@ -118,7 +118,7 @@ public class BnDatos {
                 if (texto.contains("?")) {
                     texto = texto.replace("?", "");
                 }
-                message = message + (message == "" ? texto : texto + "\n");
+                message = message + (message == "" ? texto : texto + ((i + 1) == xmlS.length ? "" : "\n"));
             }
 
             soapMessage = obtenerSoap(message);
@@ -215,6 +215,15 @@ public class BnDatos {
                 respuesta = new JSONObject(datos);
             } else if (tipoResponse == 2) {//XML
                 respuesta = XML.toJSONObject(datos);
+                String aux = "";
+                boolean parsear = false;
+                if (respuesta.has("RecuperarDatosOrsanXmlResponse")) {
+                    aux = Soporte.buscarEnJSONv2(respuesta.toString(), "RecuperarDatosOrsanXmlResult");
+                    parsear = true;
+                }
+                if (parsear) {
+                    respuesta = XML.toJSONObject(aux);
+                }
             }
         } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
@@ -885,31 +894,35 @@ public class BnDatos {
         try {
             JSONObject jsonCreden = new JSONObject(credenciales);
             JSONObject jsonParam = new JSONObject(parametrosWeb);
-            for (String Creden : JSONObject.getNames(jsonCreden)) {
-                boolean agregar = true;
+            if (jsonCreden.length() > 0) {
+                for (String Creden : JSONObject.getNames(jsonCreden)) {
+                    boolean agregar = true;
+                    for (String Param : JSONObject.getNames(jsonParam)) {
+                        if (Param.equals(Creden)) {
+                            resp.put(Param, jsonParam.get(Param));
+                            agregar = false;
+                            break;
+                        }
+                    }
+                    if (agregar) {
+                        resp.put(Creden, jsonCreden.get(Creden));
+                    }
+                }
+                JSONObject aux = resp;
                 for (String Param : JSONObject.getNames(jsonParam)) {
-                    if (Param.equals(Creden)) {
+                    boolean agregar = true;
+                    for (String Aux : JSONObject.getNames(aux)) {
+                        if (Aux.equals(Param)) {
+                            agregar = false;
+                            break;
+                        }
+                    }
+                    if (agregar) {
                         resp.put(Param, jsonParam.get(Param));
-                        agregar = false;
-                        break;
                     }
                 }
-                if (agregar) {
-                    resp.put(Creden, jsonCreden.get(Creden));
-                }
-            }
-            JSONObject aux = resp;
-            for (String Param : JSONObject.getNames(jsonParam)) {
-                boolean agregar = true;
-                for (String Aux : JSONObject.getNames(aux)) {
-                    if (Aux.equals(Param)) {
-                        agregar = false;
-                        break;
-                    }
-                }
-                if (agregar) {
-                    resp.put(Param, jsonParam.get(Param));
-                }
+            } else {
+                resp = jsonParam;
             }
         } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});

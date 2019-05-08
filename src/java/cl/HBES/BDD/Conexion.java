@@ -15,7 +15,7 @@ import java.sql.SQLException;
  *
  * @author Desarrollador
  */
-public class Conexion extends Soporte{
+public class Conexion extends Soporte {
 
     /**
      *
@@ -23,9 +23,7 @@ public class Conexion extends Soporte{
      */
     public static Connection getConn() {
         Connection con = null;
-
         try {
-
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection(DEF.DIRECCION, DEF.USER, DEF.PASSWORD);
             con.setAutoCommit(false);

@@ -74,14 +74,9 @@ function activarServ(idServ, activo) {
 
 function ValidaForm() {
     var idEmp = $("#form-empresa option:selected").val();
-    var nombre = '';
+    var nombre = $('#form-nombre').val().trim();
     var tipoPersona = $("select#form-tipoPersona option:checked").val();
     var bureau = $("select#form-bureau option:checked").val();
-    if (bureau === "1" || bureau === "2" || bureau === "3" || bureau === "4") {
-        nombre = ($("select#form-nombre-servicio option:checked").val() === "0" ? "" : $("select#form-nombre-servicio option:checked").text());
-    } else {
-        nombre = $('#form-nombre').val().trim();
-    }
     var tipoServicio = $("select#form-tipoWs option:checked").val();
     var url = $('#form-url').val().trim();
     var cantDias = $('#form-cantDias').val().trim();
@@ -212,13 +207,8 @@ function ValidaForm() {
 function GuardarForm() {
     if (ValidaForm()) {
         var idEmp = $("#form-empresa option:selected").val();
-        var nombre = "";
+        var nombre = $('#form-nombre').val().trim();
         var bureau = $("select#form-bureau option:checked").val();
-        if (bureau === "1" || bureau === "2" || bureau === "3" || bureau === "4") {
-            nombre = ($("select#form-nombre-servicio option:checked").val() === "0" ? "" : $("select#form-nombre-servicio option:checked").text());
-        } else {
-            nombre = $('#form-nombre').val().trim();
-        }
         var tipoPersona = $("select#form-tipoPersona option:checked").val();
         var tipoServicio = $("select#form-tipoWs option:checked").val();
         var url = $('#form-url').val().trim();

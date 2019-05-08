@@ -19,6 +19,7 @@ import java.util.concurrent.Future;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
  *
@@ -345,7 +346,36 @@ public class BnResponse {
                         da = Soporte.buscarHijos(da, varHijos);
                         respVari.put(variable, new JSONArray(da));
                     } else {
-                        respVari.put(variable, da);
+                        if (da.equals("")) {
+                            respVari.put(variable, da);
+                        } else {
+                            Object objeto = new JSONTokener(da).nextValue();
+                            if (objeto instanceof JSONArray) {
+                                JSONArray variab = new JSONArray();
+                                JSONArray aux = new JSONArray(da);
+                                for (int i = 0; i < aux.length(); i++) {
+                                    Object objeto2 = new JSONTokener(aux.get(i).toString()).nextValue();
+                                    if (objeto2 instanceof JSONObject) {
+                                        JSONObject vari2 = new JSONObject();
+                                        for (String c : JSONObject.getNames(new JSONObject(aux.get(i).toString()))) {
+                                            vari2.put(c, new JSONObject(aux.get(i).toString()).get(c));
+                                        }
+                                        variab.put(vari2);
+                                    } else {
+                                        variab.put(aux.get(i));
+                                    }
+                                }
+                                respVari.put(variable, variab);
+                            } else if (objeto instanceof JSONObject) {
+                                JSONObject vari3 = new JSONObject();
+                                for (String c : JSONObject.getNames(new JSONObject(da))) {
+                                    vari3.put(c, new JSONObject(da).get(c));
+                                }
+                                respVari.put(variable, vari3);
+                            } else {
+                                respVari.put(variable, da);
+                            }
+                        }
                     }
                 }
                 respuesta = respVari;

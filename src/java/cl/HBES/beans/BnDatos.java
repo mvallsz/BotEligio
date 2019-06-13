@@ -331,7 +331,7 @@ public class BnDatos {
                 for (String name : JSONObject.getNames(jParam)) {
                     busqueda += (busqueda.equals("") ? "" : " AND ") + "PARAMETROS like '%\"" + name + "\":\"" + jParam.get(name) + "\"%'";
                 }
-                query = "SELECT UPDATED_DATE FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE " + (busqueda.equals("") ? "" : " AND ") + "ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
+                query = "SELECT UPDATED_DATE FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE " + (busqueda.equals("") ? "" : (busqueda + " AND ")) + "ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
                 PreparedStatement pst2 = con.prepareStatement(query);
                 pst2.setLong(1, idEmpresa);
                 pst2.setLong(2, idServi);
@@ -345,7 +345,7 @@ public class BnDatos {
                     for (String name : JSONObject.getNames(jParam)) {
                         busqueda += (busqueda.equals("") ? "" : " AND ") + "PARAMETROS like '%\"" + name + "\":\"" + jParam.get(name) + "\"%'";
                     }
-                    query = "SELECT FECHA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE " + (busqueda.equals("") ? "" : " AND ") + "ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
+                    query = "SELECT FECHA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE " + (busqueda.equals("") ? "" : (busqueda + " AND ")) + "ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
                     PreparedStatement pst = con.prepareStatement(query);
                     pst.setLong(1, idEmpresa);
                     pst.setLong(2, idServi);
@@ -481,7 +481,7 @@ public class BnDatos {
                 for (String name : JSONObject.getNames(jParam)) {
                     busqueda += (busqueda.equals("") ? "" : " AND ") + "PARAMETROS like '%\"" + name + "\":\"" + jParam.get(name) + "\"%'";
                 }
-                query = "SELECT ID, DATA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE " + (busqueda.equals("") ? "" : " AND ") + "SERVICIO = ? AND ID_EMPRESA = ? ORDER BY FECHA DESC LIMIT 1";
+                query = "SELECT ID, DATA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE " + (busqueda.equals("") ? "" : (busqueda + " AND ")) + "SERVICIO = ? AND ID_EMPRESA = ? ORDER BY FECHA DESC LIMIT 1";
                 PreparedStatement pst = con.prepareStatement(query);
                 pst.setLong(1, idServicio);
                 pst.setLong(2, idEmpresa);
@@ -641,7 +641,7 @@ public class BnDatos {
                     for (String name : JSONObject.getNames(jsonParam)) {
                         busqueda += (busqueda.equals("") ? "" : " AND ") + "PARAMETROS like '%\"" + name + "\":\"" + jsonParam.get(name) + "\"%'";
                     }
-                    query = "SELECT ID FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE " + (busqueda.equals("") ? "" : " AND ") + "ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1;";
+                    query = "SELECT ID FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE " + (busqueda.equals("") ? "" : (busqueda + " AND ")) + "ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1;";
                     PreparedStatement pst = con.prepareStatement(query);
                     pst.setLong(1, idEmpresa);
                     pst.setLong(2, idServicio);

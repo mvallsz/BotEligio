@@ -327,30 +327,31 @@ public class BnDatos {
                     }
                 }
                 jParam = jaux;
+                String busqueda = "";
                 for (String name : JSONObject.getNames(jParam)) {
-                    query = "SELECT UPDATED_DATE FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE PARAMETROS like ? AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
-                    PreparedStatement pst2 = con.prepareStatement(query);
-                    pst2.setString(1, ("%\"" + name + "\":\"" + jParam.get(name) + "\"%"));
-                    pst2.setLong(2, idEmpresa);
-                    pst2.setLong(3, idServi);
-                    ResultSet rs1 = pst2.executeQuery();
-                    if (rs1.next()) {
-                        fechaUltima = rs1.getDate("UPDATED_DATE");
-                        break;
-                    }
+                    busqueda += (busqueda.equals("") ? "" : " AND ") + "PARAMETROS like '%\"" + name + "\":\"" + jParam.get(name) + "\"%'";
+                }
+                query = "SELECT UPDATED_DATE FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE " + busqueda + " AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
+                PreparedStatement pst2 = con.prepareStatement(query);
+                pst2.setLong(1, idEmpresa);
+                pst2.setLong(2, idServi);
+                ResultSet rs1 = pst2.executeQuery();
+                if (rs1.next()) {
+                    fechaUltima = rs1.getDate("UPDATED_DATE");
                 }
                 if (fechaUltima == null) {
+                    busqueda = "";
+
                     for (String name : JSONObject.getNames(jParam)) {
-                        query = "SELECT FECHA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE PARAMETROS like ? AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
-                        PreparedStatement pst = con.prepareStatement(query);
-                        pst.setString(1, ("%\"" + name + "\":\"" + jParam.get(name) + "\"%"));
-                        pst.setLong(2, idEmpresa);
-                        pst.setLong(3, idServi);
-                        ResultSet rs2 = pst.executeQuery();
-                        if (rs2.next()) {
-                            fechaUltima = rs2.getDate("FECHA");
-                            break;
-                        }
+                        busqueda += (busqueda.equals("") ? "" : " AND ") + "PARAMETROS like '%\"" + name + "\":\"" + jParam.get(name) + "\"%'";
+                    }
+                    query = "SELECT FECHA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE " + busqueda + " AND ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
+                    PreparedStatement pst = con.prepareStatement(query);
+                    pst.setLong(1, idEmpresa);
+                    pst.setLong(2, idServi);
+                    ResultSet rs2 = pst.executeQuery();
+                    if (rs2.next()) {
+                        fechaUltima = rs2.getDate("FECHA");
                     }
                 }
             } else {

@@ -22,7 +22,7 @@ public class BnProperties {
 
         prop = new Properties();
         try {
-            prop.load(new FileInputStream(new File("/home/properties/hbes/hbes.properties")));
+            prop.load(new FileInputStream(new File("/home/properties/HBES/hbes.properties")));
             System.out.println(prop.toString());
         } catch (IOException e) {
             e.printStackTrace();

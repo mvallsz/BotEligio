@@ -34,7 +34,7 @@ public class BnResponse {
         JSONObject serv = obtenerServicios(json);
 //        new BnResponse().datos(serv, "464654654", 1);
     }
-    public static ExecutorService executor;
+    public ExecutorService executor;
 
     public JSONObject buscarDatos(JSONArray servicios, String rut, long idEmpresa, String user, int historial, String parametrosWeb, boolean web) {
         JSONObject json = new JSONObject();

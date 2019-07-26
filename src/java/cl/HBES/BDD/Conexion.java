@@ -26,11 +26,12 @@ public class Conexion extends Soporte {
     public static Connection getConn() {
         Connection con = null;
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection(DEF.DIRECCION, DEF.USER, DEF.PASSWORD);
-            con.setAutoCommit(true);
+            con = DEF.basicDS.getConnection();
+//            Class.forName("com.mysql.jdbc.Driver");
+//            con = DriverManager.getConnection(DEF.DIRECCION, DEF.USER, DEF.PASSWORD);
+//            con.setAutoCommit(true);
 
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (Exception ex) {
             severe("{0}:{1}", new Object[]{Conexion.class.getName(), ex.toString()});
             ex.printStackTrace(System.out);
         }

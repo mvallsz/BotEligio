@@ -5,6 +5,9 @@
  */
 package cl.HBES.soporte;
 
+import cl.HBES.BDD.DataSource;
+import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
+
 /**
  *
  * @author Desarrollador
@@ -16,12 +19,12 @@ public class DEF {
     public static final String USER = prop.getPropiedad("USER");
     public static final String PASSWORD = prop.getPropiedad("PASSWORD");
     public static final String ESQUEMA = prop.getPropiedad("ESQUEMA");
-    
+
     public static final String DOMINIO_WEB_SERV = prop.getPropiedad("DOMINIO_WEB_SERV");
 
     public static final String SESSION_USUARIO = "user_session";
     public static final String TITULO = "HBES";
     public static final String PAGE_LOGIN = "/login.jsp";
-
+    public static BasicDataSource basicDS = DataSource.getInstance().getBasicDS();
 
 }

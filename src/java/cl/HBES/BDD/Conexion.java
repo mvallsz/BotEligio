@@ -10,6 +10,8 @@ import cl.HBES.soporte.Soporte;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -26,7 +28,7 @@ public class Conexion extends Soporte {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection(DEF.DIRECCION, DEF.USER, DEF.PASSWORD);
-            con.setAutoCommit(false);
+            con.setAutoCommit(true);
 
         } catch (ClassNotFoundException | SQLException ex) {
             severe("{0}:{1}", new Object[]{Conexion.class.getName(), ex.toString()});
@@ -60,10 +62,27 @@ public class Conexion extends Soporte {
 
             con.close();
 
+        } catch (SQLException ex) {
+            try {
+                con.close();
+                con = null;
+            } catch (SQLException ex1) {
+                Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex1);
+                ex1.printStackTrace(System.out);
+            }
+            ex.printStackTrace(System.out);
         } catch (Exception ex) {
             flag = false;
             severe("{0}:{1}", new Object[]{Conexion.class.getName(), ex.toString()});
             ex.printStackTrace(System.out);
+        } finally {
+            try {
+                con.close();
+                con = null;
+            } catch (SQLException ex1) {
+                Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex1);
+                ex1.printStackTrace(System.out);
+            }
         }
         return flag;
     }

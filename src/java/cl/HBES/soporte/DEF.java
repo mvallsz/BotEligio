@@ -25,6 +25,7 @@ public class DEF {
     public static final String SESSION_USUARIO = "user_session";
     public static final String TITULO = "HBES";
     public static final String PAGE_LOGIN = "/login.jsp";
+    public static final String MaxTotal = prop.getPropiedad("MaxTotal");
     public static BasicDataSource basicDS = DataSource.getInstance().getBasicDS();
 
 }

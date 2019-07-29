@@ -32,7 +32,7 @@ public class DataSource {
 
         // Parameters for connection pooling
         basicDS.setInitialSize(1);
-        basicDS.setMaxTotal(100);
+        basicDS.setMaxTotal(Integer.parseInt(DEF.MaxTotal));
     }
 
     /**

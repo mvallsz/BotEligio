@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,7 +72,8 @@ public class BnResponse {
                 }
             }
             executor.shutdown();
-            Thread.sleep(1000);
+            executor.awaitTermination(5, TimeUnit.MINUTES);
+//            Thread.sleep(1000);
             json = datos(origen, token, idEmpresa, web);
         } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnResponse.class.getName(), ex.toString()});
@@ -283,7 +285,7 @@ public class BnResponse {
 
     public static JSONObject datos(JSONObject origen, String token, long idEmpresa, boolean web) {
         JSONObject json = new JSONObject();
-        int limit = 10;
+//        int limit = 10;
         try {
             JSONObject respVari = new JSONObject();
             for (String name : JSONObject.getNames(origen)) {
@@ -291,22 +293,23 @@ public class BnResponse {
                 JSONObject resp = new JSONObject();
                 for (String name2 : JSONObject.getNames(serv)) {
                     JSONObject js = serv.getJSONObject(name2);
-                    int cont = 0;
+//                     int cont = 0;
                     String datos = BnDatos.buscarDatosServicios(token, idEmpresa, js.getLong("idServicio"));
-                    if (datos.equalsIgnoreCase("SIN DATOS")) {
-                        while (cont < limit) {
-                            Thread.sleep(5000);
-                            datos = BnDatos.buscarDatosServicios(token, idEmpresa, js.getLong("idServicio"));
-                            if (datos.equalsIgnoreCase("SIN DATOS")) {
-                                cont++;
-                            } else if (datos.equalsIgnoreCase("ERROR")) {
-                                datos = "{}";
-                                cont = 10;
-                            } else {
-                                cont = 10;
-                            }
-                        }
-                    } else if (datos.equalsIgnoreCase("ERROR")) {
+//                    if (datos.equalsIgnoreCase("SIN DATOS")) {
+//                        while (cont < limit) {
+//                            Thread.sleep(5000);
+//                            datos = BnDatos.buscarDatosServicios(token, idEmpresa, js.getLong("idServicio"));
+//                            if (datos.equalsIgnoreCase("SIN DATOS")) {
+//                                cont++;
+//                            } else if (datos.equalsIgnoreCase("ERROR")) {
+//                                datos = "{}";
+//                                cont = 10;
+//                            } else {
+//                                cont = 10;
+//                            }
+//                        }
+//                    } else 
+                    if (datos.equalsIgnoreCase("ERROR")) {
                         datos = "{}";
                     }
                     if (js.has("variable")) {

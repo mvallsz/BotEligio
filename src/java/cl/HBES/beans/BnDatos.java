@@ -1104,4 +1104,52 @@ public class BnDatos {
         return resp;
     }
 
+    public static void actualizarFecha(String token, long idEmpresa, long idServicio, int cantDias) {
+        String id = "";
+        String fecha = "";
+        Connection con = Conexion.getConn();
+        try {
+            String query = "SELECT RG.ID_DATA_RESPONSE FROM " + DEF.ESQUEMA + ".REGISTRO_CONSULTAS RG\n"
+                    + "JOIN " + DEF.ESQUEMA + ".DATA_RESPONSE DT ON (RG.ID_DATA_RESPONSE = DT.ID)\n"
+                    + "JOIN " + DEF.ESQUEMA + ".SERV_ORIGEN_EMPRESA SER ON (DT.SERVICIO = SER.ID)\n"
+                    + "WHERE RG.TOKEN = ? AND RG.ID_EMPRESA = ? AND SER.ID = ?;";
+            PreparedStatement pst = con.prepareStatement(query);
+            pst.setString(1, token);
+            pst.setLong(2, idEmpresa);
+            pst.setLong(3, idServicio);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                query = "SELECT ID, FECHA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE ID = ?;";
+                PreparedStatement pst2 = con.prepareStatement(query);
+                pst2.setLong(1, rs.getLong(1));
+                ResultSet rs2 = pst2.executeQuery();
+                while (rs2.next()) {
+                    id = rs2.getString(1);
+                    fecha = rs2.getString(2);
+                }
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        }
+
+        if (!id.equals("") && !fecha.equals("")) {
+            try {
+                String query = "UPDATE " + DEF.ESQUEMA + ".DATA_RESPONSE SET FECHA = DATE_ADD('" + fecha + "', INTERVAL -" + cantDias + " DAY) WHERE  ID = ?;";
+                PreparedStatement pst = con.prepareStatement(query);
+                pst.setString(1, id);
+                pst.executeUpdate();
+                pst.close();
+            } catch (Exception ex) {
+                Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
+                ex.printStackTrace(System.out);
+            } finally {
+                Conexion.desconectar(con);
+            }
+        } else {
+            Conexion.desconectar(con);
+        }
+
+    }
+
 }

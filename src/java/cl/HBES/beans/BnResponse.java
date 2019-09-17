@@ -286,6 +286,7 @@ public class BnResponse {
     public static JSONObject datos(JSONObject origen, String token, long idEmpresa, boolean web) {
         JSONObject json = new JSONObject();
 //        int limit = 10;
+        boolean error = false;
         try {
             JSONObject respVari = new JSONObject();
             for (String name : JSONObject.getNames(origen)) {
@@ -310,14 +311,34 @@ public class BnResponse {
 //                        }
 //                    } else 
                     if (datos.equalsIgnoreCase("ERROR")) {
-                        datos = "{}";
+                        error = true;
+                        break;
                     }
-                    if (js.has("variable")) {
-                        JSONArray variables = js.getJSONArray("variable");
-                        respVari = new BnResponse().datosResponse(variables, datos, respVari, js.getLong("idServicio"));
+
+                    JSONObject erorres = new BnResponse().buscarErrores(datos, js.getLong("idServicio"));
+                    if (erorres.getBoolean("error")) {
+                        respVari.put("estadoError", "500");
+                        respVari.put("txtError", erorres.getString("txterror"));
+
+                        //Actualizar Fecha!
+                        int cantDias = 0;
+                        if (js.getInt("vigencia") == 1) {
+                            cantDias = js.getInt("vigenciaCantDias") + 1;
+                        } else {
+                            cantDias = 32;
+                        }
+                        BnDatos.actualizarFecha(token, idEmpresa, js.getLong("idServicio"), cantDias);
                     } else {
-                        resp.put(name2, datos);
+                        if (js.has("variable")) {
+                            JSONArray variables = js.getJSONArray("variable");
+                            respVari = new BnResponse().datosResponse(variables, datos, respVari, js.getLong("idServicio"));
+                        } else {
+                            resp.put(name2, datos);
+                        }
                     }
+                }
+                if (error) {
+                    break;
                 }
                 if (!web) {
                     json.put(name, resp);
@@ -328,6 +349,13 @@ public class BnResponse {
             }
         } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnResponse.class.getName(), ex.toString()});
+        }
+
+        try {
+            if (error) {
+                json = new JSONObject("{\"error\":200}");
+            }
+        } catch (Exception e) {
         }
         return json;
     }
@@ -458,8 +486,8 @@ public class BnResponse {
     public JSONObject obtenerDatosWeb(BigInteger idRespon, String parametrosWeb, String user, String pass, BigInteger IDeMP) {
         JSONObject resp = new JSONObject();
         Connection con = Conexion.getConn();
+        JSONArray servicios = new JSONArray();
         try {
-            JSONArray servicios = new JSONArray();
             String query = "SELECT DATOS FROM  " + DEF.ESQUEMA + ".RESPONSE_EMPRESA WHERE ID = ?";
             PreparedStatement pst = con.prepareStatement(query);
             pst.setString(1, idRespon.toString());
@@ -467,12 +495,15 @@ public class BnResponse {
             while (rs.next()) {
                 servicios = new JSONArray(rs.getString(1));
             }
-            JSONObject j = new BnDatos().buscarDatUser(user, pass, IDeMP);
-            resp = buscarDatos(servicios, "", j.getLong("idEmp"), j.getString("user"), j.getInt("hist"), parametrosWeb, true);
         } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnResponse.class.getName(), ex.toString()});
         } finally {
             Conexion.desconectar(con);
+        }
+        try {
+            JSONObject j = new BnDatos().buscarDatUser(user, pass, IDeMP);
+            resp = buscarDatos(servicios, "", j.getLong("idEmp"), j.getString("user"), j.getInt("hist"), parametrosWeb, true);
+        } catch (Exception e) {
         }
         return resp;
     }
@@ -537,6 +568,56 @@ public class BnResponse {
             Soporte.severe("{0}:{1}", new Object[]{BnResponse.class.getName(), ex.toString()});
         } finally {
             Conexion.desconectar(con);
+        }
+        return resp;
+    }
+
+    public JSONObject buscarErrores(String datos, long idSer) {
+        JSONObject resp = new JSONObject();
+        Connection con = null;
+        JSONArray vari = new JSONArray();
+        try {
+            con = Conexion.getConn();
+            String sql = "SELECT VARIABLES FROM " + DEF.ESQUEMA + ".ERROR_SERVICIO WHERE SERVICIO=?;";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setLong(1, idSer);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                vari = new JSONArray(rs.getString(1));
+            }
+            rs.close();
+            pst.close();
+        } catch (Exception ex) {
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(con);
+        }
+        boolean error = false;
+        String txterror = "";
+        if (datos.toString().length() <= 2) {
+            error = true;
+            txterror = "No fue a Bureau";
+        } else {
+            if (vari.length() > 0) {
+                try {
+                    for (int i = 0; i < vari.length(); i++) {
+                        JSONObject json = new JSONObject(vari.get(i).toString());
+                        String busqueda = Soporte.buscarEnJSONv2(datos, json.getString("nombre"));
+                        if (busqueda.toUpperCase().equals(json.getString("valor").toUpperCase())) {
+                            error = true;
+                            txterror = json.getString("valor");
+                            break;
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace(System.out);
+                }
+            }
+        }
+        try {
+            resp.put("error", error);
+            resp.put("txterror", txterror);
+        } catch (Exception e) {
         }
         return resp;
     }

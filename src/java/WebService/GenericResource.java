@@ -68,10 +68,18 @@ public class GenericResource {
                         }
                         String nombre = new BnResponse().buscarNombreResp(new BigInteger(id));
                         JSONObject j = new BnResponse().obtenerDatosWeb(new BigInteger(id), parametrosWeb.toString(), user, password, new BigInteger(ideMP));
-                        JSONObject jresp = new JSONObject();
-                        jresp.put(nombre, j);
-                        jsonResp.put("estado", 200);
-                        jsonResp.put("datos", jresp);
+
+                        int estado = 200;
+                        if (j.toString().contains("estadoError")) {
+                            jsonResp.put("datos", Soporte.buscarEnJSONv2(j.toString(), "txtError"));
+                            estado = 500;
+                        } else {
+                            JSONObject jresp = new JSONObject();
+                            jresp.put(nombre, j);
+                            jsonResp.put("datos", jresp);
+                        }
+
+                        jsonResp.put("estado", estado);
                     } else {
                         jsonResp.put("estado", 300);
                         jsonResp.put("descripcion", "Usuario o Contraseña Incorrecta");

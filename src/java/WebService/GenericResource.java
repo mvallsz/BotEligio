@@ -58,7 +58,7 @@ public class GenericResource {
                 boolean validar = ValidarErrores(user, password, parametros);
                 if (validar) {
                     jsonResp.put("estado", 203);
-                    jsonResp.put("descripcion", "Algunos de los parametros de entrada estan con '-'");
+                    jsonResp.put("descripcion", "Algunos de los parametros de entrada contiene el signo de Interrogación");
                 } else {
                     if (new BnDatos().validarUSer(user, password, new BigInteger(id), new BigInteger(ideMP))) {
                         JSONObject parametrosWeb = new JSONObject();
@@ -106,13 +106,13 @@ public class GenericResource {
 
     public boolean ValidarErrores(String user, String pass, String param) {
         boolean resp = false;
-        if (user.equals("-")) {
+        if (user.equals("?")) {
             resp = true;
         } else {
-            if (pass.equals("-")) {
+            if (pass.equals("?")) {
                 resp = true;
             } else {
-                if (param.contains("-")) {
+                if (param.contains("?")) {
                     resp = true;
                 }
             }

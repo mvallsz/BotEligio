@@ -97,7 +97,7 @@ public class BnUsuario {
                 resp = 2;
             } else {
                 sql = "INSERT INTO " + DEF.ESQUEMA + ".USUARIO (nombre, usuario, password, id_empresa, estado)\n"
-                        + "VALUES(?, ?, ?, ?, 1);";
+                        + "VALUES(?, ?, md5(?), ?, 1);";
                 PreparedStatement pst1 = conn.prepareStatement(sql);
                 pst1.setString(1, nombre);
                 pst1.setString(2, user);
@@ -191,7 +191,7 @@ public class BnUsuario {
         Connection conn = null;
         try {
             conn = Conexion.getConn();
-            String sql = "UPDATE " + DEF.ESQUEMA + ".USUARIO SET nombre=?, usuario=?, password=?, estado=? WHERE ID=?;";
+            String sql = "UPDATE " + DEF.ESQUEMA + ".USUARIO SET nombre=?, usuario=?, password=md5(?), estado=? WHERE ID=?;";
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, nombre);
             pst.setString(2, user);

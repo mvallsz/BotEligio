@@ -285,7 +285,6 @@ public class BnResponse {
 
     public static JSONObject datos(JSONObject origen, String token, long idEmpresa, boolean web) {
         JSONObject json = new JSONObject();
-//        int limit = 10;
         boolean error = false;
         try {
             JSONObject respVari = new JSONObject();
@@ -294,22 +293,9 @@ public class BnResponse {
                 JSONObject resp = new JSONObject();
                 for (String name2 : JSONObject.getNames(serv)) {
                     JSONObject js = serv.getJSONObject(name2);
-//                     int cont = 0;
+
                     String datos = BnDatos.buscarDatosServicios(token, idEmpresa, js.getLong("idServicio"));
-//                    if (datos.equalsIgnoreCase("SIN DATOS")) {
-//                        while (cont < limit) {
-//                            Thread.sleep(5000);
-//                            datos = BnDatos.buscarDatosServicios(token, idEmpresa, js.getLong("idServicio"));
-//                            if (datos.equalsIgnoreCase("SIN DATOS")) {
-//                                cont++;
-//                            } else if (datos.equalsIgnoreCase("ERROR")) {
-//                                datos = "{}";
-//                                cont = 10;
-//                            } else {
-//                                cont = 10;
-//                            }
-//                        }
-//                    } else 
+
                     if (datos.equalsIgnoreCase("ERROR")) {
                         error = true;
                         break;
@@ -331,7 +317,12 @@ public class BnResponse {
                     } else {
                         if (js.has("variable")) {
                             JSONArray variables = js.getJSONArray("variable");
-                            respVari = new BnResponse().datosResponse(variables, datos, respVari, js.getLong("idServicio"));
+                            if (variables.toString().contains("-")) {
+                                Object obj = new JSONTokener(datos).nextValue();
+                                respVari.put(name2, obj);
+                            } else {
+                                respVari = new BnResponse().datosResponse(variables, datos, respVari, js.getLong("idServicio"));
+                            }
                         } else {
                             resp.put(name2, datos);
                         }

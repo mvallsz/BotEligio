@@ -535,26 +535,32 @@ public class BnServicios {
 
     public long guardarVariables(BigInteger id, int tipoRut, JSONObject j) {
         long idvar = 0;
-        Connection conn = null;
+
         try {
-            conn = Conexion.getConn();
-            String sql = "INSERT INTO " + DEF.ESQUEMA + ".VARIABLE (NOMBRE, VARIABLE, TIPO, TIPO_DATO, TIPO_SERVICIO) VALUES(?, ?, ?, ?, ?);";
-            PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            pst.setString(1, j.getString("NOMBRE"));
-            pst.setString(2, j.getString("VARIABLE"));
-            pst.setString(3, (tipoRut == 1 ? "N" : (tipoRut == 2 ? "J" : "A")));
-            pst.setLong(4, j.getLong("TIPODATO"));
-            pst.setString(5, id.toString());
-            pst.executeUpdate();
-            ResultSet rs = pst.getGeneratedKeys();
-            while (rs.next()) {
-                idvar = rs.getLong(1);
+            if (!j.getString("VARIABLE").equals("")) {
+                Connection conn = null;
+                try {
+                    conn = Conexion.getConn();
+                    String sql = "INSERT INTO " + DEF.ESQUEMA + ".VARIABLE (NOMBRE, VARIABLE, TIPO, TIPO_DATO, TIPO_SERVICIO) VALUES(?, ?, ?, ?, ?);";
+                    PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                    pst.setString(1, j.getString("NOMBRE"));
+                    pst.setString(2, j.getString("VARIABLE"));
+                    pst.setString(3, (tipoRut == 1 ? "N" : (tipoRut == 2 ? "J" : "A")));
+                    pst.setLong(4, j.getLong("TIPODATO"));
+                    pst.setString(5, id.toString());
+                    pst.executeUpdate();
+                    ResultSet rs = pst.getGeneratedKeys();
+                    while (rs.next()) {
+                        idvar = rs.getLong(1);
+                    }
+                } catch (Exception ex) {
+                    Soporte.severe("{0}:{1}", new Object[]{BnServicios.class.getName(), ex.toString()});
+                    ex.printStackTrace(System.out);
+                } finally {
+                    Conexion.desconectar(conn);
+                }
             }
-        } catch (Exception ex) {
-            Soporte.severe("{0}:{1}", new Object[]{BnServicios.class.getName(), ex.toString()});
-            ex.printStackTrace(System.out);
-        } finally {
-            Conexion.desconectar(conn);
+        } catch (Exception e) {
         }
         return idvar;
     }

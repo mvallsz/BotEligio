@@ -327,31 +327,34 @@ public class BnDatos {
                     }
                 }
                 jParam = jaux;
-                String busqueda = "";
-                for (String name : JSONObject.getNames(jParam)) {
-                    busqueda += (busqueda.equals("") ? "" : " AND ") + "PARAMETROS like '%\"" + name + "\":\"" + jParam.get(name) + "\"%'";
-                }
-                query = "SELECT UPDATED_DATE FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE " + (busqueda.equals("") ? "" : (busqueda + " AND ")) + "ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
-                PreparedStatement pst2 = con.prepareStatement(query);
-                pst2.setLong(1, idEmpresa);
-                pst2.setLong(2, idServi);
-                ResultSet rs1 = pst2.executeQuery();
-                if (rs1.next()) {
-                    fechaUltima = rs1.getDate("UPDATED_DATE");
-                }
-                if (fechaUltima == null) {
-                    busqueda = "";
 
+                if (jParam.length() > 0) {
+                    String busqueda = "";
                     for (String name : JSONObject.getNames(jParam)) {
                         busqueda += (busqueda.equals("") ? "" : " AND ") + "PARAMETROS like '%\"" + name + "\":\"" + jParam.get(name) + "\"%'";
                     }
-                    query = "SELECT FECHA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE " + (busqueda.equals("") ? "" : (busqueda + " AND ")) + "ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
-                    PreparedStatement pst = con.prepareStatement(query);
-                    pst.setLong(1, idEmpresa);
-                    pst.setLong(2, idServi);
-                    ResultSet rs2 = pst.executeQuery();
-                    if (rs2.next()) {
-                        fechaUltima = rs2.getDate("FECHA");
+                    query = "SELECT UPDATED_DATE FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE " + (busqueda.equals("") ? "" : (busqueda + " AND ")) + "ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
+                    PreparedStatement pst2 = con.prepareStatement(query);
+                    pst2.setLong(1, idEmpresa);
+                    pst2.setLong(2, idServi);
+                    ResultSet rs1 = pst2.executeQuery();
+                    if (rs1.next()) {
+                        fechaUltima = rs1.getDate("UPDATED_DATE");
+                    }
+                    if (fechaUltima == null) {
+                        busqueda = "";
+
+                        for (String name : JSONObject.getNames(jParam)) {
+                            busqueda += (busqueda.equals("") ? "" : " AND ") + "PARAMETROS like '%\"" + name + "\":\"" + jParam.get(name) + "\"%'";
+                        }
+                        query = "SELECT FECHA FROM " + DEF.ESQUEMA + ".DATA_RESPONSE WHERE " + (busqueda.equals("") ? "" : (busqueda + " AND ")) + "ID_EMPRESA = ? AND SERVICIO = ? ORDER BY FECHA DESC LIMIT 1";
+                        PreparedStatement pst = con.prepareStatement(query);
+                        pst.setLong(1, idEmpresa);
+                        pst.setLong(2, idServi);
+                        ResultSet rs2 = pst.executeQuery();
+                        if (rs2.next()) {
+                            fechaUltima = rs2.getDate("FECHA");
+                        }
                     }
                 }
             } else {
@@ -964,7 +967,7 @@ public class BnDatos {
                 resp = obtenerParam(new BigInteger(json.get(i).toString()), resp);
             }
             if (!resp.equals("")) {
-                String uResp = "?id=" + id + "&amp;empresa=" + idEmp + "&amp;user=<em>-</em>&amp;password=<em>-</em>&amp;parametros=" + resp;
+                String uResp = "?id=" + id + "&amp;empresa=" + idEmp + "&amp;user=?&amp;password=?&amp;parametros=" + resp;
                 resp = DEF.DOMINIO_WEB_SERV + "" + uResp;
                 sql = "UPDATE " + DEF.ESQUEMA + ".RESPONSE_EMPRESA SET URL = ? WHERE ID = ?;";
                 PreparedStatement pst2 = con.prepareStatement(sql);
@@ -983,9 +986,8 @@ public class BnDatos {
         return "";
     }
 
-    public String obtenerParam(BigInteger idServ, String comparar) {
+    public String obtenerParam(BigInteger idServ, String resp) {
         Connection con = Conexion.getConn();
-        String resp = "";
         try {
             JSONObject json = new JSONObject();
             String sql = "SELECT credenciales FROM " + DEF.ESQUEMA + ".SERV_ORIGEN_EMPRESA WHERE ID = ?;";
@@ -998,8 +1000,8 @@ public class BnDatos {
             if (json.has("parametros")) {
                 JSONArray jParam = json.getJSONArray("parametros");
                 for (int i = 0; i < jParam.length(); i++) {
-                    if (!comparar.contains(jParam.getString(i))) {
-                        resp += (!comparar.equals("") ? "," : "") + jParam.getString(i) + ":<em>-</em>" + ((i + 1) == jParam.length() ? "" : ",");
+                    if (!resp.contains(jParam.getString(i))) {
+                        resp += (!resp.equals("") ? "," : "") + jParam.getString(i) + ":?";
                     }
                 }
             }
@@ -1018,7 +1020,7 @@ public class BnDatos {
         Connection con = Conexion.getConn();
         try {
             BigInteger bid = new BigInteger("0");
-            String sql = "SELECT ID FROM " + DEF.ESQUEMA + ".USUARIO WHERE usuario=? AND password=? AND estado = 1 AND id_empresa = ?;";
+            String sql = "SELECT ID FROM " + DEF.ESQUEMA + ".USUARIO WHERE usuario=? AND password=md5(?) AND estado = 1 AND id_empresa = ?;";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, user);
             pst.setString(2, pass);
@@ -1050,7 +1052,7 @@ public class BnDatos {
         try {
             String sql = "SELECT US.nombre, CU.historial, CU.ID FROM " + DEF.ESQUEMA + ".USUARIO US\n"
                     + "JOIN " + DEF.ESQUEMA + ".cuentaEmpresa CU ON (US.id_empresa = CU.ID)\n"
-                    + "WHERE US.usuario = ? AND US.password = ? AND id_empresa = ?;";
+                    + "WHERE US.usuario = ? AND US.password = md5(?) AND id_empresa = ?;";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, user);
             pst.setString(2, pass);

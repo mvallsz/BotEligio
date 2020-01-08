@@ -505,6 +505,7 @@ function guardarDatos() {
 
 function limpiarDatos(tipo) {
     limpiarSelect('form-usuarioo1', '0');
+    listarUser();
     $('#form-nombreWs').val('');
     cont = 1;
     contSer = 1;

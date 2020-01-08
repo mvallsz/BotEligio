@@ -68,7 +68,7 @@
         <div class="form has-validation" style="display: none;text-align: center;" id="form-URLW">
             <section class="grid_12"> 
                 <div class="message info">
-                    <h3><em>*</em> Para acceder al Web Service creado debe dirigirse a la ruta indicada abajo <span style="font-size: 10px;">(Debe reemplazar los '-')</span></h3> 
+                    <h3><em>*</em> Para acceder al Web Service creado debe dirigirse a la ruta indicada abajo <span style="font-size: 10px;">(Debe reemplazar los signos de interrogación)</span></h3> 
                     <p id="form-urlWeb" style="font-size: 15px;font-weight: bold;"> </p> 
                 </div>
             </section>

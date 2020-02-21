@@ -102,8 +102,8 @@ function ValidaForm() {
     } else if (cantDias === "") {
         alert('Debe ingresar Cantidad de Dias');
         return false;
-    } else if (xml === "" && tipoServicio == 1) {
-        alert('Debe ingresar XML');
+    } else if (xml === "" && (tipoServicio == 1 || tipoServicio == 3)) {
+        alert(tipoServicio == 3 ? 'Debe ingresar BODY' : 'Debe ingresar XML');
         return false;
     }
     for (var i = 1; i <= contVar; i++) {
@@ -112,11 +112,11 @@ function ValidaForm() {
                 alert('Debe ingresar Nombre de la Variable');
                 return false;
             }
-        } else if ($('#form-chkHeader' + i).is(":checked")) {
-            if ($('#form-cantDiasvar' + i).val().trim() === "") {
-                alert('Debe ingresar Variable');
-                return false;
-            }
+//        } else if ($('#form-chkHeader' + i).is(":checked")) {
+//            if ($('#form-cantDiasvar' + i).val().trim() === "") {
+//                alert('Debe ingresar Variable');
+//                return false;
+//            }
         } else if ($('#form-chkParametro' + i).is(":checked")) {
             if ($('#form-cantDiaslabel' + i).val().trim() === "") {
                 alert('Debe ingresar Nombre de la Variable');
@@ -216,12 +216,15 @@ function GuardarForm() {
         var cantDias = $('#form-cantDias').val().trim();
         var diaVigencia = $("select#form-diaVigencia option:checked").val();
         var xml = " ";
-        if (tipoServicio == 1) {
+        if (tipoServicio == 1 || tipoServicio == 3) {
             xml = $('#form-xml').val().trim();
         }
         var contP = 0;
         var jsonAr = new Array();
         var json = new Object();
+
+        var header = new Object();
+        var auth = new Object();
         for (var i = 1; i <= contVar; i++) {
             var labelVar = $('#form-cantDiaslabel' + i).val().trim();
             var nombreVar = ""
@@ -232,12 +235,23 @@ function GuardarForm() {
                 contP++;
             } else {
                 nombreVar = $('#form-cantDiasvar' + i).val().trim();
+                if ($('#form-chkHeader' + i).is(":checked")) {
+                    header[labelVar] = nombreVar;
+                } else if ($('#form-chkAuth' + i).is(":checked")) {
+                    auth[labelVar] = nombreVar;
+                }
             }
-            if (!$('#form-chkParametro' + i).is(":checked")) {
+            if (!$('#form-chkParametro' + i).is(":checked") || !$('#form-chkHeader' + i).is(":checked") || !$('#form-chkParametro' + i).is(":checked")) {
                 json[labelVar] = nombreVar;
             }
         }
-        json['parametros'] = jsonAr;
+        json.parametros = jsonAr;
+        if (JSON.stringify(auth).length > 2) {
+            json.authorization = auth;
+        }
+        if (JSON.stringify(header).length > 2) {
+            json.header = header;
+        }
         var response = $("select#form-tipoSalida option:checked").val();
         var json2 = new Array();
         for (var i = 1; i <= contPar; i++) {
@@ -358,8 +372,15 @@ $("#form-tipoVigencia").change(function () {
 });
 
 $("#form-tipoWs").change(function () {
+    $('#form-xml').val('');
     if ($("select#form-tipoWs option:checked").val() === "1") {
         $('#divXML').show();
+        $('#lbl-xml').html('XML<em>*</em>');
+        $('#form-xml').attr('placeholder', '<?xml version="1.0"?>\n<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-\nenvelope/" soap:encodingStyle="http://www.w3.org/2003/05/soap-\nencoding">\n<soap:Header>\n;...\n</soap:Header>\n<soap:Body>\n...\n<soap:Fault>\n...\n</soap:Fault>\n</soap:Body>\n</soap:Envelope>\n');
+    } else if ($("select#form-tipoWs option:checked").val() === "3") {
+        $('#divXML').show();
+        $('#lbl-xml').html('BODY<em>*</em>');
+        $('#form-xml').attr('placeholder', '{\n   "var1": "?",\n   "var2": "?",\n   "var3": "?"\n}');
     } else {
         $('#divXML').hide();
     }
@@ -373,8 +394,9 @@ function AddVariable() {
     $('#addVariables').append('<div class="clearfix" id ="divVar' + contVar + '">' +
             '<label for="form-variable' + contVar + '" class="form-label">Variable ' + contVar + '<em>*</em>' +
             '<div class="checkgroup" >' +
-            '<label style="font-size: 12px;">Rut </label><input type="checkbox" id="form-chkRut' + contVar + '" onchange="EditVarRut(' + contVar + ');"/>' +
-            '<label style="font-size: 12px;"> XML Header </label><input type="checkbox" id="form-chkHeader' + contVar + '" onchange="EditVarHeader(' + contVar + ');"/>' +
+//            '<label style="font-size: 12px;">Rut </label><input type="checkbox" id="form-chkRut' + contVar + '" onchange="EditVarRut(' + contVar + ');"/>' +
+            '<label style="font-size: 12px;" title="Autentificación Basic">Basic Auth </label><input type="checkbox" id="form-chkAuth' + contVar + '" onchange="EditVarAuth(' + contVar + ');"/>' +
+            '<label style="font-size: 12px;"> Header </label><input type="checkbox" id="form-chkHeader' + contVar + '" onchange="EditVarHeader(' + contVar + ');"/>' +
             '<label style="font-size: 12px;" title="Parametro para Web Service Users"> Parametro </label><input type="checkbox" id="form-chkParametro' + contVar + '" onchange="EditParametroHeader(' + contVar + ')"/>' +
             '</div>' +
             '</label>' +
@@ -425,14 +447,41 @@ function EditVarRut(num) {
 
 function EditVarHeader(num) {
     if ($('#form-chkHeader' + num).is(":checked")) {
-        $("#form-chkRut" + num).parent().removeClass("checked");
-        $("#form-chkRut" + num).prop("checked", false);
+        $("#form-chkAuth" + num).parent().removeClass("checked");
+        $("#form-chkAuth" + num).prop("checked", false);
         $("#form-chkParametro" + num).parent().removeClass("checked");
         $("#form-chkParametro" + num).prop("checked", false);
-        $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
-        $("#form-cantDiaslabel" + num).val('SOAPAction');
-        $("#form-cantDiaslabel" + num).attr("disabled", true);
-    } else if (!$('#form-chkRut' + num).is(":checked")) {
+        $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
+        $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter variable"/>');
+//        $("#divCantDiaslabel" + num).html('<div class="selector" id="uniform-form-cantDiaslabel' + num + '"><span></span>' +
+//                '<select id="form-cantDiaslabel' + num + '" onchange="mostrarSelect2(\'form-cantDiaslabel' + num + '\');">' +
+//                '<option value="SOAPAction" selected>SOAPAction</option>' +
+//                '<option value="Content-Type">Content-Type</option>' +
+//                '</select></div>');
+//        mostrarSelect2('form-cantDiaslabel' + num);
+    } else if (!$('#form-chkAuth' + num).is(":checked")) {
+        $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
+        $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter variable"/>');
+    } else if (!$('#form-chkParametro' + num).is(":checked")) {
+        $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
+        $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter variable"/>');
+    }
+}
+
+function EditVarAuth(num) {
+    if ($('#form-chkAuth' + num).is(":checked")) {
+        $("#form-chkHeader" + num).parent().removeClass("checked");
+        $("#form-chkHeader" + num).prop("checked", false);
+        $("#form-chkParametro" + num).parent().removeClass("checked");
+        $("#form-chkParametro" + num).prop("checked", false);
+        $("#divCantDiaslabel" + num).html('<div class="selector" id="uniform-form-cantDiaslabel' + num + '"><span></span>' +
+                '<select id="form-cantDiaslabel' + num + '" onchange="mostrarSelect2(\'form-cantDiaslabel' + num + '\');cambiarTextVari(' + num + ');">' +
+                '<option value="user" selected>Usuario</option>' +
+                '<option value="pass">Password</option>' +
+                '</select></div>');
+        $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter variable"/>');
+        mostrarSelect2('form-cantDiaslabel' + num);
+    } else if (!$('#form-chkHeader' + num).is(":checked")) {
         $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
         $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter variable"/>');
     } else if (!$('#form-chkParametro' + num).is(":checked")) {
@@ -443,14 +492,14 @@ function EditVarHeader(num) {
 
 function EditParametroHeader(num) {
     if ($('#form-chkParametro' + num).is(":checked")) {
-        $("#form-chkRut" + num).parent().removeClass("checked");
-        $("#form-chkRut" + num).prop("checked", false);
+        $("#form-chkAuth" + num).parent().removeClass("checked");
+        $("#form-chkAuth" + num).prop("checked", false);
         $("#form-chkHeader" + num).parent().removeClass("checked");
         $("#form-chkHeader" + num).prop("checked", false);
         $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
         $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="variable"/>');
         $("#form-cantDiasvar" + num).attr("disabled", true);
-    } else if (!$('#form-chkRut' + num).is(":checked")) {
+    } else if (!$('#form-chkAuth' + num).is(":checked")) {
         $("#divCantDiaslabel" + num).html('<input type="text" id="form-cantDiaslabel' + num + '" name="name" required="required" placeholder="Enter name variable"/>');
         $("#divCantDiasvar" + num).html('<input type="text" id="form-cantDiasvar' + num + '" name="name" required="required" placeholder="Enter variable"/>');
     } else if (!$('#form-chkHeader' + num).is(":checked")) {
@@ -513,12 +562,6 @@ function limpiarForm(tipo) {
     $('#addVariables').html('');
     $('#addParametros').html('');
     $('#addParaHijos1').html('');
-//    for (var i = contVar; i > 1; i--) {
-//        ResVariable();
-//    }
-//    for (var i = contPar; i > 1; i--) {
-//        ResParametros();
-//    }
     selectedF('form-diaVigencia', '1');
     $('#divDiasVig').hide();
     $("#divCantDiaslabel1").html('<input type="text" id="form-cantDiaslabel1" name="name" required="required" placeholder="Enter name variable"/>');
@@ -529,8 +572,8 @@ function limpiarForm(tipo) {
     $("#form-chkHeader1").prop("checked", false);
     $("#form-chkParametro1").parent().removeClass("checked");
     $("#form-chkParametro1").prop("checked", false);
-    $("#form-chkRut1").parent().removeClass("checked");
-    $("#form-chkRut1").prop("checked", false);
+    $("#form-chkAuth1").parent().removeClass("checked");
+    $("#form-chkAuth1").prop("checked", false);
     $('#addVar' + contPar).show();
     $('#addVa').show();
     $('#addPar').show();
@@ -561,6 +604,8 @@ function limpiarForm(tipo) {
     $('#form-chkHeader1_1').attr('disabled', false);
     $('#form-diaVigencia').attr('disabled', false);
     $('#divXML').show();
+    $('#lbl-xml').html('XML<em>*</em>');
+    $('#form-xml').attr('placeholder', '<?xml version="1.0"?>\n<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-\nenvelope/" soap:encodingStyle="http://www.w3.org/2003/05/soap-\nencoding">\n<soap:Header>\n;...\n</soap:Header>\n<soap:Body>\n...\n<soap:Fault>\n...\n</soap:Fault>\n</soap:Body>\n</soap:Envelope>\n');
 }
 
 function limpiarSelect(text, mantener) {
@@ -1007,4 +1052,14 @@ function listarServi() {
                 }}
         ],
     });
+}
+
+function cambiarTextVari(cont) {
+    var lbl = $('#form-cantDiaslabel' + cont).val();
+    if (lbl == 'user') {
+        $('#form-cantDiasvar' + cont).prop('type', 'text');
+    } else {
+        $('#form-cantDiasvar' + cont).prop('type', 'password');
+
+    }
 }

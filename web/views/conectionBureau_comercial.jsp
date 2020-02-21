@@ -93,20 +93,22 @@
                 <div class="form-input">
                     <select id="form-tipoWs">
                         <option value="1" selected>SOAP</option>
-                        <option value="2">REST</option>
+                        <option value="2">REST - GET</option>
+                        <option value="3">REST - POST</option>
                     </select>
                 </div>
             </div>
             <div class="clearfix" id="divXML">
-                <label for="form-xml" class="form-label">XML<em>*</em></label>
+                <label id="lbl-xml" for="form-xml" class="form-label">XML<em>*</em></label>
                 <div class="form-input form-xml"><textarea id="form-xml" required="required" rows="15" placeholder="<?xml version=&#34;1.0&#34;?>&#10;<soap:Envelope xmlns:soap=&#34;http://www.w3.org/2003/05/soap-envelope/&#34; soap:encodingStyle=&#34;http://www.w3.org/2003/05/soap-encoding&#34;>&#10;<soap:Header>&#10;...&#10;</soap:Header>&#10;<soap:Body>&#10;...&#10;<soap:Fault>&#10;...&#10;</soap:Fault>&#10;</soap:Body>&#10;</soap:Envelope>&#10;"></textarea></div>
             </div>
             <!--<div>-->
             <div class="clearfix">
                 <label for="form-variable1" class="form-label">Variable 1<em>*</em>
                     <div class="checkgroup" >
-                        <label style="font-size: 12px;">Rut </label><input type="checkbox" id="form-chkRut1" onchange="EditVarRut(1)"/>
-                        <label style="font-size: 12px;">XML Header </label><input type="checkbox" id="form-chkHeader1" onchange="EditVarHeader(1)"/>
+                        <!--<label style="font-size: 12px;">Rut </label><input type="checkbox" id="form-chkRut1" onchange="EditVarRut(1)"/>-->
+                        <label style="font-size: 12px;" title="Autentificación Basic">Basic Auth </label><input type="checkbox" id="form-chkAuth1" onchange="EditVarAuth(1);"/>
+                        <label style="font-size: 12px;"> Header </label><input type="checkbox" id="form-chkHeader1" onchange="EditVarHeader(1)"/>
                         <label style="font-size: 12px;" title="Parametro para Web Service Users">Parametro </label><input type="checkbox" id="form-chkParametro1" onchange="EditParametroHeader(1)"/>
                     </div>
                 </label>

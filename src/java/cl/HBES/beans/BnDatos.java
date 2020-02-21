@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -43,6 +44,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.XML;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  *
@@ -124,10 +126,12 @@ public class BnDatos {
             soapMessage = obtenerSoap(message);
 
             MimeHeaders hd = soapMessage.getMimeHeaders();
-            if (json.has("SOAPAction")) {
-                hd.addHeader("SOAPAction", json.getString("SOAPAction"));
+            if (json.has("header")) {
+                JSONObject headers = new JSONObject(json.get("header").toString());
+                for (String name : JSONObject.getNames(headers)) {
+                    hd.addHeader(name, headers.get(name).toString());
+                }
             }
-
         } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
             ex.printStackTrace(System.out);
@@ -135,7 +139,7 @@ public class BnDatos {
         return soapMessage;
     }
 
-    public static JSONObject obtenerDatosRest(String rut, String credenciales, String url, String xml, int tipoResponse, String parametrosWeb, boolean web) {
+    public static JSONObject obtenerDatosRestGet(String rut, String credenciales, String url, String xml, int tipoResponse, String parametrosWeb, boolean web) {
         JSONObject respuesta = new JSONObject();
         try {
             int cont = 1;
@@ -196,6 +200,105 @@ public class BnDatos {
                 xml += line;
             }
             respuesta = pasarJSON(xml, tipoResponse);
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        }
+        return respuesta;
+    }
+
+    public static JSONObject obtenerDatosRestPost(String rut, String credenciales, String url, String body, int tipoResponse, String parametrosWeb, boolean web) {
+        JSONObject respuesta = new JSONObject();
+        try {
+            JSONObject json = new JSONObject(credenciales);
+            for (String x : JSONObject.getNames(json)) {
+                if (x.equalsIgnoreCase("parametros")) {
+                    json.remove(x);
+                    break;
+                }
+            }
+            if (web) {
+                json = reemplDatConst(json.toString(), parametrosWeb);
+            }
+            String message = "";
+            String[] xbodyS = body.split("\n");
+            for (int i = 0; i < xbodyS.length; i++) {
+                String texto = xbodyS[i];
+                for (String name : JSONObject.getNames(json)) {
+                    if (texto.contains(name)) {
+                        String valor = json.get(name).toString();
+                        if (!web) {
+                            if (valor.equalsIgnoreCase("dv") || valor.equalsIgnoreCase("rut") || valor.equalsIgnoreCase("rut-dv") || valor.equalsIgnoreCase("rutdv")) {
+                                switch (valor.toUpperCase()) {
+                                    case "RUT":
+                                        String[] var = rut.split("-");
+                                        valor = var[0];
+                                        break;
+                                    case "DV":
+                                        String[] var1 = rut.split("-");
+                                        valor = var1[1];
+                                        break;
+                                    case "RUT-DV":
+                                        valor = rut;
+                                        break;
+                                    case "RUTDV":
+                                        String[] var2 = rut.split("-");
+                                        valor = var2[0] + "" + var2[1];
+                                        break;
+                                }
+                            }
+                        }
+                        texto = texto.replace("?", valor);
+                        break;
+                    }
+                }
+                if (texto.contains("?")) {
+                    texto = texto.replace("?", "");
+                }
+                message = message + (message == "" ? texto : texto + ((i + 1) == xbodyS.length ? "" : "\n"));
+            }
+
+            URL link = new URL(url);
+            HttpURLConnection urlc = (HttpURLConnection) link.openConnection();
+            urlc.setRequestMethod("POST");
+
+            if (json.has("header")) {
+                JSONObject headers = new JSONObject(json.get("header").toString());
+                for (String name : JSONObject.getNames(headers)) {
+                    urlc.setRequestProperty(name, headers.get(name).toString());
+                }
+            }
+
+            if (json.has("authorization")) {
+                JSONObject author = new JSONObject(json.get("authorization").toString());
+                String user = author.getString("user");
+                String pass = author.getString("pass");
+                byte[] auth = (user + ":" + pass).getBytes();
+                String authorization = new String(Base64.encodeBase64(auth));
+                urlc.setRequestProperty("Authorization", "Basic " + authorization);
+            }
+
+            urlc.setDoOutput(true);
+            OutputStream os = urlc.getOutputStream();
+            os.write(message.getBytes());
+            os.flush();
+            os.close();
+
+            int responseCode = urlc.getResponseCode();
+            if (responseCode == 200) { //success
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                        urlc.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                respuesta = pasarJSON(response.toString(), tipoResponse);
+            } else {
+                System.out.println("************************************************************************************************");
+                System.out.println("POST Response Code ERROR:  " + responseCode);
+                System.out.println("************************************************************************************************");
+            }
         } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
             ex.printStackTrace(System.out);

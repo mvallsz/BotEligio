@@ -247,8 +247,10 @@ public class BnResponse {
 //CONSULTA SERVICIOS           
         if (tipoWS == 1) {
             json = BnDatos.obtenerDatosSoap(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
+        } else if (tipoWS == 3) {
+            json = BnDatos.obtenerDatosRestPost(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
         } else {
-            json = BnDatos.obtenerDatosRest(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
+            json = BnDatos.obtenerDatosRestGet(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
         }
 //GUARDA EN CACHE
         BigInteger idConsulta = BnDatos.guardarEnCache(rut, json.toString(), idEmpresa, emailUsuario, idServicio, parametrosWeb, web);
@@ -264,8 +266,10 @@ public class BnResponse {
             //CONSULTA SERVICIOS                
             if (tipoWS == 1) {
                 respuesta = BnDatos.obtenerDatosSoap(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
+            } else if (tipoWS == 3) {
+                respuesta = BnDatos.obtenerDatosRestPost(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
             } else {
-                respuesta = BnDatos.obtenerDatosRest(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
+                respuesta = BnDatos.obtenerDatosRestGet(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
             }
             //GUARDA EN CACHE     
             BigInteger idConsulta;

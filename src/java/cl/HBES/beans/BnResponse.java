@@ -291,7 +291,7 @@ public class BnResponse {
         JSONObject json = new JSONObject();
         boolean error = false;
         try {
-            JSONObject respVari = new JSONObject();
+            JSONObject respVarAux = new JSONObject();
             for (String name : JSONObject.getNames(origen)) {
                 JSONObject serv = origen.getJSONObject(name);
                 JSONObject resp = new JSONObject();
@@ -307,8 +307,8 @@ public class BnResponse {
 
                     JSONObject erorres = new BnResponse().buscarErrores(datos, js.getLong("idServicio"));
                     if (erorres.getBoolean("error")) {
-                        respVari.put("estadoError", "500");
-                        respVari.put("txtError", erorres.getString("txterror"));
+                        respVarAux.put("estadoError", "500");
+                        respVarAux.put("txtError", erorres.getString("txterror"));
 
                         //Actualizar Fecha!
                         int cantDias = 0;
@@ -326,9 +326,10 @@ public class BnResponse {
                                 obj = new JSONTokener(datos).nextValue();
 //                                respVari.put(name2, obj);
                             } else {
-                                obj = new BnResponse().datosResponse(variables, datos, respVari, js.getLong("idServicio")).toString();
+                                obj = new JSONTokener(new BnResponse().datosResponse(variables, datos, js.getLong("idServicio")).toString()).nextValue();
+//                                obj = new JSONTokener(new BnResponse().datosResponse(variables, datos, respVarAux, js.getLong("idServicio")).toString()).nextValue();
                             }
-                            respVari.put(name2, obj);
+                            respVarAux.put(name2, obj);
                         } else {
                             resp.put(name2, datos);
                         }
@@ -342,7 +343,7 @@ public class BnResponse {
                 }
             }
             if (web) {
-                json = respVari;
+                json = respVarAux;
             }
         } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnResponse.class.getName(), ex.toString()});
@@ -357,8 +358,10 @@ public class BnResponse {
         return json;
     }
 
-    public JSONObject datosResponse(JSONArray vari, String datos, JSONObject respVari, long idServicio) {
+    public JSONObject datosResponse(JSONArray vari, String datos, long idServicio) {
+//    public JSONObject datosResponse(JSONArray vari, String datos, JSONObject respVari, long idServicio) {
         JSONObject respuesta = new JSONObject();
+        JSONObject respVari = new JSONObject();
         try {
             if (vari.length() > 0) {
                 if (vari.toString().contains("-")) {

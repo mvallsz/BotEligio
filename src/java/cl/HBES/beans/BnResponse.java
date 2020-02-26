@@ -321,12 +321,14 @@ public class BnResponse {
                     } else {
                         if (js.has("variable")) {
                             JSONArray variables = js.getJSONArray("variable");
+                            Object obj = null;
                             if (variables.toString().contains("-")) {
-                                Object obj = new JSONTokener(datos).nextValue();
-                                respVari.put(name2, obj);
+                                obj = new JSONTokener(datos).nextValue();
+//                                respVari.put(name2, obj);
                             } else {
-                                respVari = new BnResponse().datosResponse(variables, datos, respVari, js.getLong("idServicio"));
+                                obj = new BnResponse().datosResponse(variables, datos, respVari, js.getLong("idServicio")).toString();
                             }
+                            respVari.put(name2, obj);
                         } else {
                             resp.put(name2, datos);
                         }

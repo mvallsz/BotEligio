@@ -483,7 +483,7 @@ public class BnResponse {
         return new JSONObject();
     }
 
-    public JSONObject obtenerDatosWeb(BigInteger idRespon, String parametrosWeb, String user, String pass, BigInteger IDeMP) {
+    public JSONObject obtenerDatosWeb(BigInteger idRespon, String parametrosWeb, String user, String pass, BigInteger IDeMP, boolean esJsonPost) {
         JSONObject resp = new JSONObject();
         Connection con = Conexion.getConn();
         JSONArray servicios = new JSONArray();
@@ -501,7 +501,7 @@ public class BnResponse {
             Conexion.desconectar(con);
         }
         try {
-            JSONObject j = new BnDatos().buscarDatUser(user, pass, IDeMP);
+            JSONObject j = new BnDatos().buscarDatUser(user, pass, IDeMP, esJsonPost);
             resp = buscarDatos(servicios, "", j.getLong("idEmp"), j.getString("user"), j.getInt("hist"), parametrosWeb, true);
         } catch (Exception e) {
         }

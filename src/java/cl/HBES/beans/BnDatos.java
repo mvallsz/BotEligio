@@ -1149,13 +1149,13 @@ public class BnDatos {
         return val;
     }
 
-    public JSONObject buscarDatUser(String user, String pass, BigInteger IDeMP) {
+    public JSONObject buscarDatUser(String user, String pass, BigInteger IDeMP, boolean esJsonPost) {
         JSONObject rsp = new JSONObject();
         Connection con = Conexion.getConn();
         try {
             String sql = "SELECT US.nombre, CU.historial, CU.ID FROM " + DEF.ESQUEMA + ".USUARIO US\n"
                     + "JOIN " + DEF.ESQUEMA + ".cuentaEmpresa CU ON (US.id_empresa = CU.ID)\n"
-                    + "WHERE US.usuario = ? AND US.password = md5(?) AND id_empresa = ?;";
+                    + "WHERE US.usuario = ? AND US.password =" + ((esJsonPost ? "?" : "md5(?)")) + " AND id_empresa = ?;";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, user);
             pst.setString(2, pass);

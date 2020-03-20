@@ -67,7 +67,7 @@ public class GenericResource {
                             parametrosWeb.put(param[i].split(":")[0], param[i].split(":")[1]);
                         }
                         String nombre = new BnResponse().buscarNombreResp(new BigInteger(id));
-                        JSONObject j = new BnResponse().obtenerDatosWeb(new BigInteger(id), parametrosWeb.toString(), user, password, new BigInteger(ideMP));
+                        JSONObject j = new BnResponse().obtenerDatosWeb(new BigInteger(id), parametrosWeb.toString(), user, password, new BigInteger(ideMP), false);
 
                         int estado = 200;
                         if (j.toString().contains("estadoError")) {

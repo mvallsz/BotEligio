@@ -116,10 +116,11 @@ public class Svl_Datos extends HttpServlet {
                 }
                 case "listarWebServise": {
                     long empresa = Long.parseLong(request.getParameter("idEmp"));
-                    JSONArray rutas = new BnDatos().obtenerRuta(empresa);
-                    if (rutas.length() > 0) {
+                    JSONObject jsonR = new BnDatos().obtenerRuta(empresa);
+                    if (jsonR.getJSONArray("rutas").length() > 0) {
                         json.put("estado", 200);
-                        json.put("datos", rutas);
+                        json.put("datos", jsonR.getJSONArray("rutas"));
+                        json.put("parametros", jsonR.getJSONObject("parametros"));
                     } else {
                         json.put("estado", 400);
                     }

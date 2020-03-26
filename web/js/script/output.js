@@ -693,12 +693,12 @@ function buscarRutas() {
         success: function (data, textStatus, jqXHR) {
             if (data.estado == 200) {
                 webSEr = data.datos;
+                console.log(data.parametros);
             }
             listarWebServ();
         }
     });
 }
-
 function listarWebServ() {
     $('#trCargando').remove();
     $('#tblWebSer').DataTable().destroy();

@@ -1175,9 +1175,37 @@ public class BnDatos {
         return rsp;
     }
 
-    public JSONArray obtenerRuta(long id) {
+    public static void main(String[] args) {
+//        System.out.println(getJSONParametros("?id=4&amp;empresa=1&amp;user=?&amp;password=?&amp;parametros=rut:?,dv:?"));
+        System.out.println(getJSONParametros("?id=23&amp;empresa=2&amp;user=?&amp;password=?&amp;parametros=chileanRut:?,usu_serie_sol:?,usu_renta:?,usu_valor_vehiculo:?,usu_monto_pie:?,usu_segmento:?,usu_tipo_financ:?"));
+    }
+
+    public static JSONObject getJSONParametros(String data) {
+        JSONObject resp = new JSONObject();
+        try {
+            String url = data;
+            String[] partes = url.split(";");
+            String[] parametros = partes[partes.length - 1].replace("parametros=", "").split(",");
+            String idServicio = partes[0].replace("?id=", "").split("&")[0];
+            String idEmpresa = partes[1].replace("empresa=", "").split("&")[0];
+            JSONObject param = new JSONObject();
+            for (int i = 0; i < parametros.length; i++) {
+                param.put(parametros[i].split(":")[0], "?");
+            }
+            resp.put("parametros", param);
+            resp.put("idServicio", idServicio);
+            resp.put("idEmpresa", idEmpresa);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resp;
+    }
+
+    public JSONObject obtenerRuta(long id) {
         Connection con = Conexion.getConn();
-        JSONArray resp = new JSONArray();
+        JSONObject resp = new JSONObject();
+        JSONArray rutas = new JSONArray();
+        JSONObject parametros = new JSONObject();
         try {
             String sql = "SELECT NOMBRE, URL, ID FROM " + DEF.ESQUEMA + ".RESPONSE_EMPRESA WHERE EMPRESA = ?;";
             PreparedStatement pst = con.prepareStatement(sql);
@@ -1188,6 +1216,7 @@ public class BnDatos {
                 j.put("nombre", rs.getString(1));
                 j.put("ruta", (DEF.DOMINIO_WEB_SERV + "" + rs.getString(2)));
                 j.put("id", rs.getLong(3));
+                parametros.put(rs.getLong(3) + "", getJSONParametros(rs.getString(2)));
                 JSONArray user = new JSONArray();
                 String sql2 = "SELECT US.usuario FROM " + DEF.ESQUEMA + ".USUARIO_has_RESPONSE UR JOIN " + DEF.ESQUEMA + ".USUARIO US ON (UR.USUARIO = US.ID)\n"
                         + "WHERE UR.RESPONSE = ?";
@@ -1198,8 +1227,11 @@ public class BnDatos {
                     user.put(rs2.getString(1));
                 }
                 j.put("user", user);
-                resp.put(j);
+                rutas.put(j);
             }
+            resp.put("rutas", rutas);
+            resp.put("parametros", parametros);
+
         } catch (Exception ex) {
             Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
             ex.printStackTrace(System.out);

@@ -9,7 +9,6 @@ import cl.HBES.beans.BnDatos;
 import cl.HBES.beans.BnUsuario;
 import cl.HBES.beans.BnResponse;
 import cl.HBES.beans.BnServicios;
-import cl.HBES.soporte.DEF;
 import cl.HBES.soporte.Soporte;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,7 +26,7 @@ import org.json.JSONObject;
 
 /**
  *
- * @author Desarrollador
+ * @author Manuel Valls
  */
 @WebServlet(name = "Svl_Datos", urlPatterns = {"/Svl_Datos"})
 public class Svl_Datos extends HttpServlet {

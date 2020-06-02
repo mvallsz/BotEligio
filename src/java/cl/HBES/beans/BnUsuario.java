@@ -144,7 +144,7 @@ public class BnUsuario {
         Connection conn = null;
         try {
             conn = Conexion.getConn();
-            String sql = "INSERT INTO " + DEF.ESQUEMA + ".USUARIO_has_RESPONSE (USUARIO, RESPONSE)\n"
+            String sql = "INSERT INTO " + DEF.ESQUEMA + ".USUARIO_HAS_RESPONSE (USUARIO, RESPONSE)\n"
                     + "VALUES(?, ?);";
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, idUser.toString());
@@ -244,7 +244,7 @@ public class BnUsuario {
                 idd = new BigInteger(res.getString(1));
             }
             JSONArray resp = new JSONArray();
-            sql = "SELECT RESPONSE FROM " + DEF.ESQUEMA + ".USUARIO_has_RESPONSE WHERE USUARIO = ?;";
+            sql = "SELECT RESPONSE FROM " + DEF.ESQUEMA + ".USUARIO_HAS_RESPONSE WHERE USUARIO = ?;";
             PreparedStatement pst1 = conn.prepareStatement(sql);
             pst1.setString(1, idd.toString());
             ResultSet res1 = pst1.executeQuery();

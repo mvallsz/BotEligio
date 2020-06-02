@@ -170,6 +170,8 @@ body.login {
     text-indent: -9999em;
     padding: 92px;
 }
+
+
 .login-box form {
     margin:10px 0 20px 0;
 }
@@ -217,12 +219,12 @@ body.login {
 }
 
 #wrapper > header > h1 {
-    background: url(../../images/HBES_SHIELD.png) no-repeat 20px center;
+    background: url(../../images/logoPrimus.png) no-repeat 20px center;
     float: left;
     font-size: 18px;
     line-height: 46px;
     margin: 0;
-    width: 320px;
+    width: 250px;
     text-indent: -9999em;
 }
 

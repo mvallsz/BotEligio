@@ -244,13 +244,23 @@ public class BnResponse {
 
     public static void buscarEnServicios(String rut, long idEmpresa, String credenciales, String url, String xml, String emailUsuario, long idServicio, String token, int tipoWS, int tipoResponse, String parametrosWeb, boolean web) {
         JSONObject json = new JSONObject();
-//CONSULTA SERVICIOS           
-        if (tipoWS == 1) {
-            json = BnDatos.obtenerDatosSoap(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
-        } else if (tipoWS == 3) {
-            json = BnDatos.obtenerDatosRestPost(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
-        } else {
-            json = BnDatos.obtenerDatosRestGet(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
+//CONSULTA SERVICIOS
+        switch (tipoWS) {
+            case 1:
+                json = BnDatos.obtenerDatosSoap(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
+                break;
+            case 2:
+                json = BnDatos.obtenerDatosRestGet(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
+                break;
+            case 3:
+                json = BnDatos.obtenerDatosRestPost(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
+                break;
+            case 4:
+                json = BnDatos.obtenerDatosRestGetP(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
+                break;
+            default:
+                json = BnDatos.obtenerDatosRestGet(rut, credenciales, url, xml, tipoResponse, parametrosWeb, web);
+                break;
         }
 //GUARDA EN CACHE
         BigInteger idConsulta = BnDatos.guardarEnCache(rut, json.toString(), idEmpresa, emailUsuario, idServicio, parametrosWeb, web);

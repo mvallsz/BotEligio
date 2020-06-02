@@ -10,7 +10,7 @@ import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 
 /**
  *
- * @author Usuario
+ * @author Manuel Valls
  */
 public class DataSource {
 
@@ -24,7 +24,6 @@ public class DataSource {
 
     //private constructor
     private DataSource() {
-        //BasicDataSource basicDS = new BasicDataSource();
         basicDS.setDriverClassName(DRIVER_CLASS);
         basicDS.setUrl(DB_CONNECTION_URL);
         basicDS.setUsername(DB_USER);

@@ -49,6 +49,7 @@ public class Svl_Servicios extends HttpServlet {
             JSONObject json = new JSONObject();
             BnServicios bn = new BnServicios();
             switch (accion) {
+//<editor-fold defaultstate="collapsed" desc="agregarServicio">
                 case "agregarServicio": {
                     String nombre = request.getParameter("nombre");
                     int tipoPersona = Integer.parseInt(request.getParameter("tipoPersona"));
@@ -96,6 +97,8 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="actualizarServicio">                
                 case "actualizarServicio": {
                     String nombre = request.getParameter("nombre");
                     int tipoPersona = Integer.parseInt(request.getParameter("tipoPersona"));
@@ -121,6 +124,8 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+                //</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="buscarServicios">
                 case "buscarServicios": {
                     long empresa = 1;
                     empresa = Long.parseLong(request.getParameter("empresa"));
@@ -134,6 +139,8 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="buscarServiciosActivos">
                 case "buscarServiciosActivos": {
                     long id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
                     JSONArray servicios = bn.serviciosActivos(id_empresa);
@@ -146,6 +153,8 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="activarServicio">
                 case "activarServicio": {
                     long idServ = Long.parseLong(request.getParameter("idServ"));
                     int activo = Integer.parseInt(request.getParameter("activo"));
@@ -157,6 +166,8 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="eliminarServicio">
                 case "eliminarServicio": {
                     long idServ = Long.parseLong(request.getParameter("idServ"));
                     if (bn.eliminarServicio(idServ)) {
@@ -167,6 +178,8 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="consultasBureauMes">
                 case "consultasBureauMes": {
                     long id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
                     JSONObject datos = bn.consultaBureauMes(id_empresa);
@@ -179,6 +192,8 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="consultasHistorialMes">
                 case "consultasHistorialMes": {
                     long id_empresa = Long.parseLong(request.getParameter("idEmpresa"));
                     JSONObject datos = bn.consultaHistorialMes(id_empresa);
@@ -191,6 +206,8 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="consultasMes">
                 case "consultasMes": {
                     int mes = 0;
                     int anio = 0;
@@ -210,6 +227,8 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="listarEmpresas">
                 case "listarEmpresas": {
                     JSONArray datos = bn.listarEmpresas();
                     if (datos.length() > 0) {
@@ -221,6 +240,8 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="listarOrigenes">
                 case "listarOrigenes": {
                     long id_empresa = Long.parseLong(request.getParameter("idEmp"));
                     JSONArray datos = bn.listarOrigenes(id_empresa);
@@ -233,6 +254,8 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="listarOrigenes2">
                 case "listarOrigenes2": {
                     long id_empresa = Long.parseLong(request.getParameter("idEmp"));
                     JSONArray datos = bn.listarOrigenes2(id_empresa);
@@ -245,6 +268,8 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="agregarOrigen">
                 case "agregarOrigen": {
                     String origen = request.getParameter("origen");
                     long idEmp = Long.parseLong(request.getParameter("idEmp"));
@@ -256,6 +281,8 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="listarTipoDato">
                 case "listarTipoDato": {
                     JSONArray datos = bn.listarTipoDato();
                     if (datos.length() > 0) {
@@ -267,6 +294,8 @@ public class Svl_Servicios extends HttpServlet {
                     response.getWriter().print(json);
                     break;
                 }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="listarServiciosDefault">
                 case "listarServiciosDefault": {
                     JSONObject datos = bn.listarServicioDefault();
                     if (datos.length() > 0) {
@@ -277,6 +306,7 @@ public class Svl_Servicios extends HttpServlet {
                     }
                     response.getWriter().print(json);
                     break;
+//</editor-fold>
                 }
             }
         } catch (NumberFormatException ex) {

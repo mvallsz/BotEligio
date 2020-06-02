@@ -7,7 +7,6 @@ package cl.HBES.soporte;
 
 import cl.HBES.clases.CredencialesUsuario;
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,14 +23,14 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author Desarrollador
+ * @author Manuel Valls
  */
 public class Soporte {
 
     /**
      *
      */
-    public static final String loggerId = "HBES v1.0.0";
+    public static final String loggerId = "HBES v2.0.0";
 
     /**
      *
@@ -126,6 +125,7 @@ public class Soporte {
     }
 
 //</editor-fold>
+	
     public static String buscarEnJSON(String str, String keyA, String busqueda) {
         try {
             JSONObject json;

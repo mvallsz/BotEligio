@@ -10,7 +10,7 @@ import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 
 /**
  *
- * @author Desarrollador
+ * @author Manuel Valls
  */
 public class DEF {
 
@@ -23,7 +23,8 @@ public class DEF {
     public static final String DOMINIO_WEB_SERV = prop.getPropiedad("DOMINIO_WEB_SERV");
 
     public static final String SESSION_USUARIO = "user_session";
-    public static final String TITULO = "HBES";
+    public static final String TITULO = prop.getPropiedad("TITULO");
+    public static final String VERSION = prop.getPropiedad("VERSION");
     public static final String PAGE_LOGIN = "/login.jsp";
     public static final String MaxTotal = prop.getPropiedad("MaxTotal");
     public static BasicDataSource basicDS = DataSource.getInstance().getBasicDS();

@@ -23,7 +23,7 @@
         <!-- Adding "maximum-scale=1" fixes the Mobile Safari auto-zoom bug: http://filamentgroup.com/examples/iosScaleBug/ -->
         <!-- iPad End -->
 
-        <title>HBES Beta</title>
+        <title><%= DEF.TITULO%> <%= DEF.VERSION%></title>
 
         <link rel="shortcut icon" href="favicon.ico">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">

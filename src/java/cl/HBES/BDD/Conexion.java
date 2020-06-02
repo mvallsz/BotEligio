@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Desarrollador
+ * @author Manuel Valls
  */
 public class Conexion extends Soporte {
 
@@ -27,9 +27,6 @@ public class Conexion extends Soporte {
         Connection con = null;
         try {
             con = DEF.basicDS.getConnection();
-//            Class.forName("com.mysql.jdbc.Driver");
-//            con = DriverManager.getConnection(DEF.DIRECCION, DEF.USER, DEF.PASSWORD);
-//            con.setAutoCommit(true);
 
         } catch (Exception ex) {
             severe("{0}:{1}", new Object[]{Conexion.class.getName(), ex.toString()});
@@ -60,12 +57,13 @@ public class Conexion extends Soporte {
                     con.commit();
                 }
             }
-
-            con.close();
+			if(con != null)
+				con.close();
 
         } catch (SQLException ex) {
             try {
-                con.close();
+                if(con != null)
+					con.close();
                 con = null;
             } catch (SQLException ex1) {
                 Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex1);
@@ -78,7 +76,8 @@ public class Conexion extends Soporte {
             ex.printStackTrace(System.out);
         } finally {
             try {
-                con.close();
+				if(con != null)
+					con.close();
                 con = null;
             } catch (SQLException ex1) {
                 Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex1);

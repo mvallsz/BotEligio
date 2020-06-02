@@ -207,6 +207,68 @@ public class BnDatos {
         return respuesta;
     }
 
+    public static JSONObject obtenerDatosRestGetP(String rut, String credenciales, String url, String xml, int tipoResponse, String parametrosWeb, boolean web) {
+        JSONObject respuesta = new JSONObject();
+        try {
+
+            String Get = url;
+            JSONObject json = new JSONObject(credenciales);
+            for (String x : JSONObject.getNames(json)) {
+                if (x.equalsIgnoreCase("parametros")) {
+                    json.remove(x);
+                    break;
+                }
+            }
+            if (web) {
+                json = reemplDatConst(json.toString(), parametrosWeb);
+            }
+            for (String name : JSONObject.getNames(json)) {
+                String valor = json.get(name).toString();
+                if (!web) {
+                    if (valor.equalsIgnoreCase("dv") || valor.equalsIgnoreCase("rut") || valor.equalsIgnoreCase("rut-dv") || valor.equalsIgnoreCase("rutdv")) { //RUT SIEMPRE VENDRA CON EN -
+                        switch (valor.toUpperCase()) {
+                            case "RUT":
+                                String[] var = rut.split("-");
+                                valor = var[0];
+                                break;
+                            case "DV":
+                                String[] var1 = rut.split("-");
+                                valor = var1[1];
+                                break;
+                            case "RUT-DV":
+                                valor = rut;
+                                break;
+                            case "RUTDV":
+                                String[] var2 = rut.split("-");
+                                valor = var2[0] + "" + var2[1];
+                                break;
+                        }
+                    }
+                }
+                Get = Get + valor;
+            }
+
+            URL link = new URL(Get);
+            HttpURLConnection urlc = (HttpURLConnection) link.openConnection();
+            urlc.setAllowUserInteraction(false);
+            urlc.setDoInput(true);
+            urlc.setDoOutput(false);
+            urlc.setUseCaches(true);
+            urlc.setRequestMethod("GET");
+            urlc.connect();
+            BufferedReader in = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
+            String line = null;
+            while ((line = in.readLine()) != null) {
+                xml += line;
+            }
+            respuesta = pasarJSON(xml, tipoResponse);
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        }
+        return respuesta;
+    }
+    
     public static JSONObject obtenerDatosRestPost(String rut, String credenciales, String url, String body, int tipoResponse, String parametrosWeb, boolean web) {
         JSONObject respuesta = new JSONObject();
         try {
@@ -655,7 +717,7 @@ public class BnDatos {
     }
 
     public static BigInteger guardarEnCache(String rut, String data, long idEmpresa, String emailUsuario, long idServi, String parametrosWeb, boolean web) {
-        System.out.println("Guardar en Cache " + idServi);
+        System.out.println("Guardar en Cache, ID de Servicio: " + idServi);
         data = data.replace("\\\"", "");
         Connection con = Conexion.getConn();
         try {
@@ -1132,7 +1194,7 @@ public class BnDatos {
             while (rs.next()) {
                 bid = new BigInteger(rs.getString(1));
             }
-            sql = "SELECT * FROM " + DEF.ESQUEMA + ".USUARIO_has_RESPONSE WHERE USUARIO=? AND RESPONSE=?;";
+            sql = "SELECT * FROM " + DEF.ESQUEMA + ".USUARIO_HAS_RESPONSE WHERE USUARIO=? AND RESPONSE=?;";
             PreparedStatement pst1 = con.prepareStatement(sql);
             pst1.setString(1, bid.toString());
             pst1.setString(2, id.toString());
@@ -1218,7 +1280,7 @@ public class BnDatos {
                 j.put("id", rs.getLong(3));
                 parametros.put(rs.getLong(3) + "", getJSONParametros(rs.getString(2)));
                 JSONArray user = new JSONArray();
-                String sql2 = "SELECT US.usuario FROM " + DEF.ESQUEMA + ".USUARIO_has_RESPONSE UR JOIN " + DEF.ESQUEMA + ".USUARIO US ON (UR.USUARIO = US.ID)\n"
+                String sql2 = "SELECT US.usuario FROM " + DEF.ESQUEMA + ".USUARIO_HAS_RESPONSE UR JOIN " + DEF.ESQUEMA + ".USUARIO US ON (UR.USUARIO = US.ID)\n"
                         + "WHERE UR.RESPONSE = ?";
                 PreparedStatement pst2 = con.prepareStatement(sql2);
                 pst2.setLong(1, rs.getLong(3));

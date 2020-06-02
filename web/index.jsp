@@ -6,7 +6,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title><%= DEF.TITULO%></title>
+        <title><%= DEF.TITULO%> <%= DEF.VERSION%></title>
     </head>
     <body>
     </body>

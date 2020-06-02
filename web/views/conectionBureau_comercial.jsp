@@ -94,6 +94,7 @@
                     <select id="form-tipoWs">
                         <option value="1" selected>SOAP</option>
                         <option value="2">REST - GET</option>
+                        <option value="4">REST - GET PARAM</option>
                         <option value="3">REST - POST</option>
                     </select>
                 </div>

@@ -22,8 +22,8 @@ public class BnProperties {
 
         prop = new Properties();
         try {
-//            prop.load(new FileInputStream(new File("C:\\Properties\\primus.properties")));
-            prop.load(new FileInputStream(new File("/home/properties/primus/primus.properties")));
+            prop.load(new FileInputStream(new File("C:\\Properties\\primus.properties")));
+//            prop.load(new FileInputStream(new File("/home/properties/primus/primus.properties")));
         } catch (IOException e) {
             e.printStackTrace();
         }

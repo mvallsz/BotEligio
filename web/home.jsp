@@ -1,12 +1,12 @@
-<%@page import="cl.HBES.soporte.DEF"%>
-<%@page import="cl.HBES.soporte.Soporte"%>
-<%@page import="cl.HBES.clases.CredencialesUsuario"%>
+<%@page import="DH.DB.clases.Usuario"%>
+<%@page import="DH.DB.soporte.DEF"%>
+<%@page import="DH.DB.soporte.Soporte"%>
 <%
     if (!Soporte.isSesionActiva(request)) {
         response.sendRedirect("cmd");
         return;
     }
-    CredencialesUsuario user = (CredencialesUsuario) Soporte.getUsuarioSesion(request);
+    Usuario user = (Usuario) Soporte.getUsuarioSesion(request);
 %>
 <!DOCTYPE html>
 <!--[if IE 7 ]>   <html lang="en" class="ie7 lte8"> <![endif] 
@@ -150,10 +150,10 @@
                                                                         </h1>-->
                         <ul class="tlm">
                             <li class="current"><a href="#dashboard_comercial.jsp" title="Dashboard"><img src="images/navicons/81.png" alt=""/><span>Dashboard</span></a></li>
-                            <li class="current"><a href="#conectionBureau_comercial.jsp" title="Data Source Integration"><img src="images/navicons/130.png" alt=""/><span>Data Source Integration</span></a></li>
-                            <li class="current"><a href="#user.jsp" title="Web Service Users"><img src="images/navicons/112.png" alt=""/><span>Web Service Users</span></a></li>
-                            <li class="current"><a href="#output_ws.jsp" title="Web Service Generation"><img src="images/navicons/122.png" alt=""/><span>Web Service Generation</span></a></li>
-                            <li class="current"><a href="#search.jsp" title="Search"><img src="images/navicons/06.png" alt=""/><span>Search</span></a></li>
+                            <li class="current"><a href="#solicitud_rpa.jsp" title="Activacion RPA"><img src="images/navicons/130.png" alt=""/><span>Activación de Servicios RPA</span></a></li>
+                            <li class="current"><a href="#user.jsp" title="Web Service Users"><img src="images/navicons/112.png" alt=""/><span>Creación de Usuarios</span></a></li>
+                            <!--<li class="current"><a href="#output_ws.jsp" title="Web Service Generation"><img src="images/navicons/122.png" alt=""/><span>Web Service Generation</span></a></li>-->
+                            <!--<li class="current"><a href="#search.jsp" title="Search"><img src="images/navicons/06.png" alt=""/><span>Search</span></a></li>-->
                         </ul>
                     </nav>
                 </aside>
@@ -168,11 +168,12 @@
                         </div>
                     </header>
                     <section id="main-content" class="clearfix">
+                        <div class="content">tett</div>
                     </section>
                     <footer class="clearfix">
                         <div class="container_12">
                             <div class="grid_12">
-                                Copyright &copy; 2018. by <a target="_blank" href="https://www.expert-choice.com/">Expert-Choice</a>
+                                Copyright &copy; 2018. by <a target="_blank" href="https://www.doghoundtech.com/">DogHound Inc.</a>
                             </div>
                         </div>
                     </footer>
@@ -213,7 +214,7 @@
                         $('body').removeAttr('style');
                     });
                 });
-                var codigo = <%=user.getEmpresa().getCod_subsidiary()%>
+                var codigo = <%=user.getEmpresa().getCod_empresa()%>
                 var idEmp = <%=user.getEmpresa().getId()%>
         </script>
         <!--         LOADING SCRIPT 

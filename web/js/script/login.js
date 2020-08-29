@@ -2,15 +2,13 @@ $('#btnEntrar').click(function () {
     var username = $('#username').val().trim();
     var password = $('#password').val().trim();
     if (username === "") {
-        alert('Atención! \nDebe ingresar usuario');
+        $('#msgLogin').html("Atención!, debe ingresar usuario");
         return false;
     } else if (password === "") {
-        alert('Atención! \nDebe ingresar contraseña');
+        $('#msgLogin').html("Atención!, Debe ingresar contraseña");
         return false;
     } else {
-        var URL = "HBES/cmd";
         if (username.trim().length > 0 && password.trim().length > 0) {
-//            var info = detectarInfo();
             $.ajax({
                 url: 'Svl_Usuario',
                 dataType: 'json',
@@ -32,7 +30,7 @@ $('#btnEntrar').click(function () {
                     if (data.estado == 200) {
                             go('cmd', [{id: 'code', val: 'home'}], false, 'cmd');
                     } else {
-                        alert('Usuario o Contraseña mal Ingresada');
+                        $('#msgLogin').html("Usuario o Contraseña mal Ingresada");
                     }
                 }
             });

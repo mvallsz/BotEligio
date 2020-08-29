@@ -1,8 +1,9 @@
-console.log("Entra");
+console.log("Entra a dashboard_comercial.js");
 var Dataaa = [];
 $(document).ready(function () {
     addAnio();
-    listarEmpresas();
+    initTables1(2);
+//    listarEmpresas();
 //Plot 1
     var Bureau1 = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     var Bureau2 = [0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -104,6 +105,26 @@ function initTables1(tablaN) {
                         Dataaa = data.datos;
                     }
                     listarConsultas();
+                }
+            });
+            break;
+        case 2:
+            $('#tableServiciosAct').DataTable().rows().remove().draw();
+            $.ajax({
+                url: 'Svl_Servicios',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    accion: 'consultasServAct'
+                },
+                beforeSend: function (xhr) {
+                    $('#tableServiciosAct tbody').append('<tr id="trCargando" class="odd" style="text-align: center;"><td valign="top" colspan="7" class="dataTables_empty" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i>  Buscando Registros</td></tr>');
+                },
+                success: function (data) {
+                    if (data.estado === 200) {
+                        Dataaa = data.datos;
+                    }
+                    listarServAct();
                 }
             });
             break;
@@ -247,4 +268,114 @@ function listarConsultas() {
     });
 }
 
+function activarServ(idServ, activo) {
+    $.ajax({
+        url: 'Svl_Servicios',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            accion: 'activarServicio',
+            idServ: idServ,
+            activo: activo
+        },
+        success: function (data, textStatus, jqXHR) {
+            if (data.estado == 200) {
+                alert("Servicio Actualizado");
+                initTables(1);
+            } else {
+                alert("No se puedo actualizar el servicio");
+            }
+        }
+    });
+}
 
+function iniciarServ(idServ) {
+        $.ajax({
+        url: 'Svl_Servicios',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            accion: 'iniciarServicio',
+            idServ: idServ
+            
+        },
+        success: function (data, textStatus, jqXHR) {
+            if (data.estado === 200) {
+                alert("Servicio Iniciado");
+                initTables(1);
+            } else {
+                alert("No se puede activar el servicio, contacto con el servicio tecnico del sistema");
+            }
+        }
+    });
+}
+function activarServ(idServ, activo) {
+    $.ajax({
+        url: 'Svl_Servicios',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            accion: 'activarServicio',
+            idServ: idServ,
+            activo: activo
+        },
+        success: function (data, textStatus, jqXHR) {
+            if (data.estado === 200) {
+                alert("Servicio Actualizado");
+                initTables(1);
+            } else {
+                alert("No se puedo actualizar el servicio");
+            }
+        }
+    });
+}
+
+function listarServAct() {
+    $('#trCargando').remove();
+    $('#tableServiciosAct').DataTable().destroy();
+    $('#tableServiciosAct').DataTable({
+        "language": {
+                   "lengthMenu": "Mostrar _MENU_ registros por página.",
+                   "zeroRecords": "Lo sentimos. No se encontraron registros.",
+                         "info": "Mostrando página _PAGE_ de _PAGES_",
+                         "infoEmpty": "No hay registros aún.",
+                         "infoFiltered": "(filtrados de un total de _MAX_ registros)",
+                         "search": "Búsqueda",
+                         "LoadingRecords": "Cargando ...",
+                         "Processing": "Procesando...",
+                         "SearchPlaceholder": "Comience a teclear...",
+                         "paginate": {
+                     "previous": "Anterior",
+                     "next": "Siguiente"
+                 }
+              },
+        "data": Dataaa,
+        "bSort": true,
+        "columnDefs": [
+            {"width": "20%", "targets": 0},
+            {"width": "20%", "targets": 1},
+            {"width": "25%", "targets": 2},
+            {"width": "25%", "targets": 3},
+            {"width": "10%", "targets": 4}
+        ],
+        "columns": [
+            {data: 'nombre', class: 'txt-center'},
+            {data: 'usuario_host', class: 'txt-center'},
+            {data: 'zip_codes', class: 'txt-center'},
+            {data: 'key_words', class: 'txt-center'},
+            {data: 'fecha_creacion', class: 'txt-center'},
+            {data: null, "render": function (data, type, row) {
+                    var action = "";
+                    action = action + '<button title="Iniciar" onclick="iniciarServ(' + data.id + ')"><i class="fas fa-robot"></i></button>';
+                    action = action + '<button title="Desactivar" onclick="activarServ(' + data.id + ', 0)"><i class="fa fa-ban"></i></button>';
+                    return action;
+                    
+                    if (data.estado === 1) {
+                        return "Activo";
+                    } else {
+                        return "Desactivo";
+                    }
+                }}
+        ]
+    });
+}

@@ -1,5 +1,5 @@
-<%@page import="cl.HBES.soporte.DEF"%>
-<%@page import="cl.HBES.soporte.Soporte"%>
+<%@page import="DH.DB.soporte.DEF"%>
+<%@page import="DH.DB.soporte.Soporte"%>
 <%
     if (!Soporte.isSesionActiva(request)) {
         response.sendRedirect("cmd");
@@ -14,8 +14,24 @@
 <div class="container_12 clearfix leading">
     <section class="grid_12"> 
         <div class="message success">
-            <h2 style="margin-bottom: 10px;">Conexiones Activas</h2> 
-            <div id="divBureauActivo"></div>
+            <h2 style="margin-bottom: 10px;">Servicios Activos</h2> 
+            <div id="divServActivo">
+                <table class="display" id="tableServiciosAct"> 
+                <thead>
+                    <tr>
+                        <th >Nombre del Servicio</th>
+                        <th >Usuario</th>
+                        <th >Zip Codes</th>
+                        <th >Key Words</th>
+                        <th >Fecha de Creación</th>
+                        <th >Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+            </div>
             <!--<h3 style="margin-bottom: 0px;">Sinacofi</h3>
                 <h3 style="margin-bottom: 0px;">Equifax</h3>
                 <h3 style="margin-bottom: 0px;">TransUnion</h3>
@@ -24,14 +40,14 @@
     </section>
     <section class="portlet grid_12 leading">
         <header>
-            <h2>Consultas HBES</h2>
+            <h2>Consultas exitosas</h2>
         </header>
         <section>
             <div class="clearfix">
                 <div class="grid_4">
-                    <label for="form-bureauu" class="form-label">Bureau</label>
+                        <label for="form-bureauu" class="form-label">Servicio RPA</label>
                     <div class="form-input">
-                        <select id="form-bureauu" onchange="initTables1(1)">
+                        <select id="form-bureauu" onchange="initTables1(2)">
                             <option value="0" selected>Todos</option>
                             <!--                            <option value="1">Sinacofi</option>
                                                         <option value="2">Equifax</option>
@@ -83,7 +99,7 @@
             <table class="display" id="tableConsultas"> 
                 <thead>
                     <tr>
-                        <th >Nombre Origen</th>
+                        <th >Nombre del Servicio</th>
                         <th >Servicio</th>
                         <th >Usuario</th>
                         <th >Fecha</th>

@@ -110,116 +110,70 @@ function activarServ(idServ, activo) {
 }
 
 function ValidaForm() {
-    var nombre = $('#form-nombre').val().trim();
-    var tipoPersona = $("select#form-tipoPersona option:checked").val();
-    var bureau = $("select#form-bureau option:checked").val();
-    var tipoServicio = $("select#form-tipoWs option:checked").val();
-    var url = $('#form-url').val().trim();
-//    var tipoVigencia = $("select#form-tipoVigencia option:checked" ).val();
-    var cantDias = $('#form-cantDias').val().trim();
-//    var diaVigencia = $("select#form-diaVigencia option:checked" ).val();
-    var xml = $('#form-xml').val().trim();
-    if (nombre === "") {
+
+    var nombre_rpa = $('#form-nombre-rpa').val().trim();
+    var US_state = $("select#form-US_state option:checked").val();
+    var zipCodes = $('#form-zipCodes').val().trim();
+    var appliance = $('#form-appliance').val().trim();
+    var correo_notificacion = $('#form-correo-notificacion').val().trim();
+    var usuario_host = $('#form-usuario-host').val().trim();
+    var password_host = $('#form-password-host').val().trim();
+    
+    if (nombre_rpa === "") {
         alert('Debe ingresar Nombre del Servicio');
         return false;
-    } else if (tipoPersona === "0") {
-        alert('Debe seleccionar Tipo de Persona');
+    } else if (US_state === "0") {
+        alert('Debe seleccionar el Estado');
         return false;
-    } else if (bureau === "0") {
-        alert('Debe seleccionar Bureau');
+    } else if (zipCodes === "") {
+        alert('Debe indicar al menos un Zip Code');
         return false;
-    } else if (tipoServicio === "0") {
-        alert('Debe seleccionar Tipo de Servicio');
+    } else if (appliance === "") {
+        alert('Debe indicar al menos un appliance');
         return false;
-    } else if (url === "") {
-        alert('Debe ingresar URL');
+    } else if (correo_notificacion === "") {
+        alert('Debe ingresar el correo al cual se notificara la aceptación del proceso');
         return false;
-    } else if (cantDias === "") {
-        alert('Debe ingresar Cantidad de Dias');
+    } else if (usuario_host === "") {
+        alert('Debe ingresar el usuario del sistema Host');
         return false;
-    } else if (xml === "" && tipoServicio == 1) {
-        alert('Debe ingresar XML');
+    } else if (password_host === "") {
+        alert('Debe ingresar el password del sistema Host');
         return false;
-    }
-    for (var i = 1; i <= contVar; i++) {
-        var labelVar = "";
-        var nombreVar = "";
-        if ($('#form-chkRut' + i).is(":checked")) {
-            labelVar = $('#form-cantDiaslabel' + i).val().trim();
-        }else if ($('#form-chkHeader' + i).is(":checked")) {
-            nombreVar = $('#form-cantDiasvar' + i).val().trim();
-        }else{
-            labelVar = $('#form-cantDiaslabel' + i).val().trim();
-            nombreVar = $('#form-cantDiasvar' + i).val().trim();
-        }
-        if (labelVar === "" && !$('#form-chkHeader' + i).is(":checked")) {
-            alert('Debe ingresar Nombre de la Variable');
-            return false;
-        } else if (nombreVar === "" && !$('#form-chkRut' + i).is(":checked")) {
-            alert('Debe ingresar Variable');
-            return false;
-        }
     }
     return true;
 }
 
 function GuardarForm() {
     if (ValidaForm()) {
-        var nombre = $('#form-nombre').val().trim();
-        var tipoPersona = $("select#form-tipoPersona option:checked").val();
-        var bureau = $("select#form-bureau option:checked").val();
-        var tipoServicio = $("select#form-tipoWs option:checked").val();
-        var url = $('#form-url').val().trim();
-        var tipoVigencia = $("select#form-tipoVigencia option:checked").val();
-        var cantDias = $('#form-cantDias').val().trim();
-        var diaVigencia = $("select#form-diaVigencia option:checked").val();
-        var xml = " ";
-        if (tipoServicio == 1) {
-            xml = $('#form-xml').val().trim();
-        }
-        var json = "{";
-        for (var i = 1; i <= contVar; i++) {
-            if (i > 1) {
-                json = json + ",";
+        var nombre_rpa = $('#form-nombre-rpa').val().trim();
+        var US_state = $("select#form-US_state option:checked").val();
+        var zipCodes = $('#form-zipCodes').val().trim();
+        var appliance = $('#form-appliance').val().trim();
+        var correo_notificacion = $('#form-correo-notificacion').val().trim();
+        var usuario_host = $('#form-usuario-host').val().trim();
+        var password_host = $('#form-password-host').val().trim();
+        
+        $.ajax({
+            url: 'Svl_Servicios',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                accion: 'agregarServicioRPA',
+                nombre_rpa: nombre_rpa,
+                US_state: US_state,
+                zipCodes: zipCodes,
+                appliance: appliance,
+                correo_notificacion: correo_notificacion,
+                usuario_host: usuario_host,
+                password_host: password_host
+            },
+            success: function (data, textStatus, jqXHR) {
+                alert('Servicio creado');
+                limpiarForm();
+                initTables(1);
             }
-            var nombreVar = ""
-            var labelVar = $('#form-cantDiaslabel' + i).val().trim();
-            if ($('#form-chkRut' + i).is(":checked")) {
-                nombreVar = $("select#form-diaVigencia" + i + " option:checked").val();
-            } else if ($('#form-chkHeader' + i).is(":checked")){
-                nombreVar = $('#form-cantDiasvar' + i).val().trim();
-            }
-            json = json + '\"' + labelVar + '\":\"' + nombreVar + '\"';
-        }
-        json = json + "}";
-        json = JSON.parse(json);
-        if (Object.keys(json).length < contVar) {
-            alert("Nombre de Variables Repetido");
-        } else {
-            $.ajax({
-                url: 'Svl_Servicios',
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                    accion: 'agregarServicio',
-                    nombre: nombre,
-                    tipoPersona: tipoPersona,
-                    bureau: bureau,
-                    tipoServicio: tipoServicio,
-                    url: url,
-                    tipoVigencia: tipoVigencia,
-                    cantDias: cantDias,
-                    diaVigencia: diaVigencia,
-                    xml: xml,
-                    json: JSON.stringify(json)
-                },
-                success: function (data, textStatus, jqXHR) {
-                    alert('Servicio creado');
-                    limpiarForm();
-                    initTables(1);
-                }
-            });
-        }
+        });
     }
 }
 

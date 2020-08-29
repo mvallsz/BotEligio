@@ -163,9 +163,9 @@ body.login {
     /*padding:20px;*/
 }
 .login-box .logo {
-    background: transparent url(../../images/HBES_SHIELD2.png) no-repeat center center;
+    background: transparent url(../../images/DOGHOUND3.png) no-repeat center center / 200px 300px;
     display: block;
-    height: 30px;
+    height: 160px;
     margin: 0 auto;
     text-indent: -9999em;
     padding: 92px;
@@ -219,7 +219,7 @@ body.login {
 }
 
 #wrapper > header > h1 {
-    background: url(../../images/logoPenta.png) no-repeat 20px center;
+    background: url(../../images/logoDH.png) no-repeat 20px center;
     float: left;
     font-size: 18px;
     line-height: 46px;

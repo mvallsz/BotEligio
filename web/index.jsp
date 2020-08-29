@@ -1,4 +1,4 @@
-<%@page import="cl.HBES.soporte.DEF"%>
+<%@page import="DH.DB.soporte.DEF"%>
 <%
     response.sendRedirect("cmd");
 %>

@@ -54,14 +54,14 @@ fieldset.fieldset-buttons {
         border-top:1px solid #fff;
         display: block;
         float: left;
-        font-size: 14px;
+        font-size: 10px;
         font-weight: bold;
         line-height: 42px;
         margin: 0;
         overflow: hidden;
         text-overflow: ellipsis;
         text-shadow: 0 1px 0 #FFF;
-        width: 35%;
+        width: 50%;
         white-space: nowrap;
         }
         .form .form-label em {
@@ -69,13 +69,13 @@ fieldset.fieldset-buttons {
             font-style: normal;
             }
     .form .form-action {
-        margin-left: 35%;  /*must be greater than the width of form-label */
+        margin-left: 45%;  /*must be greater than the width of form-label */
         padding: 0.6em;
         }
     .form .form-input {
         display:block;
         float:right;
-        width:65%;
+        width:50%;
         }
         .form .form-input .selector,
         .form .form-input .uploader,
@@ -108,10 +108,10 @@ fieldset.fieldset-buttons {
             width:100%;
             display:block;
             background:#FFF;
-            line-height: 22px;
+            line-height: 14px;
             -webkit-appearance:none;
             -moz-appearance:none;
-            font-size:18px;
+            font-size:14px;
             -o-box-shadow:none;
             -ms-box-shadow:none;
             -moz-box-shadow:none;

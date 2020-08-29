@@ -1,5 +1,5 @@
-<%@page import="cl.HBES.soporte.DEF"%>
-<%@page import="cl.HBES.soporte.Soporte"%>
+<%@page import="DH.DB.soporte.DEF"%>
+<%@page import="DH.DB.soporte.Soporte"%>
 <%
     if (Soporte.isSesionActiva(request)) {
         response.sendRedirect("cmd");
@@ -88,13 +88,16 @@
                             <span class="fl" style="line-height: 23px;">
                                 <label class="choice" for="remember">
                                     <input type="checkbox" id="remember" class="" value="1" name="remember"/>
-                                    Keep me logged in
+                                    Mantener mi sesión abierta. 
                                 </label>
                             </span>
 
                             <button class="fr" type="submit" id="btnEntrar">Login</button>
                         </p>
                     </form>
+                </section>
+                <section>
+                    <span id="msgLogin" class="label label-warning"></span>
                 </section>
             </section>
         </div>

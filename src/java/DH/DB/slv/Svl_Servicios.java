@@ -5,6 +5,7 @@
  */
 package DH.DB.slv;
 
+import DH.DB.beans.BnHTMLUnit;
 import DH.DB.beans.BnSelenium;
 import DH.DB.beans.BnServicios;
 import java.io.IOException;
@@ -45,6 +46,7 @@ public class Svl_Servicios extends HttpServlet {
             String accion = request.getParameter("accion");
             JSONObject json = new JSONObject();
             BnServicios bn = new BnServicios();
+            
             switch (accion) {
 //<editor-fold defaultstate="collapsed" desc="agregarServicio">
                 case "agregarServicio": {
@@ -263,11 +265,11 @@ public class Svl_Servicios extends HttpServlet {
                     JSONObject datos = new JSONObject();
                     BigInteger idServicio = new BigInteger(request.getParameter("idServ"));
                     datos = bn.consultasServ(idServicio);
-                    BnSelenium bs = new BnSelenium(1, datos.getString("us_state"), datos.getString("usuario_host"), datos.getString("password_host"), datos.getString("zip_codes"), datos.getString("key_words"), datos.getString("email_notification"));
-                    bs.setName("Bot Selenium para el servicio Nro:"+1+", usuario: "+datos.getString("usuario_host"));
-                    bs.setDaemon(true);
-                    bs.start();
-                    if (bs.isAlive()) {
+                    BnHTMLUnit bh = new BnHTMLUnit(idServicio.intValue(), datos.getString("us_state"), datos.getString("usuario_host"), datos.getString("password_host"), datos.getString("zip_codes"), datos.getString("key_words"), datos.getString("email_notification"));
+                    bh.setName("Bot Selenium para el servicio Nro:"+idServicio.intValue()+", usuario: "+datos.getString("usuario_host"));
+                    bh.setDaemon(true);
+                    bh.start();
+                    if (bh.isAlive()) {
                         json.put("estado", 200);
                         json.put("datos", datos);
                     } else {
@@ -291,8 +293,51 @@ public class Svl_Servicios extends HttpServlet {
                     break;
                 }                
 //</editor-fold>
-        
-        
+//<editor-fold defaultstate="collapsed" desc="consultasServAct">
+                case "consultasHistoricas": {
+                    JSONArray datos = new JSONArray();
+                    BigInteger idServicio = new BigInteger(request.getParameter("idServ"));
+                    datos = bn.consultasServHistorico(idServicio);
+                    if (datos.length() > 0) {
+                        json.put("estado", 200);
+                        json.put("datos", datos);
+                    } else {
+                        json.put("estado", 300);
+                    }
+                    response.getWriter().print(json);
+                    break;
+                }                
+//</editor-fold>                
+                
+//<editor-fold defaultstate="collapsed" desc="consultasServDisp">
+                case "consultasServDisp": {
+                    JSONArray datos = new JSONArray();
+                    datos = bn.consultasServDisp();
+                    if (datos.length() > 0) {
+                        json.put("estado", 200);
+                        json.put("datos", datos);
+                    } else {
+                        json.put("estado", 300);
+                    }
+                    response.getWriter().print(json);
+                    break;
+                }                
+//</editor-fold>        
+//<editor-fold defaultstate="collapsed" desc="apagarHilo">
+                case "apagarHilo": {
+                    long idHilo = Long.parseLong(request.getParameter("idHilo"));
+
+                    if (bn.apagarHilo(idHilo)) {
+                        json.put("estado", 200);
+                    } else {
+                        json.put("estado", 300);
+                    }
+                    response.getWriter().print(json);
+                    break;
+                }                
+//</editor-fold>        
+                
+                
 //<editor-fold defaultstate="collapsed" desc="listarEmpresas">
                 case "listarEmpresas": {
                     JSONArray datos = bn.listarEmpresas();

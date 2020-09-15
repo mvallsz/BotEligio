@@ -19,7 +19,7 @@ import javax.mail.internet.MimeMessage;
  * @author mvall
  */
 public class Correos {
-    public static void SendMail(String cuerpo, String subject, String to) {
+    public static void SendMail(String cuerpo, String subject, String to, String cc) {
         Properties props = new Properties();
 
         props.put("mail.smtp.host", "smtp.gmail.com");    
@@ -32,16 +32,16 @@ public class Correos {
                 new javax.mail.Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication("mvalls@doghoundtech.com", "smuhfiwgdzzutcru");
+                        return new PasswordAuthentication("no_reply@doghoundtech.com", "qqyjolgbkcgxgful");
                     }
                 });
  
         try {
  
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("mvalls@doghoundtech.com"));
-            message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(to));
+            message.setFrom(new InternetAddress("no_reply@doghoundtech.com"));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+            message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(cc));
             message.setSubject(subject);
             message.setContent(cuerpo, "text/html");
  
@@ -51,4 +51,5 @@ public class Correos {
             throw new RuntimeException(e);
         }
     }
+    
 }

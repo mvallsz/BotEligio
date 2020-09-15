@@ -5,6 +5,8 @@
  */
 package DH.DB.beans;
 
+import DH.DB.soporte.DEF;
+import java.io.File;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -19,9 +21,13 @@ import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.OutputType;
 
 /**
  *
@@ -96,7 +102,7 @@ public class BnSelenium extends Thread{
         WebDriver driver;
         Connection con = null;
         
-        System.setProperty("webdriver.gecko.driver", "C:\\Users\\mvall\\Downloads\\utilitarios -desarrollo\\Gecko\\geckodriver.exe");
+        System.setProperty("webdriver.gecko.driver", DEF.PATHGECKO);
         driver = new FirefoxDriver();
         FirefoxProfile firefoxProfile = new FirefoxProfile();    
         firefoxProfile.setPreference("browser.private.browsing.autostart",true);
@@ -108,26 +114,36 @@ public class BnSelenium extends Thread{
         switch (idServicio) {
             case 1:
                   
-                String URL = "https://technician.theappliancerepairmen.com/";
+                String URL = DEF.PAGE2FARM;
                 driver.get(URL);
                 WebDriverWait wait = new WebDriverWait(driver, 20);
-                
-                wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@class=\"fa fa-sign-in\"]")));
-                driver.findElement(By.xpath("//*[@class=\"fa fa-sign-in\"]")).click();
-                
-                wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"d_uname\"]")));
-                driver.findElement(By.xpath("//*[@id=\"d_uname\"]")).sendKeys(usuario);
-                driver.findElement(By.xpath("//*[@id=\"d_upass\"]")).sendKeys(password);
-                driver.findElement(By.xpath("//*[@id=\"desktoplogin\"]")).click();
+            {
+                try {
+                    
+                   // takeSnapShot(driver, "/home/centos/Documents/test.png");
+                   // takeSnapShot(driver, "C:\\Users\\mvall\\OneDrive\\Documentos\\test.png");
+
+                } catch (Exception ex) {
+                    Logger.getLogger(BnSelenium.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+                //wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@class=\"fa fa-sign-in\"]")));
+                //driver.findElement(By.xpath("//*[@class=\"fa fa-sign-in\"]")).click();
+                Dimension d = new Dimension(420,600);
+		//Resize the current window to the given dimension
+		driver.manage().window().setSize(d);
+                wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"m_uname\"]")));
+                driver.findElement(By.xpath("//*[@id=\"m_uname\"]")).sendKeys(usuario);
+                driver.findElement(By.xpath("//*[@id=\"m_upass\"]")).sendKeys(password);
+                driver.findElement(By.xpath("//*[@id=\"mobilelogin\"]")).click();
 
                 JSONArray json = new JSONArray();
                 if(checkPager(driver)){
                     json = getAppliance(driver, zipcodes, keywords, to);
                 }
-                
-                System.out.println(json.toString());
-                
+              
             break;
+
         }
     }
     
@@ -143,6 +159,7 @@ public class BnSelenium extends Thread{
         Select pager = new Select(driver.findElement(By.xpath("//*[@id=\"pager\"]")));
         
         if(pager.getOptions().isEmpty()){
+            System.out.println("Sin appliance que ejecutar");
             checkPager(driver);
         }
         return resp;
@@ -202,7 +219,14 @@ public class BnSelenium extends Thread{
                             if (json.getJSONObject(i).get("Appliance").toString().contains(keywordsArray1.trim())) {
                                 json.getJSONObject(i).put("filtro", true);
                                 filtroCumple = false;
+                                
+                                JavascriptExecutor js = null;
+                                if (driver instanceof JavascriptExecutor) {
+                                    js = (JavascriptExecutor)driver;
+                                } 
+                                js.executeScript("$('#book-"+json.getJSONObject(i).get("orden").toString()+"').submit();");
                                 bn.notificaRPA(json.getJSONObject(i), to);
+                                
                             }else if(filtroCumple){
                                 json.getJSONObject(i).put("filtro", false);
                             }
@@ -295,6 +319,17 @@ public class BnSelenium extends Thread{
         }
         return resp;
     }
+    
+    public static void takeSnapShot(WebDriver webdriver,String fileWithPath) throws Exception{
+        //Convert web driver object to TakeScreenshot
+        TakesScreenshot scrShot =((TakesScreenshot)webdriver);
+        //Call getScreenshotAs method to create image file
+        File SrcFile=scrShot.getScreenshotAs(OutputType.FILE);
+        //Move image file to new destination
+        File DestFile=new File(fileWithPath);
+        //Copy file at destination
+        FileUtils.copyFile(SrcFile, DestFile);
+}
 
 }
 

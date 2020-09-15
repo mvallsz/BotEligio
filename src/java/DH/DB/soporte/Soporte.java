@@ -5,7 +5,7 @@
  */
 package DH.DB.soporte;
 
-import DH.DB.clases.CredencialesUsuario;
+import DH.DB.soporte.DEF;
 import DH.DB.clases.Usuario;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -35,7 +35,7 @@ public class Soporte {
     /**
      *
      */
-    public static final String loggerId = "HBES v2.0.0";
+    public static final String loggerId = DEF.TITULO+" "+DEF.VERSION;
 
     /**
      *

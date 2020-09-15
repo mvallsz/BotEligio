@@ -26,10 +26,10 @@
         <!--Adding "maximum-scale=1" fixes the Mobile Safari auto-zoom bug: http://filamentgroup.com/examples/iosScaleBug/--> 
         <!--iPad Settings End--> 
 
-        <title><%= DEF.TITULO%> <%= DEF.VERSION%></title>
+        <title><%= DEF.TITULO%>&nbsp;<%= DEF.VERSION%></title>
 
         <!--<link rel="shortcut icon" href="favicon.ico">-->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
 
 
@@ -38,7 +38,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
         <!--<link rel="manifest" href="images/favicon/site.webmanifest">-->
-        <link rel="mask-icon" href="images/favicon/safari-pinned-tab.svg" color="#5b7fd5">
+        <link rel="mask-icon" href="images/favicon/safari-pinned-tab.svg">
         <meta name="msapplication-TileColor" content="#00aba9">
         <meta name="theme-color" content="#ffffff">
         <!-- FAVICON ICONS END -->
@@ -130,10 +130,12 @@
                     <div class="container_12">
                         <div class="grid_12">
                             <button class="button fr" id="CerrarSesion">Sign Out</button>
-                            <!--<a href="login.jsp" title="Logout" class="button icon-with-text fr"><img src="images/navicons-small/129.png" alt=""/>Logout</a>-->
-                            <!--                            <div class="user-info fr">
-                                                            Logged in as Administrator<a href="#">Administrator</a>
-                                                        </div>-->
+<!--                            <a href="login.jsp" title="Logout" class="button icon-with-text fr">
+                                <img src="images/navicons-small/129.png" alt=""/>Logout
+                            </a>
+                            <div class="user-info fr">
+                                Logged in as Administrator<a href="#">Administrator</a>
+                            </div>-->
                         </div>
                     </div>
                 </nav>
@@ -144,10 +146,10 @@
 
                 <aside>
                     <nav class="drilldownMenu">
-                        <!--                                                <h1>
-                                                                            <span class="title">Main Menu</span>
-                                                                            <button title="Go Back" class="back">Back</button>
-                                                                        </h1>-->
+                        <h1>
+                            <span class="title">Main Menu</span>
+                            <button title="Go Back" class="back">Back</button>
+                        </h1>
                         <ul class="tlm">
                             <li class="current"><a href="#dashboard_comercial.jsp" title="Dashboard"><img src="images/navicons/81.png" alt=""/><span>Dashboard</span></a></li>
                             <li class="current"><a href="#solicitud_rpa.jsp" title="Activacion RPA"><img src="images/navicons/130.png" alt=""/><span>Activación de Servicios RPA</span></a></li>
@@ -168,7 +170,7 @@
                         </div>
                     </header>
                     <section id="main-content" class="clearfix">
-                        <div class="content">tett</div>
+                        <div class="content"></div>
                     </section>
                     <footer class="clearfix">
                         <div class="container_12">
@@ -197,7 +199,10 @@
         <script type="text/javascript" src="js/jquery.drilldownmenu.js"></script>
         <script type="text/javascript" src="js/jquery.popover.js"></script>
         <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
         <script type="text/javascript" src="js/script/funciones.js"></script>
+        
+   
         <!--[if lt IE 9]>-->
         <!--<script type="text/javascript" src="js/PIE.js"></script>-->
         <!--<script type="text/javascript" src="js/ie.js"></script>-->

@@ -38,19 +38,22 @@ public class BnServicios {
             //}
         }
         cuerpo = cuerpo + "</body></html>";
-        Correos.SendMail(cuerpo, subject, to);
-        System.out.println("Correo enviado con exito");
+        Correos.SendMail(cuerpo, subject, to, DEF.CORREOADMIN);
+        Soporte.info("Correo enviado con exito");
     }
     
-    public BigInteger insertarResRPA(String filtro, String jsonResp) {
+    public BigInteger insertarResRPA(String filtro, String jsonResp, String jsonRespExito, BigInteger idHilo, int idServ) {
         BigInteger id = new BigInteger("0");
         Connection conn = null;
         try {
             conn = Conexion.getConn();
-            String sql = "INSERT INTO "+DEF.ESQUEMA+".bot_resp_servicio (filtros, descripcion_json, id_bot_servicio, fecha_accion, id_usuario) VALUES(?, ?, 0, CURRENT_TIMESTAMP, 0);";
+            String sql = "INSERT INTO "+DEF.ESQUEMA+".bot_resp_servicio (filtros, descripcion_json, descripcion_json_exito, id_bot_servicio, fecha_accion, id_usuario, id_hilo) VALUES(?, ?, ?, ?, CURRENT_TIMESTAMP, 0, ?);";
             PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pst.setString(1, filtro);
             pst.setString(2, jsonResp);
+            pst.setString(3, jsonRespExito);
+            pst.setInt(4, idServ);
+            pst.setInt(5, idHilo.intValue());
             pst.executeUpdate();
             ResultSet rs = pst.getGeneratedKeys();
             while (rs.next()) {
@@ -85,6 +88,26 @@ public class BnServicios {
         return act;
     }
 
+    public boolean apagarHilo(long idHilo) {
+        boolean act = false;
+        Connection conn = null;
+        try {
+            conn = Conexion.getConn();
+            
+            String sql = "UPDATE " + DEF.ESQUEMA + ".bot_threads_info SET estado_hilo=0 WHERE id=?;";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setLong(1, idHilo);
+            pst.executeUpdate();
+            act = true;
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnServicios.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(conn);
+        }
+        return act;
+    }
+    
     public boolean actualizarServicio(long idSEr, String nombre, String ip, int vigencia_tipo, int vigencia_cant, int vigencia_dia, long id_bureau, String credenciales, int limite_contador, String xml, int tipo_rut, int tipo_ws) {
         boolean insert = false;
         Connection conn = null;
@@ -396,7 +419,7 @@ public class BnServicios {
         Connection conn = null;
         try {
             conn = Conexion.getConn();
-            String sql = "SELECT id, name FROM " + DEF.ESQUEMA + ".US_states WHERE ID != 0 ORDER BY id ASC;";
+            String sql = "SELECT id, name FROM " + DEF.ESQUEMA + ".us_states WHERE ID != 0 ORDER BY id ASC;";
             PreparedStatement pst = conn.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
@@ -415,6 +438,80 @@ public class BnServicios {
     }
 
     public JSONArray consultasServAct() {
+        JSONArray servicios = new JSONArray();
+        Connection conn = null;
+        try {
+            conn = Conexion.getConn();
+            String sql = "SELECT BT.id, BS.nombre, BS.key_words, BS.zip_codes, BS.email_notificacion, BT.fecha_creacion, COUNT(HP.id) AS ejecuciones FROM "+DEF.ESQUEMA+".bot_threads_info BT \n" +
+                        "LEFT JOIN "+DEF.ESQUEMA+".sy_performace_info HP ON BT.id = HP.id_servicio\n" +
+                        "INNER JOIN "+DEF.ESQUEMA+".bot_servicio BS ON BT.id_bot_servicio = BS.id \n" +
+                        "WHERE BT.estado_hilo = 1 GROUP BY HP.id_servicio, BS.nombre, BS.key_words, BS.zip_codes, BS.email_notificacion, BT.fecha_creacion, BT.id;";
+            
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                JSONObject servicio = new JSONObject();
+                servicio.put("id", rs.getLong(1));
+                servicio.put("nombre", rs.getString(2));
+                servicio.put("key_words", rs.getString(3));
+                servicio.put("zip_codes", rs.getString(4));
+                servicio.put("email_notification", rs.getString(5));
+                servicio.put("fecha_creacion", rs.getString(6));
+                servicio.put("ejecuciones", rs.getLong(7));
+                servicios.put(servicio);
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnServicios.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(conn);
+        }
+        return servicios;
+    }
+    
+    public JSONArray consultasServHistorico(BigInteger idServ) {
+        JSONArray servicios = new JSONArray();
+        Connection conn = null;
+        String search = "";
+        
+        if(!idServ.equals(BigInteger.ZERO)){
+            search = " AND BS.id = "+idServ;
+        }
+        
+        try {
+            conn = Conexion.getConn();
+            String sql = "SELECT BT.id, BS.nombre, BS.key_words, BS.zip_codes, BT.fecha_creacion, BT.fecha_fin ,\n" +
+                        "(SELECT COUNT(id) FROM "+DEF.ESQUEMA+".bot_resp_servicio BRS WHERE BRS.id_hilo = BT.id AND BRS.descripcion_json_exito <> '[]') AS ejecuciones_exitosas, \n" +
+                        "(SELECT COUNT(id) FROM "+DEF.ESQUEMA+".bot_resp_servicio BRS WHERE BRS.id_hilo = BT.id) AS ejecuciones \n" +
+                        "FROM "+DEF.ESQUEMA+".bot_threads_info BT \n" +
+                        "LEFT JOIN "+DEF.ESQUEMA+".sy_performace_info HP ON BT.id = HP.id_servicio\n" +
+                        "INNER JOIN "+DEF.ESQUEMA+".bot_servicio BS ON BT.id_bot_servicio = BS.id\n" +
+                        "WHERE BT.estado_hilo <> 1 "+search+" GROUP BY BT.id, BS.nombre, BS.key_words, BS.zip_codes, BT.fecha_creacion;";
+            
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                JSONObject servicio = new JSONObject();
+                servicio.put("id", rs.getLong(1));
+                servicio.put("nombre", rs.getString(2));
+                servicio.put("key_words", rs.getString(3));
+                servicio.put("zip_codes", rs.getString(4));
+                servicio.put("fecha_creacion", rs.getString(5));
+                servicio.put("fecha_fin", rs.getString(6));
+                servicio.put("ejecuciones_exitosas", rs.getLong(7));
+                servicio.put("ejecuciones", rs.getLong(8));
+                servicios.put(servicio);
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnServicios.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(conn);
+        }
+        return servicios;
+    }
+    
+    public JSONArray consultasServDisp() {
         JSONArray servicios = new JSONArray();
         Connection conn = null;
         try {
@@ -445,7 +542,7 @@ public class BnServicios {
         return servicios;
     }
     
-     public JSONObject consultasServ(BigInteger idServ) {
+    public JSONObject consultasServ(BigInteger idServ) {
         Connection conn = null;
         JSONObject servicio = null;
             
@@ -477,6 +574,101 @@ public class BnServicios {
             Conexion.desconectar(conn);
         }
         return servicio;
+    }
+    
+    public BigInteger actualizarEstadosHilo (Thread hiloAct, int estadoAct, int ejecuciones, int tipo, BigInteger id, int idServ){
+        
+        BigInteger idRegistro = id;
+        Connection conn = null;
+        
+        try {
+            conn = Conexion.getConn();
+            
+            switch(tipo){
+                case 1:{
+                    String sql = "INSERT INTO " + DEF.ESQUEMA + ".bot_threads_info "
+                    + "(nombre_hilo, id_bot_servicio, num_ejecuciones, fecha_creacion, fecha_fin, estado_hilo, id_usuario) "
+                    + "VALUES(?, ?, ?, CURRENT_TIMESTAMP, NULL, ?, 0);";
+        
+                    PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                    pst.setString(1, hiloAct.getName());
+                    pst.setInt(2, idServ);
+                    pst.setInt(3, ejecuciones);
+                    pst.setInt(4, estadoAct);
+                    pst.executeUpdate();
+                    ResultSet rs = pst.getGeneratedKeys();
+                    if(rs.next()) {
+                        idRegistro = new BigInteger(rs.getString(1));
+                    }
+                    break;
+                }
+                case 2:{
+                    String sql = "UPDATE " + DEF.ESQUEMA + ".bot_threads_info "
+                            + "SET num_ejecuciones = ?,  fecha_fin = CURRENT_TIMESTAMP, estado_hilo = ? WHERE id = ?;";
+                    
+                    PreparedStatement pst = conn.prepareStatement(sql);
+                    pst.setInt(1, ejecuciones);
+                    pst.setInt(2, estadoAct);
+                    pst.setInt(3, idRegistro.intValue());
+                    pst.executeUpdate();
+                    
+                    break;
+                }       
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnServicios.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(conn);
+        }
+        return idRegistro;
+    }
+    
+    public int checkService(BigInteger idHilo) {
+        int resp = 0;
+        
+        Connection con = Conexion.getConn();
+        try {
+            String sql = "SELECT estado_hilo FROM " + DEF.ESQUEMA + ".bot_threads_info WHERE id=?;";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setLong(1, idHilo.longValue());
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                resp = rs.getInt("estado_hilo"); 
+            }
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnDatos.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(con);
+        }
+        return resp;
+    }
+    
+    public void insertarPerformance(long duration, String proceso, String clase, BigInteger idHilo, int idServicio ){
+        
+        Connection conn = null;
+        
+        try {
+            conn = Conexion.getConn();
+            String sql = "INSERT INTO " + DEF.ESQUEMA + ".sy_performace_info (duration, nombre_proceso, nombre_clase, id_usuario, id_servicio, id_hilo) "
+                    + "VALUES(?, ?, ?, 0, ?, ?);";
+
+            PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pst.setLong(1, duration);
+            pst.setString(2, proceso);
+            pst.setString(3, clase);
+            pst.setInt(4, idServicio);
+            pst.setInt(5, idHilo.intValue());
+            pst.executeUpdate();
+
+        } catch (Exception ex) {
+            Soporte.severe("{0}:{1}", new Object[]{BnServicios.class.getName(), ex.toString()});
+            ex.printStackTrace(System.out);
+        } finally {
+            Conexion.desconectar(conn);
+        }
+        
     }
     
     public JSONArray historialMes(long idEmpresa, long buscarDatos) {

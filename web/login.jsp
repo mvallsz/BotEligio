@@ -23,18 +23,20 @@
         <!-- Adding "maximum-scale=1" fixes the Mobile Safari auto-zoom bug: http://filamentgroup.com/examples/iosScaleBug/ -->
         <!-- iPad End -->
 
-        <title><%= DEF.TITULO%> <%= DEF.VERSION%></title>
+        <title><%= DEF.TITULO%>&nbsp;<%= DEF.VERSION%></title>
 
         <link rel="shortcut icon" href="favicon.ico">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
 
-        <!-- iOS ICONS -->
-        <link rel="apple-touch-icon" href="touch-icon-iphone.png" />
-        <link rel="apple-touch-icon" sizes="72x72" href="touch-icon-ipad.png" />
-        <link rel="apple-touch-icon" sizes="114x114" href="touch-icon-iphone4.png" />
-        <link rel="apple-touch-startup-image" href="touch-startup-image.png">
-        <!-- iOS ICONS END -->
+        <!-- FAVICON ICONS -->
+        <link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
+        <!--<link rel="manifest" href="images/favicon/site.webmanifest">-->
+        <link rel="mask-icon" href="images/favicon/safari-pinned-tab.svg">
+        <meta name="msapplication-TileColor" content="#00aba9">
+        <meta name="theme-color" content="#ffffff">
 
         <!-- STYLESHEETS -->
 

@@ -22,9 +22,10 @@ public class BnProperties {
 
         prop = new Properties();
         try {
-            prop.load(new FileInputStream(new File("C:\\Users\\mvall\\OneDrive\\Documentos\\Properties\\DogBot_local.properties")));
-//            prop.load(new FileInputStream(new File("/home/properties/primus/primus.properties")));
-            System.out.println(prop.toString());
+            prop.load(new FileInputStream(new File("/home/centos/Documents/properties/DogBot_produccion.properties")));
+//            prop.load(new FileInputStream(new File("C:\\Users\\mvall\\OneDrive\\Documentos\\Properties\\DogBot_local.properties")));
+//            prop.load(new FileInputStream(new File("C:\\Users\\mvall\\OneDrive\\Documentos\\Properties\\DogBot_local_prod.properties")));
+
         } catch (IOException e) {
             e.printStackTrace();
         }

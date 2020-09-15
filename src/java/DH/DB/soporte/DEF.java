@@ -15,21 +15,17 @@ import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 public class DEF {
 
     static BnProperties prop = BnProperties.getInstancia();
-//    public static final String DIRECCION = prop.getPropiedad("DIRECCION");
-//    public static final String USER = prop.getPropiedad("USER");
-//    public static final String PASSWORD = prop.getPropiedad("PASSWORD");
-    public static final String ESQUEMA = prop.getPropiedad("ESQUEMA");
+
 
     public static final String DOMINIO_WEB_SERV = prop.getPropiedad("DOMINIO_WEB_SERV");
-
     public static final String SESSION_USUARIO = "user_session";
     public static final String TITULO = prop.getPropiedad("TITULO");
     public static final String VERSION = prop.getPropiedad("VERSION");
     public static final String PAGE_LOGIN = "/login.jsp";
-    public static final String MaxTotal = prop.getPropiedad("MAXTOTAL");
-    
 
     /*Data base*/
+    public static final String ESQUEMA = prop.getPropiedad("ESQUEMA");
+    public static final String MaxTotal = prop.getPropiedad("MAXTOTAL");
     public static final String drivername = prop.getPropiedad("DRIVERNAME");
     public static final String driver = prop.getPropiedad("DRIVER");
     public static final String port = prop.getPropiedad("PORT");
@@ -40,5 +36,19 @@ public class DEF {
     public static BasicDataSource basicDS = DataSource.getInstance().getBasicDS();
     public static String page2captcha;
     
+    /*Selenium*/
+    public static final String PATHGECKO = prop.getPropiedad("PATHGECKO");
+    public static final String PATHPHANTHOM = prop.getPropiedad("PATHPHANTHOM");
+    public static final String PAGE2FARM = prop.getPropiedad("PAGE2FARM");
+    public static final String SLEEPTIME = prop.getPropiedad("SLEEPTIME");
+    
+    /*Login xPaths*/
+    public static final String XPATHSUSERLOGIN = prop.getPropiedad("XPATHSUSERLOGIN");
+    public static final String XPATHSPASSLOGIN = prop.getPropiedad("XPATHSPASSLOGIN");
+    public static final String XPATHSBOTONLOGIN = prop.getPropiedad("XPATHSBOTONLOGIN");
+    
+    /*Correos*/
+    public static final String CORREOADMIN = prop.getPropiedad("CORREOADMIN");
+
 }
 

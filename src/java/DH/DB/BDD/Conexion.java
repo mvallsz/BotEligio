@@ -55,13 +55,14 @@ public class Conexion extends Soporte {
                     con.commit();
                 }
             }
-			if(con != null)
-				con.close();
+
+            if(con != null)
+                    con.close();
 
         } catch (SQLException ex) {
             try {
                 if(con != null)
-					con.close();
+                    con.close();
                 con = null;
             } catch (SQLException ex1) {
                 Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex1);
@@ -74,8 +75,8 @@ public class Conexion extends Soporte {
             ex.printStackTrace(System.out);
         } finally {
             try {
-				if(con != null)
-					con.close();
+                if(con != null)
+                    con.close();
                 con = null;
             } catch (SQLException ex1) {
                 Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex1);

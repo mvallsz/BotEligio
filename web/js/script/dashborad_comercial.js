@@ -1,9 +1,19 @@
 console.log("Entra a dashboard_comercial.js");
-var Dataaa = [];
+var DataAct = [];
+var DataDisp = [];
+var DataHist = [];
+
 $(document).ready(function () {
     addAnio();
+    initTables1(1);
     initTables1(2);
-//    listarEmpresas();
+    initTables1(3);
+    listarServRPA();
+    $(function() {
+        $("#tooltip-1").tooltip();
+        $("#tooltip-2").tooltip();
+    });
+    
 //Plot 1
     var Bureau1 = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     var Bureau2 = [0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -81,30 +91,25 @@ $(document).ready(function () {
 function initTables1(tablaN) {
     switch (tablaN) {
         case 1:
-            $('#tableConsultas').DataTable().rows().remove().draw();
-            var anio = $("#form-anio option:selected").val();
-            var mes = $("#form-mes option:selected").val();
-            var bureau = $("#form-bureauu option:selected").val();
-            var empresa = $("#form-empresa1 option:selected").val();
+            $('#tableHistoricoRPA').DataTable().rows().remove().draw();
+            var ServRPA = $("#form-servRPA option:selected").val();
             $.ajax({
                 url: 'Svl_Servicios',
                 type: 'POST',
                 dataType: 'json',
                 data: {
-                    accion: 'consultasMes',
-                    mes: mes,
-                    anio: anio,
-                    bureau: bureau,
-                    empresa: empresa
+                    accion: 'consultasHistoricas',
+                    idServ: ServRPA
+                    
                 },
                 beforeSend: function (xhr) {
-                    $('#tableConsultas tbody').append('<tr id="trCargando" class="odd" style="text-align: center;"><td valign="top" colspan="7" class="dataTables_empty" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i>  Buscando Registros</td></tr>');
+                    $('#tableHistoricoRPA tbody').append('<tr id="trCargando" class="odd" style="text-align: center;"><td valign="top" colspan="7" class="dataTables_empty" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i>  Buscando Registros</td></tr>');
                 },
                 success: function (data) {
                     if (data.estado === 200) {
-                        Dataaa = data.datos;
+                        DataHist = data.datos;
                     }
-                    listarConsultas();
+                    listarServHist();
                 }
             });
             break;
@@ -122,9 +127,29 @@ function initTables1(tablaN) {
                 },
                 success: function (data) {
                     if (data.estado === 200) {
-                        Dataaa = data.datos;
+                        DataAct = data.datos;
                     }
                     listarServAct();
+                }
+            });
+            break;
+        case 3:
+            $('#tableServiciosDisp').DataTable().rows().remove().draw();
+            $.ajax({
+                url: 'Svl_Servicios',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    accion: 'consultasServDisp'
+                },
+                beforeSend: function (xhr) {
+                    $('#tableServiciosDisp tbody').append('<tr id="trCargando" class="odd" style="text-align: center;"><td valign="top" colspan="7" class="dataTables_empty" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i>  Buscando Registros</td></tr>');
+                },
+                success: function (data) {
+                    if (data.estado === 200) {
+                        DataDisp = data.datos;
+                    }
+                    listarServDisp();
                 }
             });
             break;
@@ -225,50 +250,7 @@ function listarOrigen1() {
     });
 }
 
-function listarConsultas() {
-    $('#trCargando').remove();
-    $('#tableConsultas').DataTable().destroy();
-    $('#tableConsultas').DataTable({
-        "language": {
-                   "lengthMenu": "Mostrar _MENU_ registros por página.",
-                   "zeroRecords": "Lo sentimos. No se encontraron registros.",
-                         "info": "Mostrando página _PAGE_ de _PAGES_",
-                         "infoEmpty": "No hay registros aún.",
-                         "infoFiltered": "(filtrados de un total de _MAX_ registros)",
-                         "search": "Búsqueda",
-                         "LoadingRecords": "Cargando ...",
-                         "Processing": "Procesando...",
-                         "SearchPlaceholder": "Comience a teclear...",
-                         "paginate": {
-                     "previous": "Anterior",
-                     "next": "Siguiente"
-                 }
-              },
-        "data": Dataaa,
-        "bSort": true,
-        "columnDefs": [
-            {"width": "25%", "targets": 0},
-            {"width": "30%", "targets": 1},
-            {"width": "25%", "targets": 2},
-            {"width": "20%", "targets": 3}
-        ],
-        "columns": [
-            {data: 'ORIGEN', class: 'txt-center'},
-            {data: 'SERVICIO', class: 'txt-center'},
-            {data: 'USUARIO', class: 'txt-center'},
-            {data: 'FECHA', class: 'txt-center'},
-            {data: null, "render": function (data, type, row) {
-                    if (data.BUSCAR_DATOS === 1) {
-                        return "Servicio";
-                    } else {
-                        return "Cache";
-                    }
-                }}
-        ]
-    });
-}
-
-function activarServ(idServ, activo) {
+function activarServ(idServ, activo, tabla) {
     $.ajax({
         url: 'Svl_Servicios',
         type: 'POST',
@@ -281,9 +263,29 @@ function activarServ(idServ, activo) {
         success: function (data, textStatus, jqXHR) {
             if (data.estado == 200) {
                 alert("Servicio Actualizado");
-                initTables(1);
+                initTables(tabla);
             } else {
                 alert("No se puedo actualizar el servicio");
+            }
+        }
+    });
+}
+
+function apagarHilo(idHilo) {
+    $.ajax({
+        url: 'Svl_Servicios',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            accion: 'apagarHilo',
+            idHilo: idHilo
+        },
+        success: function (data, textStatus, jqXHR) {
+            if (data.estado == 200) {
+                alert("Hilo apagado");
+                initTables1(2);
+            } else {
+                alert("No se puede apagar el hilo");
             }
         }
     });
@@ -301,30 +303,12 @@ function iniciarServ(idServ) {
         },
         success: function (data, textStatus, jqXHR) {
             if (data.estado === 200) {
-                alert("Servicio Iniciado");
-                initTables(1);
+                alert("Se ha iniciado de forma exitosa la activación del hilo para el servicio: "+idServ);
+                $('#tableServiciosAct tbody').append('<tr id="trCargando" class="odd" style="text-align: center;"><td valign="top" colspan="7" class="dataTables_empty" style="text-align: center;"><i class="fa fa-spinner fa-spin"></i>  El hilo se esta Activando...</td></tr>');
+                setTimeout(() => {  initTables1(2); }, 20000);
+                
             } else {
-                alert("No se puede activar el servicio, contacto con el servicio tecnico del sistema");
-            }
-        }
-    });
-}
-function activarServ(idServ, activo) {
-    $.ajax({
-        url: 'Svl_Servicios',
-        type: 'POST',
-        dataType: 'json',
-        data: {
-            accion: 'activarServicio',
-            idServ: idServ,
-            activo: activo
-        },
-        success: function (data, textStatus, jqXHR) {
-            if (data.estado === 200) {
-                alert("Servicio Actualizado");
-                initTables(1);
-            } else {
-                alert("No se puedo actualizar el servicio");
+                alert("No se puede activar el hilo, contacto con el servicio tecnico del sistema");
             }
         }
     });
@@ -349,7 +333,7 @@ function listarServAct() {
                      "next": "Siguiente"
                  }
               },
-        "data": Dataaa,
+        "data": DataAct,
         "bSort": true,
         "columnDefs": [
             {"width": "20%", "targets": 0},
@@ -360,14 +344,29 @@ function listarServAct() {
         ],
         "columns": [
             {data: 'nombre', class: 'txt-center'},
-            {data: 'usuario_host', class: 'txt-center'},
-            {data: 'zip_codes', class: 'txt-center'},
-            {data: 'key_words', class: 'txt-center'},
+            {data: 'ejecuciones', class: 'txt-center'},
+            {data: null, "render": function (data, type, row) {
+
+                if(data.zip_codes.length >= 15){
+                    zipCodesString = data.zip_codes.substring(0, 15)+"...";
+                }else{
+                    zipCodesString = data.zip_codes;
+                }
+                return "<span id='#tooltip-1' title = '"+data.zip_codes+"'>"+zipCodesString+"</span>";
+            }},
+            {data: null, "render": function (data, type, row) {
+                
+                if(data.key_words.length >= 15){
+                    keyWordsString = data.key_words.substring(0, 15)+"...";
+                }else{
+                    keyWordsString = data.key_words;
+                }
+                return "<span id='#tooltip-2' title = '"+data.key_words+"'>"+keyWordsString+"</span>";
+            }},
             {data: 'fecha_creacion', class: 'txt-center'},
             {data: null, "render": function (data, type, row) {
                     var action = "";
-                    action = action + '<button title="Iniciar" onclick="iniciarServ(' + data.id + ')"><i class="fas fa-robot"></i></button>';
-                    action = action + '<button title="Desactivar" onclick="activarServ(' + data.id + ', 0)"><i class="fa fa-ban"></i></button>';
+                    action = action + '<button title="Desactivar" onclick="apagarHilo(' + data.id + ')"><i class="fa fa-ban"></i></button>';
                     return action;
                     
                     if (data.estado === 1) {
@@ -377,5 +376,147 @@ function listarServAct() {
                     }
                 }}
         ]
+    });
+}
+
+function listarServDisp() {
+    $('#trCargando').remove();
+    $('#tableServiciosDisp').DataTable().destroy();
+    $('#tableServiciosDisp').DataTable({
+        "language": {
+                   "lengthMenu": "Mostrar _MENU_ registros por página.",
+                   "zeroRecords": "Lo sentimos. No se encontraron registros.",
+                         "info": "Mostrando página _PAGE_ de _PAGES_",
+                         "infoEmpty": "No hay registros aún.",
+                         "infoFiltered": "(filtrados de un total de _MAX_ registros)",
+                         "search": "Búsqueda",
+                         "LoadingRecords": "Cargando ...",
+                         "Processing": "Procesando...",
+                         "SearchPlaceholder": "Comience a teclear...",
+                         "paginate": {
+                     "previous": "Anterior",
+                     "next": "Siguiente"
+                 }
+              },
+        "data": DataDisp,
+        "bSort": true,
+        "columnDefs": [
+            {"width": "20%", "targets": 0},
+            {"width": "20%", "targets": 1},
+            {"width": "25%", "targets": 2},
+            {"width": "25%", "targets": 3},
+            {"width": "10%", "targets": 4}
+        ],
+        "columns": [
+            {data: 'nombre', class: 'txt-center'},
+            {data: 'email_notification', class: 'txt-center'},
+            {data: null, "render": function (data, type, row) {
+
+                if(data.zip_codes.length >= 15){
+                    zipCodesString = data.zip_codes.substring(0, 15)+"...";
+                }else{
+                    zipCodesString = data.zip_codes;
+                }
+                return "<span id='#tooltip-1' title = '"+data.zip_codes+"'>"+zipCodesString+"</span>";
+            }},
+            {data: null, "render": function (data, type, row) {
+                
+                if(data.key_words.length >= 15){
+                    keyWordsString = data.key_words.substring(0, 15)+"...";
+                }else{
+                    keyWordsString = data.key_words;
+                }
+                return "<span id='#tooltip-2' title = '"+data.key_words+"'>"+keyWordsString+"</span>";
+            }},
+            {data: 'fecha_creacion', class: 'txt-center'},
+            {data: null, "render": function (data, type, row) {
+                    var action = "";
+                    action = action + '<button title="Iniciar" onclick="iniciarServ(' + data.id + ')"><i class="fas fa-robot"></i></button>';
+                    action = action + '<button title="Desactivar" onclick="activarServ(' + data.id + ', 0, 3)"><i class="fa fa-ban"></i></button>';
+                    return action;
+                    
+                    if (data.estado === 1) {
+                        return "Activo";
+                    } else {
+                        return "Desactivo";
+                    }
+                }}
+        ]
+    });
+}
+
+function listarServHist() {
+    $('#trCargando').remove();
+    $('#tableHistoricoRPA').DataTable().destroy();
+    $('#tableHistoricoRPA').DataTable({
+        "language": {
+                   "lengthMenu": "Mostrar _MENU_ registros por página.",
+                   "zeroRecords": "Lo sentimos. No se encontraron registros.",
+                         "info": "Mostrando página _PAGE_ de _PAGES_",
+                         "infoEmpty": "No hay registros aún.",
+                         "infoFiltered": "(filtrados de un total de _MAX_ registros)",
+                         "search": "Búsqueda",
+                         "LoadingRecords": "Cargando ...",
+                         "Processing": "Procesando...",
+                         "SearchPlaceholder": "Comience a teclear...",
+                         "paginate": {
+                     "previous": "Anterior",
+                     "next": "Siguiente"
+                 }
+              },
+        "data": DataHist,
+        "bSort": true,
+        "columnDefs": [
+            {"width": "15%", "targets": 0},
+            {"width": "20%", "targets": 1},
+            {"width": "20%", "targets": 2},
+            {"width": "15%", "targets": 3},
+            {"width": "10%", "targets": 4},
+            {"width": "10%", "targets": 5},
+            {"width": "10%", "targets": 6}
+        ],
+        "columns": [
+            {data: 'nombre', class: 'txt-center'},
+            {data: 'ejecuciones', class: 'txt-center'},
+            {data: 'ejecuciones_exitosas', class: 'txt-center'},
+            {data: null, "render": function (data, type, row) {
+
+                if(data.zip_codes.length >= 15){
+                    zipCodesString = data.zip_codes.substring(0, 15)+"...";
+                }else{
+                    zipCodesString = data.zip_codes;
+                }
+                return "<span id='#tooltip-1' title = '"+data.zip_codes+"'>"+zipCodesString+"</span>";
+            }},
+            {data: null, "render": function (data, type, row) {
+                
+                if(data.key_words.length >= 15){
+                    keyWordsString = data.key_words.substring(0, 15)+"...";
+                }else{
+                    keyWordsString = data.key_words;
+                }
+                return "<span id='#tooltip-2' title = '"+data.key_words+"'>"+keyWordsString+"</span>";
+            }},
+            {data: 'fecha_creacion', class: 'txt-center'},
+            {data: 'fecha_fin', class: 'txt-center'}
+            
+        ]
+    });
+}
+
+function listarServRPA() {
+    $.ajax({
+        url: 'Svl_Servicios',
+        type: 'POST',
+        dataType: 'json',
+        data: {accion: 'consultasServDisp'},
+        success: function (data, textStatus, jqXHR) {
+            if (data.estado == 200) {
+                for (var dato in data.datos) {
+                        $('#form-servRPA').append('<option value="' + data.datos[dato].id + '">' + data.datos[dato].nombre + '</option>');
+                        
+                }
+            }
+        }
     });
 }

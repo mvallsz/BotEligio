@@ -8,7 +8,9 @@ var limitVar = 0;
 console.log("Entra a solicitud_rpa.js");
 
 $(document).ready(function () {
+    
     listarEstados();
+    initTables(1);
 });
 
 function initTables(tablaN) {
@@ -458,8 +460,8 @@ function listarEstados() {
         success: function (data, textStatus, jqXHR) {
             if (data.estado == 200) {
                 for (var dato in data.datos) {
-                        $('#form-US_state').append('<option value="' + data.datos[dato].id + '">' + data.datos[dato].name + '</option>');
-                        selectedF('form-empresa', idEmp);
+                        $('#form-US_state').append('<option value="' + data.datos[dato].name + '">' + data.datos[dato].name + '</option>');
+                        //selectedF('form-empresa', idEmp);
                         initTables(1);
                 }
             }
@@ -529,8 +531,24 @@ function listarServi() {
         ],
         "columns": [
             {data: 'nombre', class: 'txt-center'},
-            {data: 'zip_codes', class: 'txt-center'},
-            {data: 'key_words', class: 'txt-center'},
+                        {data: null, "render": function (data, type, row) {
+
+                if(data.zip_codes.length >= 15){
+                    zipCodesString = data.zip_codes.substring(0, 15)+"...";
+                }else{
+                    zipCodesString = data.zip_codes;
+                }
+                return "<span id='#tooltip-1' title = '"+data.zip_codes+"'>"+zipCodesString+"</span>";
+            }},
+            {data: null, "render": function (data, type, row) {
+                
+                if(data.key_words.length >= 15){
+                    keyWordsString = data.key_words.substring(0, 15)+"...";
+                }else{
+                    keyWordsString = data.key_words;
+                }
+                return "<span id='#tooltip-2' title = '"+data.key_words+"'>"+keyWordsString+"</span>";
+            }},
             {data: null, "render": function (data, type, row) {
                     if (data.estado) {
                         return "Activo";

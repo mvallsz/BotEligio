@@ -25,7 +25,7 @@ public class DataSource {
     //private constructor
     private DataSource() {
         basicDS.setDriverClassName(DRIVER_CLASS);
-        System.out.println(DEF.driver);
+        //System.out.println(DEF.driver);
         basicDS.setUrl(DB_CONNECTION_URL);
         basicDS.setUsername(DB_USER);
         basicDS.setPassword(DB_PWD);
